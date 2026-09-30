@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>版权投诉 / DMCA · Peach</title>
+<meta name="description" content="就 Peach 官网与演示站展示的内容提交版权投诉。">
+<style>
+:root{color-scheme:dark;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#080a0f;color:#eee}*{box-sizing:border-box}body{margin:0}main{max-width:760px;margin:auto;padding:40px 24px 72px}a{color:#f4c0bd;text-underline-offset:4px}h1{font-size:clamp(26px,5vw,36px);line-height:1.2;margin:36px 0 20px}h2{font-size:20px;margin-top:32px}p,li{line-height:1.75;color:#bfc1c8}.intro{margin-bottom:32px}form{display:grid;gap:20px}label{display:grid;gap:8px;font-size:14px}input,textarea{font:inherit;width:100%;padding:12px;border:1px solid #45464e;border-radius:8px;background:#14161c;color:#fff}textarea{resize:vertical;min-height:100px}.check{grid-template-columns:20px 1fr;align-items:start;line-height:1.6}.check input{width:18px;height:18px;margin:3px 0}button,.action{display:inline-block;font:inherit;padding:12px 18px;border:1px solid #45464e;border-radius:8px;background:#f4c0bd;color:#171318;text-decoration:none;cursor:pointer}button:disabled{background:#35343a;color:#aaa;cursor:default}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #f4c0bd;outline-offset:4px}.actions{display:flex;gap:12px;flex-wrap:wrap}.subtle{font-size:13px}.result{margin-top:28px;border-top:1px solid #45464e;padding-top:20px}[hidden]{display:none!important}#notice{min-height:280px}
+</style>
+</head>
+<body><main>
+<a href="/">← Peach 官网</a>
+<h1>版权投诉 / DMCA</h1>
+<p class="intro">如果你是权利人或其授权代表，认为 <strong>peach.video</strong> 或 <strong>demo.peach.video</strong> 展示的内容侵犯了你的版权，请提供下列信息。我们会核对投诉，并对成立的投诉及时移除相关内容或停用访问。</p>
+<p id="contact" hidden>接收邮箱：<a id="email"></a>。你也可以直接发送包含下列信息的邮件。</p>
+<form id="copyright-form">
+<label>姓名或机构与联系人<input name="claimant" autocomplete="name" maxlength="160" required></label>
+<label>联系邮箱<input name="reply" type="email" autocomplete="email" maxlength="254" required></label>
+<label>联系地址与电话号码<textarea name="contact" autocomplete="off" maxlength="700" required></textarea></label>
+<label>受保护作品及权利说明<textarea name="work" maxlength="2000" required placeholder="说明作品名称、原始发布地址，以及你是权利人还是授权代表。多个作品可以提供代表性清单。"></textarea></label>
+<label>被投诉内容的具体网址<textarea name="urls" maxlength="2000" required placeholder="列出官网或演示站的具体页面、图片或视频网址；视频请补充时间点，便于定位。"></textarea></label>
+<label class="check"><input name="goodFaith" type="checkbox" required><span>我善意相信，被投诉的使用方式未获得版权人、其代理人或法律的授权。</span></label>
+<label class="check"><input name="accuracy" type="checkbox" required><span>我声明通知中的信息准确，并在承担伪证责任的前提下确认，我是相关专有权利的权利人，或已获授权代表其行事。</span></label>
+<label>电子签名<input name="signature" maxlength="160" required placeholder="填写你的全名"></label>
+<p class="subtle">表单只在当前浏览器中整理邮件，不自动发送或保存输入。请勿附上密码、身份证件或无关个人资料；联系信息用于核对权利与回复投诉。</p>
+<button id="prepare" type="submit" disabled>准备投诉邮件</button>
+<p id="configuration" role="status">投诉接收地址正在配置。</p>
+</form>
+<section class="result" id="result" hidden aria-labelledby="result-title"><h2 id="result-title">邮件已整理，尚未发送</h2><p>在邮件客户端检查后发送。如果没有配置邮件客户端，可复制正文并发送至上面的接收邮箱。</p><label>投诉正文<textarea id="notice" readonly></textarea></label><div class="actions"><a class="action" id="compose">打开邮件客户端</a><button id="copy" type="button">复制正文</button></div><p id="copy-status" role="status"></p></section>
+<h2>处理与补充信息</h2><p>信息不足时，我们可能请求补充定位或权利说明。如果你认为内容被错误识别，请使用同一邮箱说明理由并提供相关依据。商标、肖像或隐私等其他权利问题，也可通过该邮箱联系，并注明问题类型。</p>
+<p class="subtle">故意作出重大虚假版权声明可能产生法律责任。通知内容要求参考<a href="https://www.copyright.gov/512/">美国版权局的 Section 512 说明</a>。本页不构成对任何具体使用行为的合法性认定。</p>
+<script type="module" src="./notice.js"></script>
+</main></body></html>

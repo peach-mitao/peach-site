@@ -1,0 +1,8 @@
+/_proto/
+/index-v1.html
+/hello-preview.html
+/assets/dark/*.jpg
+/assets/shots/*.jpg
+!/assets/shots/h-dark.jpg
+/assets/sleeve.jpg
+/assets/vendor/sticker-forge/*.d.ts

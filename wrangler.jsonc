@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // 纯静态落地页：没有 Worker 代码，全部由静态资源层回。
+  "name": "peach-landing",
+  "compatibility_date": "2026-09-20",
+  "assets": {"directory": "./site", "not_found_handling": "404-page"},
+  "routes": [{"pattern": "peach.video", "custom_domain": true}]
+}

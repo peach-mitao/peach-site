@@ -64,18 +64,29 @@ try {
     }
     assert.equal((await request('/?edit')).body.includes(Buffer.from('/__edit.js')),false);
   }
-  const range=await request('/assets/peach-intro-720p.mp4',{Range:'bytes=0-1023'});
-  report.videoRange={status:range.status,bytes:range.body.length,contentRange:range.headers['content-range']??null};
-  if(range.status===206) assert.equal(range.body.length,1024);
-  else {
-    assert.equal(range.status,200);
-    assert.equal(hash(range.body),hash(await readFile(new URL('./site/assets/peach-intro-720p.mp4',import.meta.url))));
+  const localVideo=await readFile(new URL('./site/assets/peach-intro-720p.mp4',import.meta.url));
+  const videoPath='/assets/peach-intro-720p.mp4';
+  report.videoRanges=[];
+  for(const start of [1048576,0,localVideo.length-1024]) {
+    const end=start+1023;
+    const range=await request(videoPath,{Range:`bytes=${start}-${end}`});
+    assert.equal(range.status,206,'视频必须返回真实范围响应');
+    assert.equal(range.headers['content-range'],`bytes ${start}-${end}/${localVideo.length}`);
+    assert.equal(range.headers['content-length'],'1024');
+    assert.deepEqual(range.body,localVideo.subarray(start,end+1));
+    report.videoRanges.push({start,status:range.status,bytes:range.body.length,contentRange:range.headers['content-range']});
   }
+  const suffix=await request(videoPath,{Range:'bytes=-1024'});
+  assert.equal(suffix.status,206);
+  assert.deepEqual(suffix.body,localVideo.subarray(-1024));
+  const invalidRange=await request(videoPath,{Range:`bytes=${localVideo.length}-`});
+  assert.equal(invalidRange.status,416);
+  assert.equal(invalidRange.headers['content-range'],`bytes */${localVideo.length}`);
   report.httpPassed=true;
   if(!httpOnly) {
   browser=await chromium.launch({channel:'chrome'});
   for(const width of [1440,390]) {
-    const context=await browser.newContext({viewport:{width,height:width===390?844:900},locale:'zh-CN'});
+    const context=await browser.newContext({viewport:{width,height:width===390?844:900},locale:'zh-CN',hasTouch:width===390});
     try {
       const page=await context.newPage();
       const errors=[],failed=[];
@@ -101,8 +112,36 @@ try {
       await page.waitForFunction(()=>document.querySelector('[data-media-video]').readyState>=1,null,{timeout:30000});
       await page.evaluate(()=>document.querySelector('[data-media-video]').pause());
       assert.equal(await page.locator('[data-media-modal]').evaluate(el=>el.hidden),false);
-      await page.evaluate(()=>{document.querySelector('[data-media-video]').currentTime=10});
-      await page.waitForFunction(()=>{const video=document.querySelector('[data-media-video]');return !video.seeking && video.currentTime>=10 && video.readyState>=2},null,{timeout:30000});
+      const timeline=page.locator('[data-media-timeline]');
+      await timeline.hover();
+      const box=await timeline.boundingBox();
+      const duration=await page.locator('[data-media-video]').evaluate(v=>v.duration);
+      const y=box.y+box.height/2;
+      if(width===390) await page.touchscreen.tap(box.x+box.width*.5,y);
+      else await page.mouse.click(box.x+box.width*.5,y);
+      await page.waitForFunction(target=>{const v=document.querySelector('[data-media-video]');return !v.seeking&&Math.abs(v.currentTime-target)<.5&&v.readyState>=2},duration*.5,{timeout:30000});
+      if(width===1440) {
+        for(const fraction of [.75,.2]) {
+          await page.mouse.move(box.x+box.width*.5,y);
+          await page.mouse.down();
+          await page.mouse.move(box.x+box.width*fraction,y,{steps:8});
+          await page.mouse.up();
+          await page.waitForFunction(target=>{const v=document.querySelector('[data-media-video]');return !v.seeking&&Math.abs(v.currentTime-target)<.5&&v.readyState>=2},duration*fraction,{timeout:30000});
+        }
+        await page.mouse.move(box.x+box.width*.5,y);
+        await page.waitForFunction(target=>{const v=document.querySelector('[data-media-preview-video]');return !v.seeking&&Math.abs(v.currentTime-target)<.5&&v.readyState>=2},duration*.5,{timeout:30000});
+        const preview=await page.locator('[data-media-preview-video]').evaluate(v=>{
+          const canvas=document.createElement('canvas');canvas.width=32;canvas.height=18;
+          const ctx=canvas.getContext('2d');ctx.drawImage(v,0,0,32,18);
+          const pixels=ctx.getImageData(0,0,32,18).data;
+          let sum=0;for(let i=0;i<pixels.length;i+=4)sum+=pixels[i]+pixels[i+1]+pixels[i+2];
+          return {time:v.currentTime,width:v.videoWidth,height:v.videoHeight,mean:sum/(32*18*3)};
+        });
+        assert.ok(preview.mean>5,'悬停预览必须解码出非黑帧');
+        report.preview=preview;
+        await page.screenshot({path:fileURLToPath(new URL('player-preview-1440.png',out))});
+      }
+      report.viewports.push({width,videoSeek:{target:duration*.5,click:true,drag:width===1440}});
       await page.keyboard.press('Escape');
       await page.waitForFunction(()=>document.querySelector('[data-media-modal]').hidden);
       await page.goto(new URL('/copyright/',base).href,{waitUntil:'load'});

@@ -4,6 +4,8 @@
 
 产品介绍、六页导览、演示动效、下载入口与版权投诉页。页面正文在 `site/index.html`，静态站部署到 Cloudflare Workers Assets。
 
+介绍视频由 `worker.mjs` 使用 Cloudflare Cache API 提供字节范围响应，支持进度拖动与悬停缩略图。缓存键包含媒体清单的内容哈希；视频文件与 `assets-manifest.json` 必须一致。其余页面走静态资源层。Cloudflare 原生范围行为见 [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#match)。实现无新增依赖。
+
 ## 本地预览
 
 使用 Node.js 24 LTS 或更新的 LTS，在仓库目录安装依赖：
@@ -25,6 +27,8 @@ npm run dev
 ```
 
 普通页面为 `http://127.0.0.1:8790/`，原位改字为 `http://127.0.0.1:8790/?edit`。回车或点别处保存到 `site/index.html`，Esc 取消。保存接口只接受同一预览来源；改字服务位于发布目录之外。
+
+验证视频 Worker 时运行 `npm run dev:worker`，入口为 `http://127.0.0.1:8794/`；该入口不提供改字模式。运行 `node check_publish.mjs http://127.0.0.1:8794/` 核对媒体范围、进度点击、拖动、缩略图与桌面／手机页面。
 
 ## 验证与发布
 

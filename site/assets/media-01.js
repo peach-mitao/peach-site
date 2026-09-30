@@ -76,6 +76,7 @@ function media01(scope = document) {
         let closeRevealTimer = 0;
         let chromeTimer = 0;
         let previewFrame = 0;
+        let pendingPreviewTime = null;
         let isPointerOverStage = false;
         let isDragging = false;
         let activePointerId = null;
@@ -823,6 +824,7 @@ function media01(scope = document) {
 
         function updatePreviewVideo(time) {
             if (!previewVideo || !Number.isFinite(time)) return;
+            pendingPreviewTime = time;
             if (previewVideo.readyState < 1) return;
 
             cancelAnimationFrame(previewFrame);
@@ -1308,6 +1310,9 @@ function media01(scope = document) {
         });
         pulse.addEventListener("animationend", clearPulse, { signal });
         previewVideo.addEventListener("error", markPreviewFallback, { signal });
+        previewVideo.addEventListener("loadedmetadata", () => {
+            if (pendingPreviewTime !== null) updatePreviewVideo(pendingPreviewTime);
+        }, { signal });
 
         stage.addEventListener(
             "pointerdown",

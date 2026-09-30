@@ -1,8 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // 纯静态落地页：没有 Worker 代码，全部由静态资源层回。
+  // 页面由静态资源层提供，介绍视频由 Worker 支持字节范围请求。
   "name": "peach-landing",
+  "main": "worker.mjs",
   "compatibility_date": "2026-09-20",
-  "assets": {"directory": "./site", "not_found_handling": "404-page"},
+  "assets": {"directory": "./site", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": ["/assets/peach-intro-720p.mp4"]},
+  "observability": {"enabled": true, "head_sampling_rate": 1},
   "routes": [{"pattern": "peach.video", "custom_domain": true}]
 }

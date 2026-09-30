@@ -6,6 +6,8 @@
 
 介绍视频由 `worker.mjs` 使用 Cloudflare Cache API 提供字节范围响应，支持进度拖动与悬停缩略图。缓存键包含媒体清单的内容哈希；视频文件与 `assets-manifest.json` 必须一致。其余页面走静态资源层。Cloudflare 原生范围行为见 [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#match)。实现无新增依赖。
 
+介绍视频为 76 秒、15 个章节，中文文案经逐页确认。独立视频工程导出 4K 母版与 720p 官网文件；MP4 使用 faststart 与最长 2 秒关键帧间隔。章节、封面和媒体清单与同一版影片匹配。
+
 ## 本地预览
 
 使用 Node.js 24 LTS 或更新的 LTS，在仓库目录安装依赖：

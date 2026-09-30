@@ -103,8 +103,8 @@
     },
     {
       "path": "assets/intro-poster.jpg",
-      "bytes": 73706,
-      "sha256": "b8d2ca408102a1a0fe4a03bf1d29e6304937e923e98b24a077292035fafcdf19"
+      "bytes": 39844,
+      "sha256": "1f34ddceed5085333ac008ab375c59659d8d3222b3a01fa05e13268d2d8deeec"
     },
     {
       "path": "assets/marks/1pondo.webp",
@@ -263,8 +263,8 @@
     },
     {
       "path": "assets/peach-intro-720p.mp4",
-      "bytes": 9405133,
-      "sha256": "36ad4f7d9ba2be702d08ece8a556cf099793a7610bfd0986abe3e64e06f1e8c5"
+      "bytes": 7551875,
+      "sha256": "8b362ca94d9c176ea6fd85b29a80f89b07957e3bb409c35e25869fa1750c5b75"
     },
     {
       "path": "assets/shots/dock-home.webp",

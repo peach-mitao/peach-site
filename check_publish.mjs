@@ -116,6 +116,8 @@ try {
       await timeline.hover();
       const box=await timeline.boundingBox();
       const duration=await page.locator('[data-media-video]').evaluate(v=>v.duration);
+      assert.ok(Math.abs(duration-76)<.05,'介绍视频时长为 76 秒');
+      assert.deepEqual(await page.locator('[data-media-chapter]').evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.start))),[0,4,9,14,18,24,30,34,40,47,53,60,65,69,73]);
       const y=box.y+box.height/2;
       if(width===390) await page.touchscreen.tap(box.x+box.width*.5,y);
       else await page.mouse.click(box.x+box.width*.5,y);

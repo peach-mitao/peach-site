@@ -64,8 +64,8 @@ try {
     }
     assert.equal((await request('/?edit')).body.includes(Buffer.from('/__edit.js')),false);
   }
-  const localVideo=await readFile(new URL('./site/assets/peach-intro-720p.mp4',import.meta.url));
-  const videoPath='/assets/peach-intro-720p.mp4';
+  const localVideo=await readFile(new URL('./site/assets/peach-intro-1080p.mp4',import.meta.url));
+  const videoPath='/assets/peach-intro-1080p.mp4';
   report.videoRanges=[];
   for(const start of [1048576,0,localVideo.length-1024]) {
     const end=start+1023;
@@ -116,8 +116,8 @@ try {
       await timeline.hover();
       const box=await timeline.boundingBox();
       const duration=await page.locator('[data-media-video]').evaluate(v=>v.duration);
-      assert.ok(Math.abs(duration-76)<.05,'介绍视频时长为 76 秒');
-      assert.deepEqual(await page.locator('[data-media-chapter]').evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.start))),[0,4,9,14,18,24,30,34,40,47,53,60,65,69,73]);
+      assert.ok(Math.abs(duration-74.5)<.05,'介绍视频时长为 74.5 秒');
+      assert.deepEqual(await page.locator('[data-media-chapter]').evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.start))),[0,5,10,15,21,26,32,38.5,43.5,49.5,55,60.5,66,70.5]);
       const y=box.y+box.height/2;
       if(width===390) await page.touchscreen.tap(box.x+box.width*.5,y);
       else await page.mouse.click(box.x+box.width*.5,y);

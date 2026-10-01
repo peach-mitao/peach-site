@@ -4,7 +4,7 @@
   "name": "peach-landing",
   "main": "worker.mjs",
   "compatibility_date": "2026-09-20",
-  "assets": {"directory": "./site", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": ["/assets/peach-intro-720p.mp4"]},
+  "assets": {"directory": "./site", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": ["/assets/peach-intro-1080p.mp4"]},
   "observability": {"enabled": true, "head_sampling_rate": 1},
   "routes": [{"pattern": "peach.video", "custom_domain": true}]
 }

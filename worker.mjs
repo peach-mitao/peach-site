@@ -1,7 +1,7 @@
 // 视频经 Cloudflare Cache API 返回字节范围；其余文件由静态资源层提供。
 import manifest from './assets-manifest.json';
 
-const videoPath = '/assets/peach-intro-720p.mp4';
+const videoPath = '/assets/peach-intro-1080p.mp4';
 const video = manifest.files.find(file => '/' + file.path === videoPath);
 const etag = `"${video.sha256}"`;
 

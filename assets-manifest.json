@@ -103,8 +103,8 @@
     },
     {
       "path": "assets/intro-poster.jpg",
-      "bytes": 39844,
-      "sha256": "1f34ddceed5085333ac008ab375c59659d8d3222b3a01fa05e13268d2d8deeec"
+      "bytes": 169705,
+      "sha256": "6072b6576c6eca069bdcec29e1cee9cf2fbced0db58b745221759742696174c7"
     },
     {
       "path": "assets/marks/1pondo.webp",
@@ -262,9 +262,9 @@
       "sha256": "1318313ea740f5a94d2cc29e569b6576bf82c8540e7260ed787f0f1c50dce9ae"
     },
     {
-      "path": "assets/peach-intro-720p.mp4",
-      "bytes": 7551875,
-      "sha256": "8b362ca94d9c176ea6fd85b29a80f89b07957e3bb409c35e25869fa1750c5b75"
+      "path": "assets/peach-intro-1080p.mp4",
+      "bytes": 25505359,
+      "sha256": "cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c"
     },
     {
       "path": "assets/shots/dock-home.webp",

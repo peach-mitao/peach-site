@@ -57,10 +57,30 @@ try {
         }
         assert.deepEqual(errors, []);
         assert.deepEqual(failures, []);
+        const actions = await page.locator('.hero .cta').evaluate(el => {
+          const primary=el.querySelector('.btn-primary'),secondary=[...el.querySelectorAll('.cta-secondary .btn')];
+          return {primary:primary.getBoundingClientRect().toJSON(),href:primary.href,text:primary.textContent.trim(),
+            secondary:secondary.map(button=>button.getBoundingClientRect().toJSON())};
+        });
+        assert.ok(actions.href.endsWith('/peach/releases'));
+        assert.equal(actions.text,'下载 Windows 版');
+        assert.equal(actions.secondary.length,2);
+        assert.ok(actions.secondary.every(button=>button.top>actions.primary.bottom),'下载位于次级动作上方');
+        assert.ok(Math.abs(actions.secondary[0].top-actions.secondary[1].top)<1,'次级动作同排');
+        assert.ok(actions.secondary.every(button=>button.left>=0&&button.right<=width),'动作位于视口内');
+        const footer = await page.locator('.final footer').evaluate(el=>{
+          const links=[...el.querySelectorAll('a')];
+          return {top:el.getBoundingClientRect().top,previousBottom:el.previousElementSibling.getBoundingClientRect().bottom,
+            color:getComputedStyle(el).color,links:links.map(link=>({height:link.getBoundingClientRect().height,width:link.getBoundingClientRect().width}))};
+        });
+        assert.ok(footer.top>footer.previousBottom,'页脚不覆盖收尾动作');
+        assert.equal(footer.color,'rgb(201, 205, 212)');
+        assert.ok(footer.links.every(link=>link.height>=44&&link.width<=width),'页脚链接可触达且不溢出');
       }
       if(width === 1280 || width === 390) {
         await page.screenshot({path:path.join(out, `home-${width}.png`)});
         await page.locator('h1').screenshot({path:path.join(out, `title-${width}.png`)});
+        await page.locator('.final footer').screenshot({path:path.join(out, `footer-${width}.png`)});
       }
       report.push({...metrics,errors,failures});
       console.log(`${captureOnly ? 'CAPTURE' : 'PASS'} ${width}: 字距、标点、完整短语、视口`);

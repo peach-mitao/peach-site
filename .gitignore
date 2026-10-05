@@ -12,6 +12,8 @@
 !/edit-server.mjs
 !/edit-client.js
 !/check_publish.mjs
+!/check_typography.mjs
+!/TYPOGRAPHY.md
 !/assets-manifest.json
 !/fetch_assets.mjs
 !/site/

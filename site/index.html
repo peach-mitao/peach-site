@@ -124,9 +124,6 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
   background:radial-gradient(1139.98% 138.18% at 0 0,rgba(255,255,255,.1) 0%,rgba(255,255,255,0) 100%);
   box-shadow:0 7px 3px rgba(0,0,0,.03),0 4px 4px rgba(0,0,0,.25)}
 .stage-say{margin-top:32px;min-height:60px}
-.shot-open{display:inline-flex;align-items:center;min-height:44px;margin-top:8px;font-size:14px;color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
-.shot-open:hover{color:var(--ink)}
-.shot-actions{text-align:center}
 
 /* 动效卡：照 raycast.com 的做法，用 HTML/CSS 画一块简化的 Peach 界面，脚本在上面演一遍，
    播完复原再来。按 720×450 排版，再整体缩到卡片宽度；卡片进入画面才播，减少动态效果时停在第一帧。 */
@@ -583,7 +580,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </div>
       </div>
       <p class="say center stage-say" id="stage-say" aria-live="polite"><b>全在这了</b><span class="sub">本地硬盘和在线网盘里的片子，在一处管理观看。</span></p>
-      <div class="shot-actions"><a class="shot-open" id="shot-open" href="/assets/shots/dock-home.webp" target="_blank" rel="noopener" aria-label="查看完整首页截图（新标签页）">查看完整截图 ↗</a></div>
     </div>
   </section>
 
@@ -944,7 +940,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 const shots=[...document.querySelectorAll('#screen img')];
 const tabs=[...document.querySelectorAll('.dock button')];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
-const shotOpen=document.getElementById('shot-open');
 const loadShot=tab=>{
   const img=shots.find(img=>img.dataset.k===tab.dataset.k);
   if(img.dataset.src&&!img.hasAttribute('src'))img.src=img.dataset.src;
@@ -955,8 +950,6 @@ tabs.forEach(tab=>tab.addEventListener('click',()=>{
   shots.forEach(img=>img.classList.toggle('on',img.dataset.k===tab.dataset.k));
   label.textContent=tab.dataset.label;
   say.innerHTML=tab.dataset.say;
-  shotOpen.href=shots.find(img=>img.dataset.k===tab.dataset.k).src;
-  shotOpen.setAttribute('aria-label',`查看完整${tab.dataset.label}截图（新标签页）`);
 }));
 tabs.forEach(tab=>tab.addEventListener('mouseenter',()=>{label.textContent=tab.dataset.label;loadShot(tab)}));
 tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));

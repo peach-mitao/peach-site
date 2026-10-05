@@ -6,7 +6,7 @@
 
 中文标题的字距、标点与响应式断行见 [官网中文排版](TYPOGRAPHY.md)。
 
-下载是导航、首屏和收尾区的主动作，首屏的在线演示与介绍视频并排显示。手机导览聚焦截图内容，可通过「查看完整截图」打开当前页面的原图。页脚使用深色底面，链接保留足够的点击高度。
+下载是导航、首屏和收尾区的主动作，首屏的在线演示与介绍视频并排显示。手机导览聚焦截图内容。页脚使用深色底面，链接保留足够的点击高度。
 
 介绍视频由 `worker.mjs` 使用 Cloudflare Cache API 提供字节范围响应，支持进度拖动与悬停缩略图。缓存键包含媒体清单的内容哈希；视频文件与 `assets-manifest.json` 必须一致。其余页面走静态资源层。Cloudflare 原生范围行为见 [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#match)。实现无新增依赖。
 

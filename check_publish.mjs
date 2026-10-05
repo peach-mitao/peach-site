@@ -104,12 +104,7 @@ try {
         await page.locator(`.dock button[data-k="${key}"]`).click();
         const dimensions=await page.locator(`#screen img[data-k="${key}"]`).evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});
         assert.deepEqual(dimensions,[3840,2160],key); tabs.push({key,dimensions});
-        assert.equal(await page.locator('#shot-open').evaluate(link=>link.href),await page.locator(`#screen img[data-k="${key}"]`).evaluate(img=>img.src),'完整截图跟随导览');
       }
-      const [fullShot]=await Promise.all([page.waitForEvent('popup'),page.locator('#shot-open').click()]);
-      await fullShot.waitForLoadState('load');
-      assert.deepEqual(await fullShot.locator('img').evaluate(img=>[img.naturalWidth,img.naturalHeight]),[3840,2160]);
-      await fullShot.close();
       await page.locator('.marks').scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);
       await page.screenshot({path:fileURLToPath(new URL(`rows-${width}.png`,out))});

@@ -81,6 +81,7 @@ try {
         await page.screenshot({path:path.join(out, `home-${width}.png`)});
         await page.locator('h1').screenshot({path:path.join(out, `title-${width}.png`)});
         await page.locator('.final footer').screenshot({path:path.join(out, `footer-${width}.png`)});
+        await page.locator('.windows-download').screenshot({path:path.join(out, `download-${width}.png`)});
       }
       report.push({...metrics,errors,failures});
       console.log(`${captureOnly ? 'CAPTURE' : 'PASS'} ${width}: 字距、标点、完整短语、视口`);

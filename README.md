@@ -8,6 +8,8 @@
 
 下载是导航、首屏和收尾区的主动作，首屏的在线演示与介绍视频并排显示。手机导览聚焦截图内容。页脚使用深色底面，链接保留足够的点击高度。
 
+Windows 下载区区分 EXE 安装包与 ZIP 免安装压缩包：`-setup.exe` 用于安装，ZIP 解压后运行目录中的 `Peach.exe`。两种文件均从应用的 GitHub Releases 获取。
+
 介绍视频由 `worker.mjs` 使用 Cloudflare Cache API 提供字节范围响应，支持进度拖动与悬停缩略图。缓存键包含媒体清单的内容哈希；视频文件与 `assets-manifest.json` 必须一致。其余页面走静态资源层。Cloudflare 原生范围行为见 [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/#match)。实现无新增依赖。
 
 介绍视频为 74.5 秒、14 个章节，分镜与文案跟随本页分区。独立视频工程导出 4K 母版与 1080p 官网文件（H.264 2.6 Mbps、AAC 128k，低于静态资源单文件 25 MiB 上限）；MP4 使用 faststart 与 2 秒关键帧间隔。章节、封面和媒体清单与同一版影片匹配。

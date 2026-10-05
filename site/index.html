@@ -359,10 +359,11 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .panel{min-width:0;padding:28px;border-radius:16px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .panel h3{margin:0 0 22px;font-size:17px;font-weight:600;display:flex;align-items:center;gap:10px}
 .panel h3 svg{width:18px;height:18px;color:var(--ink-2)}
-.steps{list-style:none;padding:0;margin:0 0 26px;display:grid;gap:12px;counter-reset:s}
-.steps li{display:flex;gap:14px;color:var(--ink-2);font-size:14.5px;counter-increment:s}
-.steps li::before{content:counter(s,decimal-leading-zero);flex:none;font:500 12px/22px var(--mono);color:var(--dim)}
-.steps code,.note code{overflow-wrap:anywhere}
+.package-option+.package-option{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair-2)}
+.package-option h4{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink)}
+.package-option p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
+.package-start{margin:24px 0;font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.note code{overflow-wrap:anywhere}
 code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--ink)}
 .code{margin:0 0 16px;border-radius:10px;border:1px solid var(--hair-2);background:#06070A;overflow:hidden}
 .code-bar{display:flex;align-items:center;justify-content:space-between;height:36px;padding:0 6px 0 14px;border-bottom:1px solid var(--hair)}
@@ -781,15 +782,19 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap">
       <p class="say lg reveal"><b><span class="nowrap">下载 Peach</span></b></p>
       <div class="dl reveal">
-        <div class="panel">
+        <div class="panel windows-download">
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</h3>
-          <ol class="steps">
-            <li><span>下载 <code>Peach-&lt;版本&gt;-windows-x64.zip</code> 并解压</span></li>
-            <li><span>双击 <code>Peach.exe</code></span></li>
-            <li><span>选择媒体文件夹，开始扫描</span></li>
-          </ol>
-          <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
-          <p class="note" style="margin-top:18px">测试包未签名，遇到提示点「更多信息 → 仍要运行」。</p>
+          <div class="package-option" data-package="exe">
+            <h4>EXE 安装包</h4>
+            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64-setup.exe</code>，双击并按提示安装。无需管理员权限，安装后从开始菜单打开 Peach。</p>
+          </div>
+          <div class="package-option" data-package="zip">
+            <h4>ZIP 免安装压缩包</h4>
+            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64.zip</code> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
+          </div>
+          <p class="package-start">首次打开后，选择媒体文件夹，开始扫描。</p>
+          <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
+          <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
         </div>
         <div class="panel">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>

@@ -3,5 +3,5 @@
  "engines":{"node":">=24"},
  "repository":{"type":"git","url":"https://github.com/peach-mitao/peach-site.git"},
  "scripts":{"dev":"node serve.mjs 8790","dev:worker":"wrangler dev --ip 127.0.0.1 --port 8794","assets:fetch":"node fetch_assets.mjs","check":"node --check worker.mjs && node --check site/assets/media-01.js && node --check serve.mjs && node --check edit-server.mjs && node --check edit-client.js && node --check fetch_assets.mjs && node --check check_publish.mjs && node --check check_typography.mjs","verify":"node check_publish.mjs","verify:typography":"node check_typography.mjs","deploy":"wrangler deploy"},
- "devDependencies":{"playwright":"1.58.1","wrangler":"4.141.0"}
+ "devDependencies":{"playwright":"1.58.1","wrangler":"4.147.0"}
 }

@@ -337,6 +337,11 @@
       "sha256": "578c7c53111b3910af2d292968b5c2374fc0fb3252c93e1d9fe96148696878fc"
     },
     {
+      "path": "assets/screenshots/wall-20261014-readme.webp",
+      "bytes": 1400544,
+      "sha256": "8339d44defa8453c9a37be432d651df502391a246be8bce9db8def2c257df911"
+    },
+    {
       "path": "assets/screenshots/wall-20261014.png",
       "bytes": 8354819,
       "sha256": "52c7e396fc812145cb6526687a521b6085e71eaabe9926c3eec023483840acb5"

@@ -267,6 +267,86 @@
       "sha256": "cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c"
     },
     {
+      "path": "assets/screenshots/favorites-20261014.png",
+      "bytes": 3572112,
+      "sha256": "cfbf3a2171bbec0988dfab47cdc5531a27da3c969cbc8a3076094ab6f78df2b8"
+    },
+    {
+      "path": "assets/screenshots/favorites-20261014.webp",
+      "bytes": 2206364,
+      "sha256": "71bcb6763cb53176e139b4dc3579795ff59aaf16fd2a7b4e7cac92cc556a1372"
+    },
+    {
+      "path": "assets/screenshots/follow-20261014.png",
+      "bytes": 4703224,
+      "sha256": "e2eaccb98b074189e73581fd973befdd9c16385f8993c0a427b636b3514a1d86"
+    },
+    {
+      "path": "assets/screenshots/follow-20261014.webp",
+      "bytes": 2919982,
+      "sha256": "de705515574b282051060813495350823911330a36cb6a36dbcdee76daaf54d6"
+    },
+    {
+      "path": "assets/screenshots/home-20261014.png",
+      "bytes": 4402164,
+      "sha256": "dea1ddf2a6f20f635b64c53b83e00396e83d099ec67e4ffd209936a1b4c9f5db"
+    },
+    {
+      "path": "assets/screenshots/home-20261014.webp",
+      "bytes": 2891434,
+      "sha256": "53872dd91dbb22ca330396aec42464ef7c8a3433da46586700d14056b8b73cfd"
+    },
+    {
+      "path": "assets/screenshots/people-20261014.png",
+      "bytes": 5218093,
+      "sha256": "c31d93696e13f619d575663e2756acc47a780212ed64b7e33cf1bb16e794ce84"
+    },
+    {
+      "path": "assets/screenshots/people-20261014.webp",
+      "bytes": 3249344,
+      "sha256": "6d02da932fcee392e09e6fc77a20ff0fe5d98b36859566c63c539f33a7a7f829"
+    },
+    {
+      "path": "assets/screenshots/play-20261014.png",
+      "bytes": 2920033,
+      "sha256": "03a336f173756ac3776a2eb1f09db4e779d33a87524182c06643594ad3cb9fac"
+    },
+    {
+      "path": "assets/screenshots/play-20261014.webp",
+      "bytes": 1881064,
+      "sha256": "c2879d86c10b68946f6136672ccf46911f8e140f46edcd9b90849344d267955f"
+    },
+    {
+      "path": "assets/screenshots/profile-20261014.png",
+      "bytes": 3870729,
+      "sha256": "f3d39731218552109bddaa49f06d4f608b89ed6e3ef24fe86299711be55ca5da"
+    },
+    {
+      "path": "assets/screenshots/profile-20261014.webp",
+      "bytes": 2373060,
+      "sha256": "76f371de9df22fdcb49310e0fb5c73c5a16e109be61c056a0a5396c2f8c0a7a4"
+    },
+    {
+      "path": "assets/screenshots/stats-20261014.png",
+      "bytes": 923361,
+      "sha256": "bd9fc70ab26ae9d2ecce48c05b7d743a19414df178f2603a55d7b88d059d1698"
+    },
+    {
+      "path": "assets/screenshots/stats-20261014.webp",
+      "bytes": 442922,
+      "sha256": "578c7c53111b3910af2d292968b5c2374fc0fb3252c93e1d9fe96148696878fc"
+    },
+    {
+      "path": "assets/screenshots/wall-20261014.png",
+      "bytes": 8354819,
+      "sha256": "52c7e396fc812145cb6526687a521b6085e71eaabe9926c3eec023483840acb5"
+    },
+    {
+      "path": "assets/screenshots/wall-20261014.webp",
+      "bytes": 5710636,
+      "sha256": "40032d18ccd9470d112eb92ea34034f24c982a0fe14bb0b48fcf2f119cd225ad"
+    },
+    {
       "path": "assets/shots/dock-home.webp",
       "bytes": 377204,
       "sha256": "cd1b9f976ce0ba54580a2a6a3eff1ecf31cbe1cfcf805cb6b4bac45a012f4074"

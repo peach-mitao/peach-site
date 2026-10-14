@@ -132,6 +132,8 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .live:hover{border-color:var(--hair-3)}
 .live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
   border:1px solid var(--hair-2);background:#0B0C0F}
+.feature-shot{aspect-ratio:16/9}
+.feature-shot img{display:block;width:100%;height:100%;object-fit:cover}
 .mk{position:absolute;left:0;top:0;width:720px;height:450px;transform-origin:0 0;transform:scale(var(--mk-s,.75));
   font:13px/1.45 var(--font);color:#EDEEF0;text-align:left;
   --mk-line:rgba(255,255,255,.08);--mk-dim:#8B9098;--mk-surface:#16171B;--mk-raise:#1E2025;--mk-blue:#2F7BF5;--mk-red:#E5484D}
@@ -555,12 +557,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap tour reveal">
       <div class="window">
         <div class="screen" id="screen">
-          <img class="on" data-k="home" src="/assets/shots/dock-home.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high">
-          <img data-k="people" data-src="/assets/dark/performers.webp" alt="艺人页" width="3840" height="2160" decoding="async">
-          <img data-k="profile" data-src="/assets/dark/performer.webp" alt="女优页" width="3840" height="2160" decoding="async">
-          <img data-k="play" data-src="/assets/shots/dock-play.webp?v=20260929-4k" alt="播放页，右侧可记录一次高潮" width="3840" height="2160" decoding="async">
-          <img data-k="follow" data-src="/assets/dark/follow.webp" alt="关注页" width="3840" height="2160" decoding="async">
-          <img data-k="stats" data-src="/assets/shots/dock-stats.webp" alt="统计页" width="3840" height="2160" decoding="async">
+          <img class="on" data-k="home" src="/assets/screenshots/home-20261014.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high">
+          <img data-k="people" data-src="/assets/screenshots/people-20261014.webp" alt="艺人页" width="3840" height="2160" decoding="async">
+          <img data-k="profile" data-src="/assets/screenshots/profile-20261014.webp" alt="女优页" width="3840" height="2160" decoding="async">
+          <img data-k="play" data-src="/assets/screenshots/play-20261014.webp" alt="播放页，右侧可记录一次高潮" width="3840" height="2160" decoding="async">
+          <img data-k="follow" data-src="/assets/screenshots/follow-20261014.webp" alt="关注页" width="3840" height="2160" decoding="async">
+          <img data-k="stats" data-src="/assets/screenshots/stats-20261014.webp" alt="统计页" width="3840" height="2160" decoding="async">
         </div>
       </div>
       <div class="dock-wrap">
@@ -581,6 +583,22 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </div>
       </div>
       <p class="say center stage-say" id="stage-say" aria-live="polite"><b>全在这了</b><span class="sub">本地硬盘和在线网盘里的片子，在一处管理观看。</span></p>
+    </div>
+  </section>
+
+  <section class="section" id="new-features">
+    <div class="wrap">
+      <div class="live-grid">
+        <a class="card live reveal" href="https://demo.peach.video/wall">
+          <div class="txt"><p class="say"><b>播放墙</b><span class="sub">拖动封面墙挑片，点开就能原位播放，切换版本和分卷。</span></p></div>
+          <div class="live-screen feature-shot"><img src="/assets/screenshots/wall-20261014.webp" alt="播放墙：全屏封面与浏览控件" width="3840" height="2160" loading="lazy"><span class="live-go">打开演示 →</span></div>
+        </a>
+        <a class="card live reveal" href="https://demo.peach.video/?favorites=1">
+          <div class="txt"><p class="say"><b>我的收藏与保存筛选</b><span class="sub">收藏常看的艺人、厂牌、系列和标签，给常用筛选起名字，下次直接打开。</span></p></div>
+          <div class="live-screen feature-shot"><img src="/assets/screenshots/favorites-20261014.webp" alt="我的收藏：分类导航与收藏条目" width="3840" height="2160" loading="lazy"><span class="live-go">打开演示 →</span></div>
+        </a>
+      </div>
+      <p class="note">同一番号的版本汇在一张作品卡里，同版分卷自动接着播放。创作者在多个站点的同一作品合成一张卡；按女优名订阅新作，馆藏里没有的也能追。</p>
     </div>
   </section>
 

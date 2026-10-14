@@ -132,8 +132,54 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .live:hover{border-color:var(--hair-3)}
 .live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
   border:1px solid var(--hair-2);background:#0B0C0F}
-.feature-shot{aspect-ratio:16/9}
-.feature-shot img{display:block;width:100%;height:100%;object-fit:cover}
+/* 播放墙按真实界面缩排：无圆角作品块、方形展开块、块内标题与两行控制条。 */
+.mk-wall{overflow:hidden;background:#070707;color:#F7F4EE}
+.mk-wall-world{position:absolute;inset:0;width:900px;height:620px;transform:translate(-30px,-30px);transition:transform 950ms cubic-bezier(.77,0,.175,1)}
+.mk-wall.dragged .mk-wall-world{transform:translate(-130px,-65px)}
+.mk-wall-tile{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:var(--h);overflow:hidden;background:#161419}
+.mk-wall-tile>img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.mk-wall-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 34%,rgba(0,0,0,.24) 56%,rgba(0,0,0,.92))}
+.mk-wall-tile>small{position:absolute;top:6px;left:6px;z-index:1;padding:2px 3px;background:rgba(0,0,0,.66);font-size:8px;font-weight:600}
+.mk-wall-tile>.duration{left:auto;right:6px}
+.mk-wall-copy{position:absolute;left:8px;right:8px;bottom:8px;z-index:1}
+.mk-wall-copy b{display:block;font-size:19px;line-height:.96;letter-spacing:-.045em;font-weight:600}
+.mk-wall-copy span{display:block;margin-top:4px;font-size:9px;opacity:.78}
+.mk-wall-dim{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .25s}
+.mk-wall.open .mk-wall-dim{opacity:.6}
+.mk-wall-nav{position:absolute;z-index:3;left:12px;top:12px;display:flex;gap:4px}
+.mk-wall-nav span,.mk-wall-settings,.mk-wall-close{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(40,40,40,.78)}
+.mk-wall-nav svg,.mk-wall-settings svg,.mk-wall-close svg{width:12px;height:12px;stroke-width:1.5}
+.mk-wall-settings{position:absolute;right:12px;bottom:12px}
+.mk-wall-focus{position:absolute;left:206px;top:71px;width:308px;height:308px;overflow:hidden;background:#161419;border:1px solid rgba(247,244,238,.72);box-shadow:0 21px 55px rgba(0,0,0,.74);opacity:0;transform:translate(0,0) scale(.96);transform-origin:0 0;transition:opacity .25s,transform .35s cubic-bezier(.23,1,.32,1)}
+.mk-wall.open .mk-wall-focus{opacity:1;transform:none}
+.mk-wall-focus::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;border:1px solid #F7F4EE;box-shadow:inset 0 0 0 1px rgba(0,0,0,.52)}
+.mk-wall-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.mk-wall-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.86),rgba(0,0,0,.62) 14%,rgba(0,0,0,.26) 30%,transparent 46%),linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.5) 52%,rgba(0,0,0,.08))}
+.mk-wall-head{position:absolute;left:12px;right:12px;bottom:58px;display:flex;flex-direction:column;gap:4px}
+.mk-wall-head b{display:block;max-width:76%;font-size:31px;font-weight:600;line-height:.95;letter-spacing:-.045em;white-space:nowrap}
+.mk-wall-head strong{display:block;max-width:90%;font-size:10px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-wall-head span{font-size:9px;opacity:.8}
+.mk-wall-number{position:absolute;left:6px;top:6px;padding:2px 3px;background:rgba(0,0,0,.66);font-size:8px;font-weight:600}
+.mk-wall-close{position:absolute;right:8px;top:8px;z-index:3;width:20px;height:20px;background:rgba(0,0,0,.66)}
+.mk-wall-actions{position:absolute;bottom:11px;left:12px;right:9px;z-index:3;display:flex;flex-direction:column;gap:5px}
+.mk-wall-controls{display:flex;align-items:center;gap:3px}
+.mk-wall-controls>span:not(.mk-wall-time){display:grid;place-items:center;width:18px;height:18px;flex:none}
+.mk-wall-controls svg{width:11px;height:11px;stroke-width:1.5}
+.mk-wall-time{margin-left:auto;font-size:8px;white-space:nowrap;opacity:.78;font-variant-numeric:tabular-nums}
+.mk-wall-seek{height:2px;background:rgba(247,244,238,.28)}
+.mk-wall-seek i{display:block;height:100%;width:100%;background:#F7F4EE;transform:scaleX(.01);transform-origin:left}
+.mk-wall-seek::after{content:'';display:block;width:4px;height:4px;margin-top:-3px;border-radius:50%;background:#F7F4EE;transform:translateX(var(--seek-dot,0px))}
+.mk-wall-preview{position:absolute;inset:66px 55px;opacity:0}
+.mk-wall-preview img{width:100%;height:100%;object-fit:contain}
+.mk-wall.playing .mk-wall-art{filter:blur(18px);transform:scale(1.1)}
+.mk-wall.playing .mk-wall-preview{opacity:1}
+.mk-wall.playing .mk-wall-head{top:32px;bottom:auto;gap:3px}
+.mk-wall.playing .mk-wall-head b{font-size:14px;line-height:1.1;letter-spacing:-.025em}
+.mk-wall.playing .mk-wall-head strong{font-size:9px}
+.mk-wall-play .pause,.mk-wall.playing:not(.paused) .mk-wall-play .play{display:none}
+.mk-wall.playing:not(.paused) .mk-wall-play .pause{display:block}
+.feature-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:28px;text-align:center}
+.feature-more img{width:96px;height:96px;opacity:.65}
 .mk{position:absolute;left:0;top:0;width:720px;height:450px;transform-origin:0 0;transform:scale(var(--mk-s,.75));
   font:13px/1.45 var(--font);color:#EDEEF0;text-align:left;
   --mk-line:rgba(255,255,255,.08);--mk-dim:#8B9098;--mk-surface:#16171B;--mk-raise:#1E2025;--mk-blue:#2F7BF5;--mk-red:#E5484D}
@@ -364,7 +410,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .package-option+.package-option{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair-2)}
 .package-option h4{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink)}
 .package-option p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
-.package-start{margin:24px 0;font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.windows-download>.btn{margin-top:24px}
 .note code{overflow-wrap:anywhere}
 code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--ink)}
 .code{margin:0 0 16px;border-radius:10px;border:1px solid var(--hair-2);background:#06070A;overflow:hidden}
@@ -586,29 +632,13 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </div>
   </section>
 
-  <section class="section" id="new-features">
-    <div class="wrap">
-      <div class="live-grid">
-        <a class="card live reveal" href="https://demo.peach.video/wall">
-          <div class="txt"><p class="say"><b>播放墙</b><span class="sub">拖动封面墙挑片，点开就能原位播放，切换版本和分卷。</span></p></div>
-          <div class="live-screen feature-shot"><img src="/assets/screenshots/wall-20261014.webp" alt="播放墙：全屏封面与浏览控件" width="3840" height="2160" loading="lazy"><span class="live-go">打开演示 →</span></div>
-        </a>
-        <a class="card live reveal" href="https://demo.peach.video/?favorites=1">
-          <div class="txt"><p class="say"><b>我的收藏与保存筛选</b><span class="sub">收藏常看的艺人、厂牌、系列和标签，给常用筛选起名字，下次直接打开。</span></p></div>
-          <div class="live-screen feature-shot"><img src="/assets/screenshots/favorites-20261014.webp" alt="我的收藏：分类导航与收藏条目" width="3840" height="2160" loading="lazy"><span class="live-go">打开演示 →</span></div>
-        </a>
-      </div>
-      <p class="note">同一番号的版本汇在一张作品卡里，同版分卷自动接着播放。创作者在多个站点的同一作品合成一张卡；按女优名订阅新作，馆藏里没有的也能追。</p>
-    </div>
-  </section>
-
   <!-- 动效卡：简化的 Peach 界面，脚本在上面演一遍；点开去演示站亲手试 -->
   <section class="section" id="live">
     <div class="wrap">
       <p class="say lg reveal"><b><span class="nowrap">Peach 能干什么</span></b><span class="sub">订阅新作，关注创作者，分析口味，<span class="nowrap">自定义配色……</span></span></p>
       <div class="live-grid">
         <a class="card live reveal" href="https://demo.peach.video/performers/凉森玲梦" data-mock="feed">
-          <div class="txt"><p class="say"><b>订阅艺人</b><span class="sub">新发行的片子第一时间知道。</span></p></div>
+          <div class="txt"><p class="say"><b>订阅艺人</b><span class="sub">新发行的片子，第一时间知道。</span></p></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-feed">
             <div class="mk-hero"><div class="mk-ava"><img src="/assets/mock/f-remu.webp" alt="" loading="lazy"></div><div><h4>凉森玲梦</h4><p>3 个视频 · T-POWERS · 出道 2019-03-09</p></div></div>
             <div class="mk-sect">订阅新作<small>4 部新发行</small></div>
@@ -649,7 +679,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           </div></div></div><span class="live-go">打开演示 →</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
-          <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（在授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
+          <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-taste">
             <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
             <div class="mk-stats">
@@ -738,6 +768,46 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             </div>
           </div></div></div><span class="live-go">打开演示 →</span></div>
         </a>
+        <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
+          <div class="txt"><p class="say" data-copy-draft><b>影片墙</b><span class="sub">拖动封面墙，沉浸式挑片。</span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
+            <div class="mk-wall-world">
+              <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>03</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>04</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:0px;--w:180px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>05</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>06</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile mk-wall-target" style="--x:346px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>07</small><small class="duration">2:04:00</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:173px;--w:180px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>08</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>09</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>10</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>11</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>12</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>13</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>14</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:436px;--w:180px;--h:180px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>15</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+            </div>
+            <div class="mk-wall-dim"></div>
+            <div class="mk-wall-nav"><span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span></div>
+            <span class="mk-wall-settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m9 3 6 0 1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z"/></svg></span>
+            <div class="mk-wall-focus">
+              <img class="mk-wall-art" src="/assets/mock/f-n3.webp" alt="" loading="lazy"><div class="mk-wall-preview"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"></div><div class="mk-wall-shade"></div>
+              <span class="mk-wall-number">07</span>
+              <div class="mk-wall-head"><b>ABF-367</b><strong>涼森れむの「顔」で</strong><span>凉森玲梦</span></div>
+              <span class="mk-wall-close"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></span>
+              <div class="mk-wall-actions"><div class="mk-wall-controls">
+                <span class="mk-wall-play"><svg class="play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">00:00 / 2:04:00</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
+              </div><div class="mk-wall-seek"><i></i></div></div>
+            </div>
+          </div></div></div><span class="live-go" data-copy-draft>打开演示 →</span></div>
+        </a>
+        <div class="feature-more reveal">
+          <img src="/assets/peach-logo.png" alt="" width="96" height="96" loading="lazy">
+          <p class="say" data-copy-draft><b>还有更多</b><span class="sub">下载 Peach，慢慢发现。</span></p>
+          <a class="btn btn-primary btn-lg" href="#download" data-copy-draft>下载 Peach →</a>
+        </div>
       </div>
     </div>
   </section>
@@ -804,13 +874,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</h3>
           <div class="package-option" data-package="exe">
             <h4>EXE 安装包</h4>
-            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64-setup.exe</code>，双击并按提示安装。无需管理员权限，安装后从开始菜单打开 Peach。</p>
+            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64-setup.exe</code>，双击并按提示安装。</p>
           </div>
           <div class="package-option" data-package="zip">
             <h4>ZIP 免安装压缩包</h4>
             <p>下载 <code>Peach-&lt;版本&gt;-windows-x64.zip</code> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
           </div>
-          <p class="package-start">首次打开后，选择媒体文件夹，开始扫描。</p>
           <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
           <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
         </div>
@@ -1003,6 +1072,23 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
 {
   const CURSOR='<svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.3-4.1 2.7 6.2 3-1.3-2.7-6.1h6z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>';
   const SCENES={
+    async wall(k){
+      const s=k.$('.mk-wall'),target=k.$('.mk-wall-target');
+      await k.sleep(800);
+      await k.move(target,.65,.5);k.down(true);s.classList.add('dragged');
+      await k.move(s,320/720,198/450,950);k.down(false);await k.sleep(700);
+      await k.click(target);
+      const focus=k.$('.mk-wall-focus');focus.style.transition='none';focus.style.transform='none';
+      const a=target.getBoundingClientRect(),b=focus.getBoundingClientRect(),scale=b.width/focus.offsetWidth;
+      const folded=`translate(${(a.left-b.left)/scale}px,${(a.top-b.top)/scale}px) scale(${a.width/b.width},${a.height/b.height})`;
+      focus.style.transform=folded;focus.style.opacity='1';focus.getBoundingClientRect();focus.style.transition='';
+      s.classList.add('open');focus.style.transform='none';await k.sleep(1800);
+      await k.click(k.$('.mk-wall-play'));s.classList.add('playing');k.$('.mk-wall-number').textContent='正在播放 · 07';
+      const bar=k.$('.mk-wall-seek i');
+      for(let i=1;i<=5;i++){bar.style.transform=`scaleX(${i/7440})`;k.$('.mk-wall-seek').style.setProperty('--seek-dot',`${bar.offsetWidth*i/7440}px`);k.$('.mk-wall-time').textContent=`00:0${i} / 2:04:00`;await k.sleep(600)}
+      await k.click(k.$('.mk-wall-play'));s.classList.add('paused');await k.sleep(1000);
+      await k.click(k.$('.mk-wall-close'));focus.style.transform=folded;focus.style.opacity='0';s.classList.remove('open');await k.sleep(1300);
+    },
     async feed(k){
       await k.sleep(800);
       const cards=k.$$('.mk-f');

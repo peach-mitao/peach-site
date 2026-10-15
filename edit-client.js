@@ -37,6 +37,7 @@
 
   const css = document.createElement("style");
   css.textContent = `
+[data-copy-draft],[data-copy-draft] *{color:#F4C0BD!important}
 .__eh{position:absolute;pointer-events:none;z-index:2147483000;outline:1.5px dashed #F08A8C;outline-offset:3px;border-radius:4px;display:none}
 .__ee{outline:2px solid #F08A8C;outline-offset:3px;border-radius:3px;background:rgba(240,138,140,.14);-webkit-user-select:text;user-select:text;cursor:text}
 .__ei{position:absolute;z-index:2147483001;padding:2px 6px;border:0;border-radius:4px;outline:2px solid #F08A8C;background:#141518;color:#fff}
@@ -122,7 +123,6 @@
     const text = (ed.box.tagName === "INPUT" ? ed.box.value : ed.box.textContent).replace(/\s*\n\s*/g, " ").trim();
     putBack(ed);
     if (cancel || text === ed.core) return;
-    if (!text) { say("不能留空，没有保存", "err"); return; }
     const before = ed.node.data;
     ed.node.data = ed.lead + text + ed.trail;
     say("保存中…");
@@ -145,13 +145,18 @@
       const res = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
       const out = await res.json();
       if (!res.ok) throw new Error(out.error || res.status);
-      if (ed.kind === "text") raw[body.i] = out.raw;
+      if (ed.kind === "text") {
+        if (out.raw === "") {
+          raw.splice(body.i, 1); index.delete(ed.node); ed.node.remove();
+          for (const [node, i] of index) if (i > body.i) index.set(node, i - 1);
+        } else raw[body.i] = out.raw;
+      }
       else {
         const tab = document.querySelector(`.dock [data-k="${body.k}"]`);
         if (ed.kind === "label") { tab.dataset.label = text; tab.setAttribute("aria-label", text); }
         else tab.dataset.say = `<b>${esc(body.title)}</b>` + (body.sub ? `<span class="sub">${esc(body.sub)}</span>` : "");
       }
-      say("已保存「" + text.slice(0, 24) + (text.length > 24 ? "…" : "") + "」", "ok");
+      say(text ? "已保存「" + text.slice(0, 24) + (text.length > 24 ? "…" : "") + "」" : "已删除文字", "ok");
     } catch (err) {
       ed.node.data = before;
       say("没保存：" + err.message, "err");

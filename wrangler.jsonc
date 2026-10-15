@@ -1,10 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  // 页面由静态资源层提供，介绍视频由 Worker 支持字节范围请求。
+  // 页面由静态资源层提供，介绍视频通过 R2 自定义域名直接分发。
   "name": "peach-landing",
-  "main": "worker.mjs",
   "compatibility_date": "2026-09-20",
-  "assets": {"directory": "./site", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": ["/assets/peach-intro-1080p.mp4"]},
+  "assets": {"directory": "./site", "not_found_handling": "404-page"},
   "observability": {"enabled": true, "head_sampling_rate": 1},
   "routes": [{"pattern": "peach.video", "custom_domain": true}]
 }

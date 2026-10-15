@@ -14,6 +14,8 @@ const source = await readFile(new URL('./site/index.html', import.meta.url));
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const withoutBeacon = bytes => Buffer.from(bytes.toString('utf8').replace(/<script type="module" src="https:\/\/static\.cloudflareinsights\.com\/beacon\.min\.js\/[^"\r\n]+"[^>]*><\/script>\r?\n/g,''));
 const report = {base, checkedAt:new Date().toISOString(), sourceHash:hash(source), assets:[], viewports:[]};
+const manifest=JSON.parse(await readFile(new URL('./assets-manifest.json',import.meta.url),'utf8'));
+const video=manifest.files.find(file=>file.path==='assets/peach-intro-1080p.mp4');
 function request(path, headers={}) {
   const url = new URL(path, base);
   return new Promise((resolve,reject)=>{
@@ -37,7 +39,7 @@ async function files(dir, prefix='') {
   return result;
 }
 function excluded(path) {
-  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','assets/sleeve.jpg'].includes(path)
+  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','_redirects','assets/sleeve.jpg',video.path].includes(path)
     || /^assets\/dark\/.*\.jpg$/.test(path)
     || (/^assets\/shots\/.*\.jpg$/.test(path) && path!=='assets/shots/h-dark.jpg')
     || /^assets\/vendor\/sticker-forge\/.*\.d\.ts$/.test(path);
@@ -63,9 +65,23 @@ try {
       assert.equal((await request(path)).status,404,path);
     }
     assert.equal((await request('/?edit')).body.includes(Buffer.from('/__edit.js')),false);
+    const legacyVideo=await request('/'+video.path);
+    assert.equal(legacyVideo.status,301,'视频原地址通过静态重定向转到 R2');
+    const legacyTarget=new URL(legacyVideo.headers.location);
+    legacyTarget.search='';
+    assert.equal(legacyTarget.href,video.url);
   }
-  const localVideo=await readFile(new URL('./site/assets/peach-intro-1080p.mp4',import.meta.url));
-  const videoPath='/assets/peach-intro-1080p.mp4';
+  const localVideo=await readFile(new URL('./site/'+video.path,import.meta.url));
+  assert.equal(hash(localVideo),video.sha256);
+  const videoPath=video.url;
+  const fullVideo=await request(videoPath);
+  assert.equal(fullVideo.status,200);
+  assert.equal(fullVideo.headers['content-type'],'video/mp4');
+  assert.equal(fullVideo.body.length,video.bytes);
+  assert.equal(hash(fullVideo.body),video.sha256);
+  assert.match(fullVideo.headers['cache-control'],/max-age=31536000/);
+  assert.match(fullVideo.headers['cache-control'],/immutable/);
+  report.video={url:videoPath,bytes:fullVideo.body.length,sha256:hash(fullVideo.body),headers:fullVideo.headers};
   report.videoRanges=[];
   for(const start of [1048576,0,localVideo.length-1024]) {
     const end=start+1023;

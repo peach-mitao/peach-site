@@ -5,4 +5,5 @@
 /assets/shots/*.jpg
 !/assets/shots/h-dark.jpg
 /assets/sleeve.jpg
+/assets/peach-intro-1080p.mp4
 /assets/vendor/sticker-forge/*.d.ts

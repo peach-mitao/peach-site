@@ -7,7 +7,6 @@
 !/package.json
 !/package-lock.json
 !/wrangler.jsonc
-!/worker.mjs
 !/serve.mjs
 !/edit-server.mjs
 !/edit-client.js
@@ -20,6 +19,7 @@
 /site/*
 !/site/index.html
 !/site/.assetsignore
+!/site/_redirects
 !/site/favicon.ico
 !/site/copyright/
 !/site/assets/

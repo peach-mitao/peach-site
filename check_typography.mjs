@@ -62,7 +62,7 @@ try {
           return {primary:primary.getBoundingClientRect().toJSON(),href:primary.href,text:primary.textContent.trim(),
             secondary:secondary.map(button=>button.getBoundingClientRect().toJSON())};
         });
-        assert.ok(actions.href.endsWith('/peach/releases'));
+        assert.ok(actions.href.endsWith('#download'));
         assert.equal(actions.text,'下载 Windows 版');
         assert.equal(actions.secondary.length,2);
         assert.ok(actions.secondary.every(button=>button.top>actions.primary.bottom),'下载位于次级动作上方');

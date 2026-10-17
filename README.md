@@ -6,9 +6,11 @@
 
 中文标题的字距、标点与响应式断行见 [官网中文排版](TYPOGRAPHY.md)。
 
-下载是导航、首屏和收尾区的主动作，首屏的在线演示与介绍视频并排显示。手机导览聚焦截图内容。页脚使用深色底面，链接保留足够的点击高度。
+下载是导航、首屏和收尾区的主动作，主按钮进入下载区选择安装或免安装；首屏的在线演示与介绍视频并排显示。手机导览展示独立比例的桌面截图。页脚使用深色底面，链接保留足够的点击高度。
 
-Windows 下载区区分 EXE 安装包与 ZIP 免安装压缩包：`-setup.exe` 用于安装，ZIP 解压后运行目录中的 `Peach.exe`。两种文件均从应用的 GitHub Releases 获取。
+Windows 下载区面向全新安装：安装使用 `Peach-0.43.0-windows-x64-setup.exe`；免安装使用 `Peach-0.43.0-windows-x64.zip`，完整解压后运行目录中的 `Peach.exe`。文件名直接链接到对应的 GitHub Release 资产。
+
+六页导览在宽度不大于 560px 时使用 4:3 桌面截图，其余宽度使用 16:9 桌面截图。两套截图来自更新并验收完成的演示站：4:3 以 1280×960 桌面视口完整拍摄，输出为 3840×2880 无损 PNG；16:9 输出为 3840×2160 无损 PNG。`node capture_compact_desktop.mjs` 生成截图，`node optimize_compact_desktop.mjs` 生成像素完全一致的无损 WebP 展示图；截图回执核对实际像素、完整桌面布局和加载状态，图片哈希登记在 `assets-manifest.json`。导览通过 `picture` 按视口选择图片，切换时按需加载；手机隐藏「还有更多」卡片。
 
 介绍视频保存在 R2 标准存储桶 `peach-public-media`，由 `media.peach.video` 直接提供 MP4 与字节范围响应，支持进度拖动与悬停缩略图。对象地址使用完整 SHA-256，缓存期为一年；视频文件、页面地址与 `assets-manifest.json` 必须一致。页面、图片与其他资源由 Static Assets 提供。视频原地址通过 `site/_redirects` 跳转到媒体域名。R2 自定义域名支持 [Cloudflare CDN 缓存](https://developers.cloudflare.com/r2/buckets/public-buckets/)，实现无新增依赖。
 

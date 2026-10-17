@@ -102,8 +102,9 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
   box-shadow:0 0 40px 20px rgba(255,255,255,.03),inset 0 .5px 0 rgba(255,255,255,.3)}
 .window .screen{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--hair-2);background:#07080A;aspect-ratio:16/9;
   box-shadow:0 0 2px rgba(255,255,255,.19),inset 0 .5px 0 rgba(255,255,255,.1)}
-.window .screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top left;opacity:0;transition:opacity .45s ease}
-.window .screen img.on{opacity:1}
+.window .screen picture{position:absolute;inset:0;opacity:0}
+.window .screen picture.on{opacity:1}
+.window .screen img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
 .tour{position:relative;margin-top:-40px}
 /* 点顶栏「导览」跳过来时，产品窗口落在粘性顶栏下方，不被它盖住 */
 #tour{scroll-margin-top:92px}
@@ -455,7 +456,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 /* 进场：只淡入一次 */
 .reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.window .screen picture{transition:none}html{scroll-behavior:auto}}
 
 /* 窄屏 */
 @media (max-width:960px){
@@ -489,7 +490,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .dock-wrap{margin-top:-30px}
   .section{padding-top:88px}
   .window .screen{aspect-ratio:4/3}
-  .window .screen img{object-position:35% top}
+  .feature-more{display:none}
   .stage-say{margin-top:24px}
   .live-grid,.dl{margin-top:32px}
   .final{margin-top:112px;padding-top:88px}
@@ -573,7 +574,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </nav>
     <div class="nav-end">
       <a class="btn btn-quiet" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
-      <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载</a>
+      <a class="btn btn-primary" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载</a>
     </div>
   </div>
 </header>
@@ -588,7 +589,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <h1><span class="headline-first nowrap">所有片子<span class="punct">，</span></span><br class="hero-break"><span class="nowrap">放进一处</span></h1>
       <p class="say"><span class="nowrap">本地硬盘、在线网盘</span><br class="caption-break"><span class="nowrap">和关注的创作者，</span><span class="nowrap">整理合一。</span></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
+        <a class="btn btn-primary btn-lg" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>介绍视频</button>
@@ -603,12 +604,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap tour reveal">
       <div class="window">
         <div class="screen" id="screen">
-          <img class="on" data-k="home" src="/assets/screenshots/home-20261014.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high">
-          <img data-k="people" data-src="/assets/screenshots/people-20261014.webp" alt="艺人页" width="3840" height="2160" decoding="async">
-          <img data-k="profile" data-src="/assets/screenshots/profile-20261014.webp" alt="女优页" width="3840" height="2160" decoding="async">
-          <img data-k="play" data-src="/assets/screenshots/play-20261014.webp" alt="播放页，右侧可记录一次高潮" width="3840" height="2160" decoding="async">
-          <img data-k="follow" data-src="/assets/screenshots/follow-20261014.webp" alt="关注页" width="3840" height="2160" decoding="async">
-          <img data-k="stats" data-src="/assets/screenshots/stats-20261014.webp" alt="统计页" width="3840" height="2160" decoding="async">
+          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261018.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261018.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
+          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261018.webp" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261018.webp" alt="女优页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261018.webp" alt="播放页，可记录一次高潮" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261018.webp" alt="关注页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261018.webp" alt="统计页" width="3840" height="2160" decoding="async"></picture>
         </div>
       </div>
       <div class="dock-wrap">
@@ -873,12 +874,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="panel windows-download">
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</h3>
           <div class="package-option" data-package="exe">
-            <h4>EXE 安装包</h4>
-            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64-setup.exe</code>，双击并按提示安装。</p>
+            <h4>安装</h4>
+            <p>下载 <a href="https://github.com/peach-mitao/peach/releases/download/v0.43.0/Peach-0.43.0-windows-x64-setup.exe"><code>Peach-0.43.0-windows-x64-setup.exe</code></a>，双击并按提示安装。</p>
           </div>
           <div class="package-option" data-package="zip">
-            <h4>ZIP 免安装压缩包</h4>
-            <p>下载 <code>Peach-&lt;版本&gt;-windows-x64.zip</code> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
+            <h4>免安装</h4>
+            <p>下载 <a href="https://github.com/peach-mitao/peach/releases/download/v0.43.0/Peach-0.43.0-windows-x64.zip"><code>Peach-0.43.0-windows-x64.zip</code></a> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
           </div>
           <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
           <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
@@ -904,7 +905,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <img src="/assets/peach-logo.png" alt="">
       <p class="say lg center"><b><span class="nowrap">Peach 蜜桃</span></b></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
+        <a class="btn btn-primary btn-lg" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <a class="btn btn-quiet btn-lg" href="https://github.com/peach-mitao/peach"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>
@@ -1029,15 +1030,21 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
 <script src="/assets/media-01.js" defer></script>
 <script>
-const shots=[...document.querySelectorAll('#screen img')];
+const shots=[...document.querySelectorAll('#screen picture')];
 const tabs=[...document.querySelectorAll('.dock button')];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
 const loadShot=tab=>{
-  const img=shots.find(img=>img.dataset.k===tab.dataset.k);
+  const picture=shots.find(shot=>shot.dataset.k===tab.dataset.k);
+  const source=picture.querySelector('source'),img=picture.querySelector('img');
+  if(source.dataset.srcset&&!source.hasAttribute('srcset'))source.srcset=source.dataset.srcset;
   if(img.dataset.src&&!img.hasAttribute('src'))img.src=img.dataset.src;
+  return img;
 };
-tabs.forEach(tab=>tab.addEventListener('click',()=>{
-  loadShot(tab);
+let shotRequest=0;
+tabs.forEach(tab=>tab.addEventListener('click',async()=>{
+  const request=++shotRequest,img=loadShot(tab);
+  try{await img.decode()}catch{return}
+  if(request!==shotRequest)return;
   tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
   shots.forEach(img=>img.classList.toggle('on',img.dataset.k===tab.dataset.k));
   label.textContent=tab.dataset.label;

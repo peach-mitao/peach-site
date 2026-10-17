@@ -1,0 +1,88 @@
+import assert from 'node:assert/strict';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {fileURLToPath} from 'node:url';
+import {chromium} from 'playwright';
+const base=process.argv[2]??'http://127.0.0.1:8795/';
+const out=new URL('./evidence/mobile/',import.meta.url);
+await mkdir(out,{recursive:true});
+const manifest=JSON.parse(await readFile(new URL('./assets-manifest.json',import.meta.url),'utf8'));
+const published=manifest.files.filter(file=>/-(wide|compact)-20261018\.webp$/.test(file.path));
+assert.equal(published.length,12,'六页两套4K展示图均登记哈希');
+for(const file of published){
+  const response=await fetch(new URL(file.path,base));
+  assert.equal(response.status,200,file.path);
+  const bytes=Buffer.from(await response.arrayBuffer());
+  assert.equal(bytes.length,file.bytes,file.path);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'),file.sha256,file.path);
+}
+const browser=await chromium.launch({channel:'chrome'}),report=[];
+try {
+  for(const width of [320,390,560,561,1440]) {
+    const page=await browser.newPage({viewport:{width,height:844},deviceScaleFactor:width===390?3:1,reducedMotion:'reduce'}),errors=[],requests=[];
+    page.on('pageerror',e=>errors.push(e.message));
+    page.on('request',r=>{if(r.url().includes('/screenshots/'))requests.push(r.url())});
+    try {
+      await page.goto(base,{waitUntil:'networkidle'});
+      await page.evaluate(()=>document.fonts.ready);
+      assert.equal(await page.locator('#screen img[src]').count(),1);
+      assert.equal(requests.length,1,'初次只读取首页截图');
+      assert.equal(requests[0].includes('-compact-'),width<=560,'只读取当前视口的图片');
+      assert.equal(await page.locator('.feature-more').isVisible(),width>560);
+      assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'),'#download');
+      assert.equal(await page.locator('.package-option').count(),2);
+      const downloads=await page.locator('.package-option a').evaluateAll(ns=>ns.map(n=>({text:n.textContent,href:n.href})));
+      assert.deepEqual(downloads.map(d=>d.text),['Peach-0.43.0-windows-x64-setup.exe','Peach-0.43.0-windows-x64.zip']);
+      downloads.forEach(d=>assert.ok(d.href.endsWith('/v0.43.0/'+d.text)));
+      const tabs=[];
+      for(const key of ['home','people','profile','play','follow','stats']) {
+        await page.locator(`.dock button[data-k="${key}"]`).click();
+        await page.waitForFunction(key=>document.querySelector('#screen picture.on')?.dataset.k===key,key);
+        const shot=page.locator(`#screen picture[data-k="${key}"] img`);
+        const dimensions=await shot.evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {pixels:[img.naturalWidth,img.naturalHeight],ratio:r.width/r.height,src:img.currentSrc,fit:getComputedStyle(img).objectFit}});
+        if(width<=560)assert.deepEqual(dimensions.pixels,[3840,2880],'4K 4:3桌面图');
+        else assert.deepEqual(dimensions.pixels,[3840,2160]);
+        assert.ok(Math.abs(dimensions.ratio-(width<=560?4/3:16/9))<.01,'画框与截图比例一致');
+        assert.equal(dimensions.fit,'contain');
+        assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'),key);
+        assert.equal(await page.locator('.dock button[aria-selected=true]').getAttribute('data-k'),key);
+        await page.waitForFunction(() => [...document.querySelectorAll('#screen picture')].every(p => Math.abs(Number(getComputedStyle(p).opacity)-(p.classList.contains('on')?1:0))<.001));
+        assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+        if(width===390||width===1440){await page.evaluate(()=>scrollTo({top:scrollY+document.querySelector('.window').getBoundingClientRect().top-100,behavior:'instant'}));await page.locator('.window').screenshot({path:fileURLToPath(new URL(`tour-${width}-${key}.png`,out))});}
+        tabs.push({key,...dimensions});
+      }
+      if(width===390) {
+        await page.setViewportSize({width:1440,height:900});
+        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-wide-')&&img.naturalWidth===3840&&img.naturalHeight===2160});
+        await page.locator('#screen picture.on img').evaluate(img=>img.decode());
+        assert.deepEqual(await page.locator('#screen picture.on img').evaluate(img=>[img.naturalWidth,img.naturalHeight]),[3840,2160]);
+        await page.setViewportSize({width:390,height:844});
+        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-compact-')&&img.naturalWidth===3840&&img.naturalHeight===2880});
+        await page.locator('#screen picture.on img').evaluate(img=>img.decode());
+        assert.ok(await page.locator('#screen picture.on img').evaluate(img=>img.currentSrc.includes('-compact-')&&img.naturalWidth===3840&&img.naturalHeight===2880));
+      }
+      await page.locator('.hero .cta-download .btn-primary').click();
+      assert.equal(new URL(page.url()).hash,'#download');
+      await page.locator('.windows-download').screenshot({path:fileURLToPath(new URL(`downloads-${width}.png`,out))});
+      if(width===390) {
+        let releaseImage;
+        const imageGate=new Promise(resolve=>{releaseImage=resolve});
+        await page.route('**/people-compact-20261018.webp',async route=>{await imageGate;await route.continue()});
+        try {
+          await page.reload({waitUntil:'networkidle'});
+          await page.locator('.dock button[data-k="people"]').click();
+          assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'),'home','等图片解码时保留当前画面');
+          await page.locator('.dock button[data-k="stats"]').click();
+          await page.waitForFunction(()=>document.querySelector('#screen picture.on')?.dataset.k==='stats');
+          releaseImage();
+          await page.locator('#screen picture[data-k="people"] img').evaluate(img=>img.decode());
+          assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'),'stats','较早发起的请求不覆盖最后一次选择');
+        } finally {releaseImage();await page.unroute('**/people-compact-20261018.webp')}
+      }
+      assert.deepEqual(errors,[]);
+      report.push({width,tabs,downloads,errors});
+      console.log('PASS',width);
+    } finally {await page.close()}
+  }
+} finally {await browser.close()}
+await writeFile(new URL('verification.json',out),JSON.stringify({base,report},null,2));

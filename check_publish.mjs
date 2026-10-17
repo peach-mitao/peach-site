@@ -118,8 +118,10 @@ try {
       const tabs=[];
       for(const key of ['people','profile','play','follow','stats','home']) {
         await page.locator(`.dock button[data-k="${key}"]`).click();
-        const dimensions=await page.locator(`#screen img[data-k="${key}"]`).evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});
-        assert.deepEqual(dimensions,[3840,2160],key); tabs.push({key,dimensions});
+        const dimensions=await page.locator(`#screen picture[data-k="${key}"] img`).evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});
+        if(width===390)assert.deepEqual(dimensions,[3840,2880],key);
+        else assert.deepEqual(dimensions,[3840,2160],key);
+        tabs.push({key,dimensions});
       }
       await page.locator('.marks').scrollIntoViewIfNeeded();
       await page.waitForTimeout(500);

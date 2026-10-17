@@ -12,6 +12,9 @@
 !/edit-client.js
 !/check_publish.mjs
 !/check_typography.mjs
+!/capture_compact_desktop.mjs
+!/optimize_compact_desktop.mjs
+!/check_mobile.mjs
 !/TYPOGRAPHY.md
 !/assets-manifest.json
 !/fetch_assets.mjs

@@ -22,7 +22,7 @@
   "deploy": "wrangler deploy"
  },
  "devDependencies": {
-  "playwright": "1.58.1",
+  "playwright": "1.64.1",
   "sharp": "0.35.4",
   "wrangler": "4.141.0"
  }

@@ -32,8 +32,14 @@ try {
       assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'),'#download');
       assert.equal(await page.locator('.package-option').count(),2);
       const downloads=await page.locator('.package-option a').evaluateAll(ns=>ns.map(n=>({text:n.textContent,href:n.href})));
-      assert.deepEqual(downloads.map(d=>d.text),['Peach-0.43.0-windows-x64-setup.exe','Peach-0.43.0-windows-x64.zip']);
-      downloads.forEach(d=>assert.ok(d.href.endsWith('/v0.43.0/'+d.text)));
+      for(const [index,download] of downloads.entries()) {
+        if(download.href==='https://github.com/peach-mitao/peach/releases') {
+          assert.equal(download.text,index===0?'安装包（.exe）':'免安装包（.zip）');
+        } else {
+          assert.match(download.text,index===0?/^Peach-.+-windows-x64-setup\.exe$/:/^Peach-.+-windows-x64\.zip$/);
+          assert.ok(download.href.endsWith('/'+encodeURIComponent(download.text)));
+        }
+      }
       const tabs=[];
       for(const key of ['home','people','profile','play','follow','stats']) {
         await page.locator(`.dock button[data-k="${key}"]`).click();

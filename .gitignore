@@ -15,6 +15,7 @@
 !/capture_compact_desktop.mjs
 !/optimize_compact_desktop.mjs
 !/check_mobile.mjs
+!/check_downloads.mjs
 !/TYPOGRAPHY.md
 !/assets-manifest.json
 !/fetch_assets.mjs
@@ -29,6 +30,7 @@
 /site/assets/*
 !/site/assets/media-01.css
 !/site/assets/media-01.js
+!/site/assets/downloads.js
 !/site/assets/stickers.js
 !/site/assets/peach-logo.png
 !/site/assets/peach-mark.svg

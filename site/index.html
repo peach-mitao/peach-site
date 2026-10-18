@@ -875,11 +875,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</h3>
           <div class="package-option" data-package="exe">
             <h4>安装</h4>
-            <p>下载 <a href="https://github.com/peach-mitao/peach/releases/download/v0.43.0/Peach-0.43.0-windows-x64-setup.exe"><code>Peach-0.43.0-windows-x64-setup.exe</code></a>，双击并按提示安装。</p>
+            <p>下载 <a href="https://github.com/peach-mitao/peach/releases" data-download="setup"><code>安装包（.exe）</code></a>，双击并按提示安装。</p>
           </div>
           <div class="package-option" data-package="zip">
             <h4>免安装</h4>
-            <p>下载 <a href="https://github.com/peach-mitao/peach/releases/download/v0.43.0/Peach-0.43.0-windows-x64.zip"><code>Peach-0.43.0-windows-x64.zip</code></a> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
+            <p>下载 <a href="https://github.com/peach-mitao/peach/releases" data-download="portable"><code>免安装包（.zip）</code></a> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
           </div>
           <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
           <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
@@ -1029,6 +1029,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </div>
 
 <script src="/assets/media-01.js" defer></script>
+<script type="module" src="/assets/downloads.js"></script>
 <script>
 const shots=[...document.querySelectorAll('#screen picture')];
 const tabs=[...document.querySelectorAll('.dock button')];

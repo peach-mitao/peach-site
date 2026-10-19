@@ -30,6 +30,6 @@
     "sharp": "0.35.5",
     "wrangler": "4.151.2",
     "typescript": "7.0.2",
-    "@types/node": "24.19.2"
+    "@types/node": "26.6.5"
   }
 }

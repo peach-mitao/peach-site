@@ -2,7 +2,8 @@
 // 先按文档顺序取下 body 里的每一段文字，和服务端给的源文件原文逐段核对；对得上的段落才能改。
 // 点一段文字就在原位变成可编辑，回车或点别处保存，Esc 取消；保存时只发「第几段、原文、新文字」。
 // 导览区那句轮换说明和标签名由脚本从按钮的 data-say / data-label 换进来，改的是当前选中那个标签页的属性。
-// 不开放：动效卡里的演示界面、介绍视频播放器、图标里的文字、脚本后来生成的内容（标志条复制的那份、贴纸便签）。
+// 切换控件照常操作；Alt+点击可改控件文字。动态文案按 data-copy-key 保存各个状态。
+// 不开放：动效卡里的演示界面、播放器读数、图标里的文字与贴纸便签。
 (() => {
   const {raw} = window.__EDIT;
   const decode = (s) => { const t = document.createElement("textarea"); t.innerHTML = s; return t.value; };
@@ -23,6 +24,7 @@
   const kindOf = (n) => {
     const el = n.parentElement;
     if (!el || !n.data.trim() || el.closest(SKIP)) return null;
+    if (el.closest('[data-copy-key]')) return 'copy';
     if (el.closest("#stage-say")) return "say";
     if (el.closest("#dock-label")) return "label";
     return index.has(n) ? "text" : null;
@@ -41,13 +43,13 @@
 .__eh{position:absolute;pointer-events:none;z-index:2147483000;outline:1.5px dashed #F08A8C;outline-offset:3px;border-radius:4px;display:none}
 .__ee{outline:2px solid #F08A8C;outline-offset:3px;border-radius:3px;background:rgba(240,138,140,.14);-webkit-user-select:text;user-select:text;cursor:text}
 .__ei{position:absolute;z-index:2147483001;padding:2px 6px;border:0;border-radius:4px;outline:2px solid #F08A8C;background:#141518;color:#fff}
-.__eb{position:fixed;left:16px;bottom:16px;z-index:2147483002;display:flex;gap:10px;align-items:center;padding:8px 14px;border-radius:10px;
+.__eb{position:fixed;left:16px;bottom:16px;z-index:2147483002;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:8px 14px;border-radius:10px;max-width:calc(100vw - 32px);box-sizing:border-box;
   font:13px/1.4 system-ui,"Microsoft YaHei",sans-serif;color:#C9CDD3;background:rgba(17,18,20,.94);border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(0,0,0,.4)}
 .__eb b{color:#fff}.__eb .ok{color:#7BD88F}.__eb .err{color:#FF8A80}`;
   document.head.append(css);
   const hl = document.createElement("div"); hl.className = "__eh";
   const bar = document.createElement("div"); bar.className = "__eb";
-  bar.innerHTML = `<b>改字模式</b><span>点文字直接改，回车保存，Esc 取消</span><span class="st"></span>`;
+  bar.innerHTML = `<b>改字模式</b><span>点文字编辑，切换照常；Alt+点击改控件文字；回车保存，Esc 取消</span><span class="st"></span>`;
   const status = bar.querySelector(".st");
   const say = (msg, cls) => { status.textContent = msg; status.className = "st " + (cls || ""); };
   addEventListener("DOMContentLoaded", () => {
@@ -68,7 +70,11 @@
 
   addEventListener("click", (e) => {
     if (e.target.closest?.(".__eb")) return;
-    if (e.target.closest?.(".dock button")) return; // 标签页照常切换，好改每一页的说明
+    if (e.target.closest?.(SKIP)) return;
+    if (!e.altKey && e.target.closest?.('[role="tab"], [role="switch"], [role="radiogroup"], [role="slider"], [role="checkbox"], [role="combobox"], [data-platform-option], [aria-expanded], [aria-pressed], [aria-haspopup], summary, input, select, label, [data-copy-interact]')) {
+      if (editing) commit();
+      return;
+    }
     e.preventDefault(); e.stopPropagation();
     if (editing) { if (!editing.box.contains(e.target)) commit(); return; }
     const n = textAt(e.clientX, e.clientY);
@@ -77,6 +83,8 @@
   }, true);
 
   function begin(node, kind) {
+    const field = node.parentElement?.closest('[data-copy-key]');
+    const multiline = !!node.parentElement?.closest('pre,code');
     const data = node.data;
     const lead = /^\s*/.exec(data)[0], trail = /\s*$/.exec(data)[0];
     const core = data.slice(lead.length, data.length - trail.length);
@@ -85,8 +93,9 @@
       // 按钮里的文字没法原位编辑（按下会先聚焦按钮），在文字上盖一个同字体的输入框
       const rs = rectsOf(node), st = getComputedStyle(node.parentElement);
       box = document.createElement("input"); box.className = "__ei"; box.value = core;
-      Object.assign(box.style, {left: rs[0].left + scrollX - 6 + "px", top: rs[0].top + scrollY - 2 + "px",
-        width: Math.max(140, rs[0].width + 60) + "px", font: st.font, letterSpacing: st.letterSpacing});
+      const width = Math.min(Math.max(140, rs[0].width + 60), innerWidth - 32);
+      Object.assign(box.style, {left: Math.max(16, Math.min(rs[0].left - 6, innerWidth - width - 16)) + scrollX + "px", top: rs[0].top + scrollY - 2 + "px",
+        width: width + "px", boxSizing: 'border-box', font: st.font, letterSpacing: st.letterSpacing});
       document.body.append(box);
       box.select();
     } else {
@@ -98,10 +107,11 @@
       getSelection().removeAllRanges(); getSelection().addRange(r);
     }
     hl.style.display = "none";
-    editing = {node, kind, lead, trail, core, box};
+    editing = {node, kind, lead, trail, core, box, key: field?.dataset.copyKey,
+      multiline};
     box.addEventListener("keydown", (e) => {
       e.stopPropagation();
-      if (e.key === "Enter") { e.preventDefault(); commit(); }
+      if (e.key === "Enter" && !(e.shiftKey && editing?.multiline)) { e.preventDefault(); commit(); }
       else if (e.key === "Escape") { e.preventDefault(); commit(true); }
     });
     box.addEventListener("blur", () => commit());
@@ -120,7 +130,8 @@
     const ed = editing;
     if (!ed) return;
     editing = null;
-    const text = (ed.box.tagName === "INPUT" ? ed.box.value : ed.box.textContent).replace(/\s*\n\s*/g, " ").trim();
+    const value = ed.box.tagName === "INPUT" ? ed.box.value : ed.box.textContent;
+    const text = (ed.multiline ? value : value.replace(/\s*\n\s*/g, " ")).trim();
     putBack(ed);
     if (cancel || text === ed.core) return;
     const before = ed.node.data;
@@ -128,7 +139,10 @@
     say("保存中…");
     try {
       let url, body;
-      if (ed.kind === "text") {
+      if (ed.kind === 'copy') {
+        const overrides = JSON.parse(document.body.dataset.copyOverrides || '{}');
+        url = '/__edit/copy'; body = {key: ed.key, before: Object.hasOwn(overrides, ed.key) ? overrides[ed.key] : '', text};
+      } else if (ed.kind === "text") {
         const i = index.get(ed.node);
         url = "/__edit/text"; body = {i, raw: raw[i], text};
       } else {
@@ -143,9 +157,16 @@
         }
       }
       const res = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
-      const out = await res.json();
+      const response = await res.text();
+      let out;
+      try { out = JSON.parse(response); } catch {
+        throw Error(`保存接口未返回有效数据（HTTP ${res.status}），请刷新编辑页后重试`);
+      }
       if (!res.ok) throw new Error(out.error || res.status);
-      if (ed.kind === "text") {
+      if (ed.kind === 'copy') {
+        document.body.dataset.copyOverrides = JSON.stringify(out.overrides);
+        dispatchEvent(new Event('peach:copy-saved'));
+      } else if (ed.kind === "text") {
         if (out.raw === "") {
           raw.splice(body.i, 1); index.delete(ed.node); ed.node.remove();
           for (const [node, i] of index) if (i > body.i) index.set(node, i - 1);

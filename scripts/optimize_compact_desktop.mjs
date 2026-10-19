@@ -3,12 +3,14 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import sharp from 'sharp';
+const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0,10).replaceAll('-','');
+assert.match(captureDate,/^\d{8}$/);
 const manifestUrl=new URL('../assets-manifest.json',import.meta.url);
 const manifest=JSON.parse(await readFile(manifestUrl,'utf8')),report=[];
 for(const variant of ['wide','compact']) {
 for(const name of ['home','people','profile','play','follow','stats'].filter(name=>!process.argv[2]||process.argv[2].split(',').includes(name))) {
-  const png=new URL(`../site/assets/screenshots/${name}-${variant}-20261018.png`,import.meta.url);
-  const path=`assets/screenshots/${name}-${variant}-20261018.webp`;
+  const png=new URL(`../site/assets/screenshots/${name}-${variant}-${captureDate}.png`,import.meta.url);
+  const path=`assets/screenshots/${name}-${variant}-${captureDate}.webp`;
   const target=new URL('../site/'+path,import.meta.url);
   const meta=await sharp(fileURLToPath(png)).metadata();
   assert.deepEqual([meta.width,meta.height],variant==='wide'?[3840,2160]:[3840,2880],name+' 4K '+variant);

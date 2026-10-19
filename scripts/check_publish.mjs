@@ -5,6 +5,7 @@ import http from 'node:http';
 import https from 'node:https';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
+import sharp from 'sharp';
 const base = process.argv[2] ?? 'http://127.0.0.1:8790/';
 const publicSite = new URL(base).protocol === 'https:';
 const httpOnly = process.argv.includes('--http-only');
@@ -150,13 +151,10 @@ try {
         }
         await page.mouse.move(box.x+box.width*.5,y);
         await page.waitForFunction(target=>{const v=document.querySelector('[data-media-preview-video]');return !v.seeking&&Math.abs(v.currentTime-target)<.5&&v.readyState>=2},duration*.5,{timeout:30000});
-        const preview=await page.locator('[data-media-preview-video]').evaluate(v=>{
-          const canvas=document.createElement('canvas');canvas.width=32;canvas.height=18;
-          const ctx=canvas.getContext('2d');ctx.drawImage(v,0,0,32,18);
-          const pixels=ctx.getImageData(0,0,32,18).data;
-          let sum=0;for(let i=0;i<pixels.length;i+=4)sum+=pixels[i]+pixels[i+1]+pixels[i+2];
-          return {time:v.currentTime,width:v.videoWidth,height:v.videoHeight,mean:sum/(32*18*3)};
-        });
+        const previewVideo=page.locator('[data-media-preview-video]');
+        const preview=await previewVideo.evaluate(v=>({time:v.currentTime,width:v.videoWidth,height:v.videoHeight}));
+        const pixels=await sharp(await previewVideo.screenshot()).stats();
+        preview.mean=pixels.channels.slice(0,3).reduce((sum,channel)=>sum+channel.mean,0)/3;
         assert.ok(preview.mean>5,'悬停预览必须解码出非黑帧');
         report.preview=preview;
         await page.screenshot({path:fileURLToPath(new URL('player-preview-1440.png',out))});

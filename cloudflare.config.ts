@@ -1,8 +1,9 @@
 import { defineConfig } from "cf/config";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
 	worker: {
-		name: "peach-landing",
+		name: mode === "preview" ? "peach-site-docker-preview" : "peach-landing",
+		workersDev: mode === "preview" ? true : undefined,
 		compatibilityDate: "2026-09-20",
 		observability: {
 			enabled: true,
@@ -11,8 +12,6 @@ export default defineConfig({
 		assets: {
 			notFoundHandling: "404-page",
 		},
-		domains: [
-			"peach.video",
-		],
+		domains: mode === "preview" ? [] : ["peach.video"],
 	},
-});
+}));

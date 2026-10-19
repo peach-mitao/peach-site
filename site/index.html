@@ -418,6 +418,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .platform-options button[aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink)}
 .platform-options button:hover{color:var(--ink)}
 .download-platforms+.dl{margin-top:20px}
+.docker-download{grid-column:1/-1}
 .download-platforms p{margin:0;font-size:13px;color:var(--muted)}
 .download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
 .platform-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
@@ -428,6 +429,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 :is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-apple"]){width:16px;height:16px}
 :is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-github"]){width:17px;height:17px}
 :is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-windows"]){width:20px;height:20px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-docker"]){width:21px;height:21px}
 .download-meta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px}
 .download-caption{margin:0!important;font-size:12px!important;line-height:1.5!important;color:var(--muted)!important}
 .download-alternatives{display:inline-block;font-size:12px;color:var(--muted);text-underline-offset:4px}
@@ -586,6 +588,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <!-- Apple：Simple Icons，CC0，来源与固定版本见 NOTICE.md。 -->
     <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></g></symbol>
+    <!-- Docker 官方图标：https://www.docker.com/company/newsroom/media-resources/ -->
+    <symbol id="i-docker" viewBox="0 0 340 268"><path fill="currentColor" d="M334,110.1c-8.3-5.6-30.2-8-46.1-3.7-.9-15.8-9-29.2-24-40.8l-5.5-3.7-3.7,5.6c-7.2,11-10.3,25.7-9.2,39,.8,8.2,3.7,17.4,9.2,24.1-20.7,12-39.8,9.3-124.3,9.3H0c-.4,19.1,2.7,55.8,26,85.6,2.6,3.3,5.4,6.5,8.5,9.6,19,19,47.6,32.9,90.5,33,65.4,0,121.4-35.3,155.5-120.8,11.2.2,40.8,2,55.3-26,.4-.5,3.7-7.4,3.7-7.4l-5.5-3.7h0ZM85.2,92.7h-36.7v36.7h36.7v-36.7ZM132.6,92.7h-36.7v36.7h36.7v-36.7ZM179.9,92.7h-36.7v36.7h36.7v-36.7ZM227.3,92.7h-36.7v36.7h36.7v-36.7ZM37.8,92.7H1.1v36.7h36.7v-36.7ZM85.2,46.3h-36.7v36.7h36.7v-36.7ZM132.6,46.3h-36.7v36.7h36.7v-36.7ZM179.9,46.3h-36.7v36.7h36.7v-36.7ZM179.9,0h-36.7v36.7h36.7V0Z"/></symbol>
   </defs>
 </svg>
 
@@ -615,7 +619,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <p class="say"><span class="nowrap">本地硬盘、在线网盘</span><br class="caption-break"><span class="nowrap">和关注的创作者，</span><span class="nowrap">整理合一。</span></p>
       <div class="cta cta-download">
         <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
-        <div class="download-meta"><p class="download-caption" data-download-caption>适用于 Windows 和 macOS</p><a class="download-alternatives" href="#download">其他版本</a></div>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker 部署</p><a class="download-alternatives" href="#download">其他平台</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>介绍视频</button>
@@ -630,12 +634,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap tour reveal">
       <div class="window">
         <div class="screen" id="screen">
-          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261018.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261018.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
-          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261018.webp" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261018.webp" alt="女优页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261018.webp" alt="播放页，可记录一次高潮" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261018.webp" alt="关注页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261018.webp" alt="统计页" width="3840" height="2160" decoding="async"></picture>
+          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261020.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261020.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
+          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261020.webp" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261020.webp" alt="女优页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261020.webp" alt="播放页，可记录一次高潮" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261020.webp" alt="关注页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261020.webp" alt="统计页" width="3840" height="2160" decoding="async"></picture>
         </div>
       </div>
       <div class="dock-wrap">
@@ -895,11 +899,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <!-- 下载 -->
   <section class="section" id="download">
     <div class="wrap">
-      <p class="say lg reveal"><b><span class="nowrap">下载 Peach</span></b></p>
+      <p class="say lg reveal"><b><span class="nowrap">安装与部署</span></b></p>
       <div class="download-platforms reveal">
         <div class="platform-options" role="group" aria-label="下载平台">
           <button type="button" data-platform-option="windows" aria-pressed="true"><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</button>
           <button type="button" data-platform-option="macos" aria-pressed="false"><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS</button>
+          <button type="button" data-platform-option="docker" aria-pressed="false"><svg aria-hidden="true" width="24" height="24"><use href="#i-docker"/></svg>Docker</button>
         </div>
         <p data-platform-hint>选择适合你电脑的版本</p>
       </div>
@@ -933,7 +938,17 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <p class="note" style="margin-top:22px">打开 DMG，将 Peach 拖入「应用程序」。Mac 版可独立运行。<a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">安装与运行说明 →</a></p>
           <p class="note" style="margin-top:10px" data-macos-status>Mac 测试包尚未公开发布。</p>
         </div>
-        <div class="panel">
+        <div class="panel docker-download" data-download-panel="docker" hidden>
+          <h3><svg aria-hidden="true" width="24" height="24"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
+          <p>在自己的服务器或 NAS 上运行，通过浏览器管理馆藏。</p>
+          <div class="platform-packages" style="margin-top:22px">
+            <div class="package-option"><a class="btn btn-primary" href="https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
+            <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">打开镜像仓库</a><p><code>longmeidao/peach</code></p></div>
+          </div>
+          <p class="note" style="margin-top:22px">支持 <code>linux/amd64</code>。配置与数据库保存在 <code>/data</code>，媒体单独挂载到 <code>/media</code>，默认只读。</p>
+          <p class="note" style="margin-top:10px">CloudDrive2 单独部署，可复用已有挂载。ARM NAS 尚未验收。</p>
+        </div>
+        <div class="panel" data-source-panel>
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>
           <div class="code">
             <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src">复制</button></div>
@@ -955,7 +970,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <p class="say lg center"><b><span class="nowrap">Peach 蜜桃</span></b></p>
       <div class="cta cta-download">
         <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
-        <div class="download-meta"><p class="download-caption" data-download-caption>适用于 Windows 和 macOS</p><a class="download-alternatives" href="#download">其他版本</a></div>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker 部署</p><a class="download-alternatives" href="#download">其他平台</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <a class="btn btn-quiet btn-lg" href="https://github.com/peach-mitao/peach"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>

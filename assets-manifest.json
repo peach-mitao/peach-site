@@ -536,6 +536,126 @@
       "path": "assets/screenshots/stats-compact-20261018.webp",
       "bytes": 881736,
       "sha256": "8296dfc9d60d3b545a6a91868fead2f1f08c6c192a47be950952929121323a0a"
+    },
+    {
+      "path": "assets/screenshots/home-wide-20261020.png",
+      "bytes": 5952605,
+      "sha256": "7bc4bbee540cc5a7ec18d60977233b456c3c8755d14f9161882b3f1455d41cef"
+    },
+    {
+      "path": "assets/screenshots/people-wide-20261020.png",
+      "bytes": 5342359,
+      "sha256": "e4ed0faae63ba4ff2653b91649213206bc755160faa774ce5ffffc793724d65f"
+    },
+    {
+      "path": "assets/screenshots/profile-wide-20261020.png",
+      "bytes": 3976183,
+      "sha256": "9fc18ee7d613d29eda24bab67d0ab2a17e0ba848cfa11b4a3419f97f03ce868d"
+    },
+    {
+      "path": "assets/screenshots/play-wide-20261020.png",
+      "bytes": 3463285,
+      "sha256": "f9d6299a11696fe6fe43e99a73222604d3d008f2019939377d06648b384d4fef"
+    },
+    {
+      "path": "assets/screenshots/follow-wide-20261020.png",
+      "bytes": 4881746,
+      "sha256": "b64e33413c2724bdd1093e9e74434a6c35b0ba57c0d3777ee5268886e041094e"
+    },
+    {
+      "path": "assets/screenshots/stats-wide-20261020.png",
+      "bytes": 1039878,
+      "sha256": "b6ae8bdbe6b048332325c66cb89b268b78fba4e1deb322efa23663ef96521d26"
+    },
+    {
+      "path": "assets/screenshots/home-compact-20261020.png",
+      "bytes": 6345785,
+      "sha256": "bbd86aa7e1560f718a2768ee223de40db209f17e43ce10f58f094110c63672ea"
+    },
+    {
+      "path": "assets/screenshots/people-compact-20261020.png",
+      "bytes": 6084452,
+      "sha256": "092294e813bfcbfe86c6ce38354a9f5ae5106f0d0c669359254245707a188b7f"
+    },
+    {
+      "path": "assets/screenshots/profile-compact-20261020.png",
+      "bytes": 4858316,
+      "sha256": "fc9eca43084bd87e0124e69d00b31e825e31723169e646c37e032b4bf4c9bde5"
+    },
+    {
+      "path": "assets/screenshots/play-compact-20261020.png",
+      "bytes": 4008578,
+      "sha256": "93101c33400bd2defd046784bef465016359fb408a436d2638b0dfbe194aa2d3"
+    },
+    {
+      "path": "assets/screenshots/follow-compact-20261020.png",
+      "bytes": 5675904,
+      "sha256": "bb37c44f5bfa29e2d078c58d3f432c7d53dc841bf3a06a6793a00be9cc60b9d3"
+    },
+    {
+      "path": "assets/screenshots/stats-compact-20261020.png",
+      "bytes": 1717697,
+      "sha256": "3e77b6fd4a6a539a890ce21658eb9b2b338a5fcd8a7de08aec7e8fb322aa774a"
+    },
+    {
+      "path": "assets/screenshots/home-wide-20261020.webp",
+      "bytes": 3894970,
+      "sha256": "0df655ed24e11f05bd90084fdd806de3aab5e3b593888f9a066e163ce6685f30"
+    },
+    {
+      "path": "assets/screenshots/people-wide-20261020.webp",
+      "bytes": 3349122,
+      "sha256": "f5ef1253da31340e526b0b164e1ca40341a1ca7ca2245fa848e4ccc80bd198c3"
+    },
+    {
+      "path": "assets/screenshots/profile-wide-20261020.webp",
+      "bytes": 2454290,
+      "sha256": "1baa7c686fb808eec65e9b8e5f204dbe41db7e1cc4a9fc39ca7ea4fdffbafafd"
+    },
+    {
+      "path": "assets/screenshots/play-wide-20261020.webp",
+      "bytes": 2106820,
+      "sha256": "8e126290f0087cfe87cb7ead9fc78e3833298529fc704d485de838fc2c493a2c"
+    },
+    {
+      "path": "assets/screenshots/follow-wide-20261020.webp",
+      "bytes": 3054102,
+      "sha256": "e3901760cc5a6837563c7e77698f2b8237c70930c1c8ca210bc545912c155db4"
+    },
+    {
+      "path": "assets/screenshots/stats-wide-20261020.webp",
+      "bytes": 534406,
+      "sha256": "3fa27a8b4544c443206e97af12760daa66fb14345988d7725c3c72376261e751"
+    },
+    {
+      "path": "assets/screenshots/home-compact-20261020.webp",
+      "bytes": 4019248,
+      "sha256": "fee0a3ebac59d2fbc4f308be1c7c9a21e53df7e4da9178b74f3eb5575e15b7a0"
+    },
+    {
+      "path": "assets/screenshots/people-compact-20261020.webp",
+      "bytes": 3727246,
+      "sha256": "11f4c4290ba42ca7084aadea643a7a7bd4203455662d7af0acd876488067d6a7"
+    },
+    {
+      "path": "assets/screenshots/profile-compact-20261020.webp",
+      "bytes": 2962726,
+      "sha256": "43c908c596ab3917b28814fb957c9bfb993ab5bacdb74117a647c7c7e277bfaf"
+    },
+    {
+      "path": "assets/screenshots/play-compact-20261020.webp",
+      "bytes": 2668502,
+      "sha256": "60dda8bdb008e269a4190ff9de2b69e9b943523eeb9940dcd9048faaad19f14c"
+    },
+    {
+      "path": "assets/screenshots/follow-compact-20261020.webp",
+      "bytes": 3475364,
+      "sha256": "40b3c29d5a39d797b32e7d17ee4cb00ffa162a72e420c1ae29f57096340bd563"
+    },
+    {
+      "path": "assets/screenshots/stats-compact-20261020.webp",
+      "bytes": 882650,
+      "sha256": "311a006feb394e2488fffe79e3b05ca556014ca941bc84b2feb1b467cdf695f6"
     }
   ]
 }

@@ -97,7 +97,7 @@ try {
       {name: 'Intel Mac', platform: 'MacIntel', ua: macUA, architecture: 'x86', system: 'macos', icon: '#i-apple', file: '-macos-x86_64.dmg'},
       {name: 'Safari 芯片未知', platform: 'MacIntel', ua: macUA, system: 'macos', icon: '#i-apple', file: '#download'},
       {name: 'iPad 桌面模式', platform: 'MacIntel', ua: macUA, touch: 5, system: 'other', icon: '#i-download', file: '#download'},
-      {name: 'Linux', platform: 'Linux x86_64', ua: 'X11; Linux x86_64', system: 'other', icon: '#i-download', file: '#download'},
+      {name: 'Linux', platform: 'Linux x86_64', ua: 'X11; Linux x86_64', system: 'docker', icon: '#i-docker', file: '#download'},
     ]) {
       const page = await browser.newPage({viewport: {width, height: 900}, reducedMotion: 'reduce'});
       try {
@@ -115,7 +115,7 @@ try {
         await page.goto(base, {waitUntil: 'networkidle'});
         const primary = page.locator('[data-primary-download]');
         assert.equal(await primary.count(), 3);
-        const expected = scenario.system === 'other' ? '下载 Peach' : `下载 ${scenario.system === 'macos' ? 'macOS' : 'Windows'} 版`;
+        const expected = scenario.system === 'docker' ? '部署 Docker 版' : scenario.system === 'other' ? '下载 Peach' : `下载 ${scenario.system === 'macos' ? 'macOS' : 'Windows'} 版`;
         assert.deepEqual(await primary.locator('span').allTextContents(), [expected, expected, expected]);
         for (const link of await primary.all()) {
           assert.ok((await link.getAttribute('href')).endsWith(scenario.file));
@@ -178,6 +178,16 @@ try {
         } else {
           assert.ok(portable.y >= setup.y + setup.height + 8, '窄容器中的 Windows 版本应正常换行');
         }
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        await page.locator('[data-platform-option="docker"]').click();
+        const docker = page.locator('[data-download-panel="docker"]');
+        assert.equal(await docker.isVisible(), true);
+        assert.equal(await page.locator('[data-source-panel]').isVisible(), false);
+        assert.deepEqual(await primary.locator('span').allTextContents(), Array(3).fill('部署 Docker 版'));
+        assert.equal(await docker.getByRole('link', {name: '查看部署指南'}).getAttribute('href'), 'https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md');
+        assert.equal(await docker.getByRole('link', {name: '打开镜像仓库'}).getAttribute('href'), 'https://hub.docker.com/r/longmeidao/peach');
+        assert.match(await docker.innerText(), /linux\/amd64/);
+        assert.match(await docker.innerText(), /ARM NAS 尚未验收/);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(errors, []);
         console.log('PASS', width, scenario.name, '按钮、图标、链接、手动切换');

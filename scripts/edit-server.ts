@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // 放进单引号属性的 HTML：先按文字转义，再按属性转义
 const attrSq = (s: string) => s.replace(/&/g, "&amp;").replace(/'/g, "&#39;");
-const attrDq = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+const attrDq = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // 从 from 扫到 to，列出每一段文字节点在源文件里的起止位置；跳过注释、script、style 的内容，
 // 与浏览器一样丢掉紧跟在 <pre> 开标签后的那个换行。
@@ -101,15 +101,32 @@ function editTab(html: string, body: TabEdit) {
   return { html: html.replace(tag[0], t) };
 }
 
-export async function post(file: string, kind: 'tab' | 'text', input: unknown) {
+export async function post(file: string, kind: 'tab' | 'text' | 'copy', input: unknown) {
   if (!input || typeof input !== 'object') return {status: 400, json: {error: '编辑请求格式无效'}};
   const body = input as Record<string, unknown>;
-  const strings = kind === 'tab' ? (typeof body.title === 'string'
+  const strings = kind === 'copy' ? ['key', 'before', 'text'] : kind === 'tab' ? (typeof body.title === 'string'
     ? ['k', 'title', 'sub', 'oldTitle', 'oldSub'] : ['k', 'label', 'oldLabel']) : ['raw', 'text'];
   if (strings.some(key => typeof body[key] !== 'string') || (kind === 'text' && !Number.isInteger(body.i))) {
     return {status: 400, json: {error: '编辑请求格式无效'}};
   }
   const html = await readFile(file, "utf8");
+  if (kind === 'copy') {
+    if (!/^[a-z][a-z0-9.-]{0,119}$/i.test(body.key as string) || (body.text as string).length > 12000) {
+      return {status: 400, json: {error: '文案标识或长度无效'}};
+    }
+    const bodyTag = /<body\b(?:[^>"']|"[^"]*"|'[^']*')*>/.exec(html)?.[0] || '';
+    const attribute = /\sdata-copy-overrides="([^"]*)"/.exec(bodyTag);
+    const decode = (value: string) => value.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+    const overrides: Record<string, string> = attribute ? JSON.parse(decode(attribute[1])) : {};
+    const key = body.key as string;
+    if ((Object.hasOwn(overrides, key) ? overrides[key] : '') !== body.before) {
+      return {status: 409, json: {error: '源文件里这一句已经变了，刷新再改'}};
+    }
+    overrides[key] = body.text as string;
+    const next = ` data-copy-overrides="${attrDq(JSON.stringify(overrides))}"`;
+    await save(file, attribute ? html.replace(attribute[0], next) : html.replace(/<body\b/, '<body' + next));
+    return {status: 200, json: {ok: true, overrides}};
+  }
   if (kind === "tab") {
     const r = editTab(html, body as unknown as TabEdit);
     if ('error' in r) return { status: 409, json: { error: r.error } };

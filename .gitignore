@@ -6,7 +6,8 @@
 !/NOTICE.md
 !/package.json
 !/package-lock.json
-!/wrangler.jsonc
+!/cloudflare.config.ts
+!/wrangler.config.ts
 !/tsconfig.json
 !/docs/
 !/scripts/

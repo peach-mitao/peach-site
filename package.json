@@ -11,25 +11,28 @@
     "url": "https://github.com/peach-mitao/peach-site.git"
   },
   "scripts": {
-    "dev": "node scripts/serve.ts 8790",
-    "dev:assets": "wrangler dev --ip 127.0.0.1 --port 8794",
+    "dev": "cf dev",
+    "dev:edit": "node scripts/serve.ts 8790",
+    "build": "cf build",
     "assets:fetch": "node scripts/fetch_assets.mjs",
     "check": "tsc --noEmit && node scripts/check.mjs",
-    "check:deploy": "wrangler deploy --dry-run --outdir .cache/worker",
+    "precheck": "cf workers types",
+    "check:deploy": "cf deploy --dry-run",
     "verify": "node scripts/check_publish.mjs",
     "verify:typography": "node scripts/check_typography.mjs",
     "verify:mobile": "node scripts/check_mobile.mjs",
     "verify:downloads": "node scripts/check_downloads.mjs",
     "capture:desktop": "node scripts/capture_compact_desktop.mjs && node scripts/optimize_compact_desktop.mjs",
-    "deploy": "wrangler deploy",
+    "deploy": "cf deploy",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node scripts/test_browser.mjs"
   },
   "devDependencies": {
+    "@types/node": "24.19.2",
+    "cf": "1.0.0-beta.18",
     "playwright": "1.64.1",
     "sharp": "0.35.5",
-    "wrangler": "4.151.2",
     "typescript": "7.0.2",
-    "@types/node": "24.19.2"
+    "wrangler": "4.151.2"
   }
 }

@@ -52,18 +52,19 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       try {name = decodeURIComponent(url.pathname)} catch {res.writeHead(400).end(); return}
       if (name.includes('\0') || name.includes('\\')) {res.writeHead(400).end(); return}
       if (req.method === 'POST' && ['/__edit/tab', '/__edit/text', '/__edit/copy'].includes(name)) {
+        const rejectEdit = (status: number, error: string) => res.writeHead(status, {'Content-Type':'application/json; charset=utf-8'}).end(JSON.stringify({error}));
         const address = server.address();
         const port = address && typeof address !== 'string' ? address.port : 0;
-        if (![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(req.headers.origin ?? '')) {res.writeHead(403).end(); return}
+        if (![`http://127.0.0.1:${port}`, `http://localhost:${port}`].includes(req.headers.origin ?? '')) {rejectEdit(403, '请从当前本地预览页保存，刷新后重试'); return}
         const chunks: Buffer[] = [];
         let size = 0;
         for await (const chunk of req) {
           size += chunk.length;
-          if (size > 65536) {res.writeHead(413).end(); return}
+          if (size > 65536) {rejectEdit(413, '本次文案过长，请分段编辑'); return}
           chunks.push(chunk);
         }
         let input: unknown;
-        try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {res.writeHead(400).end(); return}
+        try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {rejectEdit(400, '编辑请求无效，请刷新后重试'); return}
         const result = await edit.post(index, name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : 'text', input);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
@@ -74,6 +75,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       };
       if (previewDownloads && name === '/__preview/downloads.json') {reply(JSON.stringify(previewDownloads), 'application/json'); return}
       if (name === '/__edit.js') {reply(await readFile(edit.client, 'utf8'), types['.js']); return}
+      if (name === '/__edit-core.js') {reply(await readFile(edit.core, 'utf8'), types['.js']); return}
       if (name === '/' || name === '/index.html') {
         if (url.searchParams.has('edit')) {
           const address = server.address();

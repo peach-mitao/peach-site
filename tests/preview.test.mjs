@@ -48,8 +48,9 @@ test('预览提供 HEAD、Range、错误隔离和同源文字编辑', async () =
     assert.equal((await request('/%00')).status, 400);
     assert.equal((await request('/%2e%2e%2fpackage.json')).status, 403);
     const edit = (body, origin = base) => request('/__edit/text', {method: 'POST', headers: {origin}, body: typeof body === 'string' ? body : JSON.stringify(body)});
-    assert.equal((await edit({i: 0, raw: '原文', text: '新文'}, 'https://outside.example')).status, 403);
-    assert.equal((await edit('{')).status, 400);
+    const forbidden=await edit({i: 0, raw: '原文', text: '新文'}, 'https://outside.example');
+    assert.equal(forbidden.status,403);assert.match((await forbidden.json()).error,/本地预览/);
+    const malformed=await edit('{');assert.equal(malformed.status,400);assert.match((await malformed.json()).error,/请求无效/);
     assert.equal((await edit({i: 0, raw: '原文', text: 5})).status, 400);
     assert.equal((await edit({i: 0, raw: '原文', text: '<新文>'})).status, 200);
     assert.ok((await readFile(path.join(root, 'index.html'), 'utf8')).includes('&lt;新文&gt;'));

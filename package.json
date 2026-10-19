@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "cf dev",
     "dev:edit": "node scripts/serve.ts 8790",
+    "edit:sync": "node scripts/sync_copy_editor.mjs",
     "build": "cf build",
     "assets:fetch": "node scripts/fetch_assets.mjs",
     "check": "tsc --noEmit && node scripts/check.mjs",

@@ -76,6 +76,13 @@ try {
     await page.locator('.dock [data-k="home"]').click();
     await page.locator('.dock [data-k="people"]').click();
     assert.equal(await page.locator('#stage-say b').innerText(),`导览标题 ${width}`);
+    await page.locator('.dock [data-k="home"]').click();
+    await page.waitForFunction(()=>document.querySelector('.dock [data-k="home"]')?.getAttribute('aria-selected')==='true');
+    if(await page.locator('#stage-say .sub').count())await edit(page.locator('#stage-say .sub'),'');
+    await docker.click();
+    await edit(page.locator('[data-download-panel="docker"] > p').last(),`删除默认导览说明后继续 ${width}`);
+    await page.reload({waitUntil:'networkidle'});await docker.click();
+    assert.equal(await page.locator('[data-download-panel="docker"] > p').last().innerText(),`删除默认导览说明后继续 ${width}`);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     const html=await readFile(path.join(root,'index.html'),'utf8');
     assert.match(html,/data-copy-overrides=/);assert.match(html,new RegExp(`Docker 提示 ${width}`));

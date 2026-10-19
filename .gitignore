@@ -1,5 +1,8 @@
 /*
 !/.gitignore
+!/.gitattributes
+!/copy-editor-core.js
+!/copy-editor-source.json
 !/.github/
 !/README.md
 !/LICENSE

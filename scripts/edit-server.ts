@@ -58,7 +58,7 @@ export async function page(file: string, port: number) {
   const raw = textSlices(html, from, to).map(([a, b]) => html.slice(a, b));
   const data = JSON.stringify({ raw, port }).replace(/</g, "\\u003c");
   // 两个 script 之间不能留空白：客户端取文字时那段空白已经在 DOM 里，会多出一段
-  const inject = `<script>window.__EDIT=${data}</script><script src="/__edit.js"></script>\n`;
+  const inject = `<script>window.__EDIT=${data}</script><script src="/__edit-core.js"></script><script src="/__edit.js"></script>\n`;
   return html.slice(0, to) + inject + html.slice(to);
 }
 
@@ -130,8 +130,15 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy', input: u
   if (kind === "tab") {
     const r = editTab(html, body as unknown as TabEdit);
     if ('error' in r) return { status: 409, json: { error: r.error } };
+    const beforeBounds=bounds(html),afterBounds=bounds(r.html);
+    const before=textSlices(html,beforeBounds.from,beforeBounds.to).map(([a,b])=>html.slice(a,b));
+    const after=textSlices(r.html,afterBounds.from,afterBounds.to).map(([a,b])=>r.html.slice(a,b));
+    let start=0,end=0;
+    while(start<before.length&&start<after.length&&before[start]===after[start])start++;
+    while(end<before.length-start&&end<after.length-start&&before.at(-end-1)===after.at(-end-1))end++;
+    const textPatch={start,deleteCount:before.length-start-end,raw:after.slice(start,after.length-end)};
     await save(file, r.html);
-    return { status: 200, json: { ok: true } };
+    return { status: 200, json: { ok: true, textPatch } };
   }
   const { from, to } = bounds(html);
   const slice = textSlices(html, from, to)[body.i as number];
@@ -143,3 +150,4 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy', input: u
 }
 
 export const client = fileURLToPath(new URL("../edit-client.js", import.meta.url));
+export const core = fileURLToPath(new URL("../copy-editor-core.js", import.meta.url));

@@ -67,14 +67,14 @@ try {
           assert.ok(ready, '公开发布具有两种完整下载包');
           version = ready.tag_name.replace(/^v/, '');
         }
-        const downloads = await page.locator('.windows-download .package-option a').evaluateAll(links => links.map(link => ({text: link.textContent, href: link.href})));
+        const downloads = await page.locator('.windows-download .package-option a').evaluateAll(links => links.map(link => ({text: link.textContent, href: link.href, title: link.title})));
         assert.equal(downloads.length, 2);
+        assert.deepEqual(downloads.map(d => d.text), ['下载安装版', '下载免安装版']);
         if (version) {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];
-          assert.deepEqual(downloads.map(d => d.text), names);
+          assert.deepEqual(downloads.map(d => d.title), names);
           assert.deepEqual(downloads.map(d => d.href), names.map(name => `${releasesUrl}/download/v${version}/${name}`));
         } else {
-          assert.deepEqual(downloads.map(d => d.text), ['安装包（.exe）', '免安装包（.zip）']);
           assert.ok(downloads.every(d => d.href === releasesUrl));
         }
         if (!scenario.live) {
@@ -169,6 +169,15 @@ try {
         await page.locator('[data-platform-option="windows"]').click();
         assert.equal(await page.locator('[data-download-panel="windows"]').isVisible(), true);
         assert.ok((await primary.first().getAttribute('href')).endsWith('-windows-x64-setup.exe'));
+        const setup = await page.locator('[data-download="setup"]').boundingBox();
+        const portable = await page.locator('[data-download="portable"]').boundingBox();
+        if (width >= 1000) {
+          assert.ok(Math.abs(setup.y - portable.y) < 1 && portable.x >= setup.x + setup.width + 12,
+            '宽容器中的两个 Windows 版本应在同一行');
+          assert.ok(Math.abs(setup.width - portable.width) < 1, '两个 Windows 版本按钮等宽');
+        } else {
+          assert.ok(portable.y >= setup.y + setup.height + 8, '窄容器中的 Windows 版本应正常换行');
+        }
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(errors, []);
         console.log('PASS', width, scenario.name, '按钮、图标、链接、手动切换');

@@ -411,7 +411,6 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .package-option+.package-option{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair-2)}
 .package-option h4{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink)}
 .package-option p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
-.windows-download>.btn{margin-top:24px}
 .download-platforms{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:32px}
 .platform-options{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--hair-2);border-radius:12px;background:var(--ground)}
 .platform-options button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:500 14px/1 var(--font);cursor:pointer}
@@ -421,10 +420,10 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .download-platforms+.dl{margin-top:20px}
 .download-platforms p{margin:0;font-size:13px;color:var(--muted)}
 .download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
-.macos-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
-.macos-packages .package-option+.package-option{margin:0;padding:0;border:0}
-.macos-packages .btn{width:100%;height:40px}
-.macos-packages .package-option p{margin-top:8px;font-size:12px;color:var(--muted)}
+.platform-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
+.platform-packages .package-option+.package-option{margin:0;padding:0;border:0}
+.platform-packages .btn{width:100%;height:40px}
+.platform-packages .package-option p{margin-top:8px;font-size:12px;color:var(--muted)}
 /* 同级入口以实心品牌标与线条图标的实际墨迹校准；不影响插画、演示界面和播放器的尺寸层级。 */
 :is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-apple"]){width:16px;height:16px}
 :is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-github"]){width:17px;height:17px}
@@ -907,20 +906,21 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <div class="dl reveal">
         <div class="panel windows-download" data-download-panel="windows">
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows<span class="download-version" data-release-version="windows">64 位 · 测试版</span></h3>
+          <div class="platform-packages">
           <div class="package-option" data-package="exe">
-            <h4>安装</h4>
-            <p>下载 <a href="https://github.com/peach-mitao/peach/releases" data-download="setup"><code>安装包（.exe）</code></a>，双击并按提示安装。</p>
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>下载安装版</span></a>
+            <p>双击安装（.exe）</p>
           </div>
           <div class="package-option" data-package="zip">
-            <h4>免安装</h4>
-            <p>下载 <a href="https://github.com/peach-mitao/peach/releases" data-download="portable"><code>免安装包（.zip）</code></a> 并解压，再双击解压目录中的 <code>Peach.exe</code>。</p>
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>下载免安装版</span></a>
+            <p>解压后打开 Peach.exe（.zip）</p>
           </div>
-          <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
-          <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
+          </div>
+          <p class="note" style="margin-top:22px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。<a href="https://github.com/peach-mitao/peach/releases">全部版本 →</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
-          <div class="macos-packages">
+          <div class="platform-packages">
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon 版准备中</span></a>
             <p>M 系列芯片</p>

@@ -84,8 +84,8 @@ function start() {
         link.href = asset.href;
         link.title = asset.name;
         link.removeAttribute('aria-disabled');
-        if (link.querySelector('code')) link.querySelector('code').textContent = asset.name;
-        else link.querySelector('span').textContent = kind.endsWith('arm64') ? '下载 Apple Silicon 版' : '下载 Intel 版';
+        link.querySelector('span').textContent = {setup: '下载安装版', portable: '下载免安装版',
+          'macos-arm64': '下载 Apple Silicon 版', 'macos-x86_64': '下载 Intel 版'}[kind];
       }
     }
     document.querySelector('[data-macos-status]').textContent = mac

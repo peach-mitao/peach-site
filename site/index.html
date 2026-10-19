@@ -66,19 +66,19 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 /* 按钮：主动作是浅灰反相，阴影叠层照 Raycast */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:0;
   font:500 14px/1 var(--font);white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
-.btn svg{width:16px;height:16px;flex:none}
+.btn svg{width:20px;height:20px;display:block;flex:none}
 .btn-primary{background:#E6E6E6;color:#2F3031;
   box-shadow:0 0 0 2px rgba(0,0,0,.5),0 0 14px rgba(255,255,255,.19),inset 0 -1px .4px rgba(0,0,0,.2),inset 0 1px .4px #fff}
 .btn-primary:hover{background:#fff}
 .btn-quiet{background:rgba(255,255,255,.04);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--hair-2),inset 0 1px 0 rgba(255,255,255,.06)}
 .btn-quiet:hover{color:var(--ink);background:rgba(255,255,255,.08)}
 .btn-lg{height:44px;padding:0 18px;font-size:15px}
-.btn-lg svg{width:17px;height:17px}
+.btn-lg svg{width:20px;height:20px}
 /* 介绍视频的打开按钮：沿用 media-01 的钩子，外观跟两侧按钮一致 */
 .cta .btn[data-media-01-open]{height:44px;padding:0 18px;gap:8px;border-radius:8px;corner-shape:round;font:500 15px/1 var(--font);
   color:var(--ink-2);background:rgba(255,255,255,.04);backdrop-filter:none;-webkit-backdrop-filter:none}
 .cta .btn[data-media-01-open]:hover{color:var(--ink);background:rgba(255,255,255,.08)}
-.cta .btn[data-media-01-open] svg{width:17px;height:17px}
+.cta .btn[data-media-01-open] svg{width:24px;height:24px}
 
 /* 首屏：斜向光束 */
 .hero{position:relative;margin-top:-92px;padding:220px 0 120px;text-align:center;overflow:hidden;isolation:isolate}
@@ -407,11 +407,34 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
 .panel{min-width:0;padding:28px;border-radius:16px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 .panel h3{margin:0 0 22px;font-size:17px;font-weight:600;display:flex;align-items:center;gap:10px}
-.panel h3 svg{width:18px;height:18px;color:var(--ink-2)}
+.panel h3 svg{width:20px;height:20px;flex:none;color:var(--ink-2)}
 .package-option+.package-option{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair-2)}
 .package-option h4{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink)}
 .package-option p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
 .windows-download>.btn{margin-top:24px}
+.download-platforms{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:32px}
+.platform-options{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--hair-2);border-radius:12px;background:var(--ground)}
+.platform-options button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:500 14px/1 var(--font);cursor:pointer}
+.platform-options button svg{width:20px;height:20px;display:block;flex:none}
+.platform-options button[aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink)}
+.platform-options button:hover{color:var(--ink)}
+.download-platforms+.dl{margin-top:20px}
+.download-platforms p{margin:0;font-size:13px;color:var(--muted)}
+.download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
+.macos-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
+.macos-packages .package-option+.package-option{margin:0;padding:0;border:0}
+.macos-packages .btn{width:100%;height:40px}
+.macos-packages .package-option p{margin-top:8px;font-size:12px;color:var(--muted)}
+/* 同级入口以实心品牌标与线条图标的实际墨迹校准；不影响插画、演示界面和播放器的尺寸层级。 */
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-apple"]){width:16px;height:16px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-github"]){width:17px;height:17px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-windows"]){width:20px;height:20px}
+.download-meta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px}
+.download-caption{margin:0!important;font-size:12px!important;line-height:1.5!important;color:var(--muted)!important}
+.download-alternatives{display:inline-block;font-size:12px;color:var(--muted);text-underline-offset:4px}
+.download-alternatives:hover{color:var(--ink);text-decoration:underline}
+[data-download-panel][hidden],[data-source-platform][hidden]{display:none}
+.btn[aria-disabled="true"]{background:var(--surface);color:var(--dim);box-shadow:inset 0 0 0 1px var(--hair-2);cursor:default}
 .note code{overflow-wrap:anywhere}
 code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--ink)}
 .code{margin:0 0 16px;border-radius:10px;border:1px solid var(--hair-2);background:#06070A;overflow:hidden}
@@ -561,6 +584,9 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
     <symbol id="i-demo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M12 17v4M8 21h8"/><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z" fill="currentColor" stroke="none"/></g></symbol>
     <symbol id="i-windows" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.5 10.5 4.5v7H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></symbol>
+    <!-- Apple：Simple Icons，CC0，来源与固定版本见 NOTICE.md。 -->
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></g></symbol>
   </defs>
 </svg>
 
@@ -574,7 +600,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </nav>
     <div class="nav-end">
       <a class="btn btn-quiet" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
-      <a class="btn btn-primary" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载</a>
+      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
     </div>
   </div>
 </header>
@@ -589,7 +615,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <h1><span class="headline-first nowrap">所有片子<span class="punct">，</span></span><br class="hero-break"><span class="nowrap">放进一处</span></h1>
       <p class="say"><span class="nowrap">本地硬盘、在线网盘</span><br class="caption-break"><span class="nowrap">和关注的创作者，</span><span class="nowrap">整理合一。</span></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
+        <div class="download-meta"><p class="download-caption" data-download-caption>适用于 Windows 和 macOS</p><a class="download-alternatives" href="#download">其他版本</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>介绍视频</button>
@@ -870,9 +897,16 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="download">
     <div class="wrap">
       <p class="say lg reveal"><b><span class="nowrap">下载 Peach</span></b></p>
+      <div class="download-platforms reveal">
+        <div class="platform-options" role="group" aria-label="下载平台">
+          <button type="button" data-platform-option="windows" aria-pressed="true"><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</button>
+          <button type="button" data-platform-option="macos" aria-pressed="false"><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS</button>
+        </div>
+        <p data-platform-hint>选择适合你电脑的版本</p>
+      </div>
       <div class="dl reveal">
-        <div class="panel windows-download">
-          <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</h3>
+        <div class="panel windows-download" data-download-panel="windows">
+          <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows<span class="download-version" data-release-version="windows">64 位 · 测试版</span></h3>
           <div class="package-option" data-package="exe">
             <h4>安装</h4>
             <p>下载 <a href="https://github.com/peach-mitao/peach/releases" data-download="setup"><code>安装包（.exe）</code></a>，双击并按提示安装。</p>
@@ -884,16 +918,31 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <a class="btn btn-primary btn-lg" href="https://github.com/peach-mitao/peach/releases"><svg aria-hidden="true"><use href="#i-github"/></svg>前往 GitHub Releases</a>
           <p class="note" style="margin-top:18px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。</p>
         </div>
+        <div class="panel macos-download" data-download-panel="macos" hidden>
+          <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
+          <div class="macos-packages">
+          <div class="package-option">
+            <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon 版准备中</span></a>
+            <p>M 系列芯片</p>
+          </div>
+          <div class="package-option">
+            <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel 版准备中</span></a>
+            <p>Intel 处理器</p>
+          </div>
+          </div>
+          <p class="note" style="margin-top:22px">打开 DMG，将 Peach 拖入「应用程序」。Mac 版可独立运行。<a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">安装与运行说明 →</a></p>
+          <p class="note" style="margin-top:10px" data-macos-status>Mac 测试包尚未公开发布。</p>
+        </div>
         <div class="panel">
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>
           <div class="code">
-            <div class="code-bar"><span class="mono">PowerShell</span><button class="copybtn" type="button" data-copy="src">复制</button></div>
+            <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src">复制</button></div>
 <pre id="src"><span>git clone https://github.com/peach-mitao/peach.git peach-app
 </span><span>cd peach-app
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">需要 Git 和 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。macOS 见 <a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
+          <p class="note">开发者使用，需要 Git 和 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。见<a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
         </div>
       </div>
     </div>
@@ -905,7 +954,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <img src="/assets/peach-logo.png" alt="">
       <p class="say lg center"><b><span class="nowrap">Peach 蜜桃</span></b></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="#download"><svg aria-hidden="true"><use href="#i-windows"/></svg>下载 Windows 版</a>
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
+        <div class="download-meta"><p class="download-caption" data-download-caption>适用于 Windows 和 macOS</p><a class="download-alternatives" href="#download">其他版本</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <a class="btn btn-quiet btn-lg" href="https://github.com/peach-mitao/peach"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>

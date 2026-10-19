@@ -5,6 +5,8 @@ import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 
 const base = process.argv[2] ?? 'https://demo.peach.video/';
+const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0,10).replaceAll('-','');
+assert.match(captureDate,/^\d{8}$/);
 const out = new URL('../site/assets/screenshots/', import.meta.url);
 await mkdir(out, {recursive:true});
 const browser = await chromium.launch({channel:'chrome'});
@@ -42,7 +44,7 @@ try {
       await page.waitForTimeout(500);
       assert.deepEqual(errors,[],name);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,name);
-      const path=fileURLToPath(new URL(`${name}-${variant.name}-20261018.png`,out));
+      const path=fileURLToPath(new URL(`${name}-${variant.name}-${captureDate}.png`,out));
       await page.screenshot({path});
       const png=await readFile(path);
       const pixels=[png.readUInt32BE(16),png.readUInt32BE(20)];
@@ -62,7 +64,7 @@ await writeFile(captureUrl,JSON.stringify([...retained,...report],null,2));
 const manifestUrl=new URL('../assets-manifest.json',import.meta.url);
 const manifest=JSON.parse(await readFile(manifestUrl,'utf8'));
 for(const shot of report) {
-  const path=`assets/screenshots/${shot.name}-${shot.variant}-20261018.png`;
+  const path=`assets/screenshots/${shot.name}-${shot.variant}-${captureDate}.png`;
   const bytes=await readFile(shot.path);
   const entry={path,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')};
   const index=manifest.files.findIndex(file=>file.path===path);

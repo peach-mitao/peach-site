@@ -1,3 +1,5 @@
+import {renderCopy} from './copy.js';
+
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const releasesApi = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
 
@@ -8,6 +10,7 @@ export function platformFor(nav) {
   const platform = nav.userAgentData?.platform || nav.platform || ua;
   if (/Win/i.test(platform)) return 'windows';
   if (/Mac/i.test(platform)) return 'macos';
+  if (/Linux/i.test(platform)) return 'docker';
   return 'other';
 }
 
@@ -45,7 +48,7 @@ export function downloadsFor(releases) {
 
 function start() {
   const params = new URLSearchParams(location.search);
-  const chosenPlatform = ['windows', 'macos'].includes(params.get('platform')) ? params.get('platform') : null;
+  const chosenPlatform = ['windows', 'macos', 'docker'].includes(params.get('platform')) ? params.get('platform') : null;
   const chosenArchitecture = ['arm64', 'x86_64'].includes(params.get('arch')) ? params.get('arch') : null;
   const state = {platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
     manual: !!chosenPlatform, downloads: {}, localMac: null};
@@ -56,26 +59,30 @@ function start() {
     const ready = state.platform === 'macos' ? mac : state.downloads.windows;
     const file = state.platform === 'windows' ? ready?.files.setup
       : state.platform === 'macos' && state.architecture ? ready?.files[`macos-${state.architecture}`] : null;
-    const label = state.platform === 'windows' ? '下载 Windows 版' : state.platform === 'macos' ? '下载 macOS 版' : '下载 Peach';
-    const icon = state.platform === 'windows' ? '#i-windows' : state.platform === 'macos' ? '#i-apple' : '#i-download';
+    const label = state.platform === 'windows' ? '下载 Windows 版' : state.platform === 'macos' ? '下载 macOS 版' : state.platform === 'docker' ? '部署 Docker 版' : '下载 Peach';
+    const icon = state.platform === 'windows' ? '#i-windows' : state.platform === 'macos' ? '#i-apple' : state.platform === 'docker' ? '#i-docker' : '#i-download';
     document.querySelectorAll('[data-primary-download]').forEach(link => {
       link.href = file?.href || '#download';
-      link.querySelector('span').textContent = label;
+      renderCopy(link.querySelector('span'), `download.primary.${state.platform}`, label);
       link.querySelector('use').setAttribute('href', icon);
       link.title = state.platform === 'macos' && !state.architecture ? '选择 Apple Silicon 或 Intel 版本' : label;
     });
     const caption = state.platform === 'windows' ? 'Windows 64 位 · 安装包与免安装版'
       : state.platform === 'macos' ? `${state.architecture ? macName() + ' · ' : ''}${ready?.local ? '本地测试包' : 'DMG · 测试版'}`
-      : '可在 Windows 或 macOS 电脑上安装';
-    document.querySelectorAll('[data-download-caption]').forEach(element => {element.textContent = caption});
-    const panel = state.platform === 'macos' ? 'macos' : 'windows';
+      : state.platform === 'docker' ? 'Docker · VPS / NAS · linux/amd64' : 'Windows、macOS 与 Docker 部署';
+    document.querySelectorAll('[data-download-caption]').forEach(element => {
+      renderCopy(element, `download.caption.${state.platform}.${state.architecture || 'unknown'}.${ready?.local ? 'local' : 'public'}`, caption);
+    });
+    const panel = ['macos', 'docker'].includes(state.platform) ? state.platform : 'windows';
     document.querySelectorAll('[data-download-panel]').forEach(element => {element.hidden = element.dataset.downloadPanel !== panel});
     document.querySelectorAll('[data-platform-option]').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.platformOption === panel));
     });
-    document.querySelector('[data-platform-hint]').textContent = state.platform === 'macos'
+    const hint = state.platform === 'macos'
       ? state.architecture ? `${macName()} · DMG` : '在「关于本机」中查看芯片或处理器'
-      : state.platform === 'windows' ? 'Windows 64 位' : '支持 Windows 与 macOS';
+      : state.platform === 'windows' ? 'Windows 64 位' : state.platform === 'docker' ? 'VPS / NAS · linux/amd64' : '支持 Windows、macOS 与 Docker';
+    renderCopy(document.querySelector('[data-platform-hint]'), `download.hint.${state.platform}.${state.architecture || 'unknown'}`, hint);
+    document.querySelector('[data-source-panel]').hidden = panel === 'docker';
     for (const [platform, entry] of Object.entries({...state.downloads, ...(mac ? {macos: mac} : {})})) {
       document.querySelector(`[data-release-version="${platform}"]`).textContent = `v${entry.version} · ${entry.local ? '本地测试包' : '测试版'}`;
       for (const [kind, asset] of Object.entries(entry.files)) {
@@ -84,17 +91,18 @@ function start() {
         link.href = asset.href;
         link.title = asset.name;
         link.removeAttribute('aria-disabled');
-        link.querySelector('span').textContent = {setup: '下载安装版', portable: '下载免安装版',
-          'macos-arm64': '下载 Apple Silicon 版', 'macos-x86_64': '下载 Intel 版'}[kind];
+        renderCopy(link.querySelector('span'), `download.package.${kind}.ready`, {setup: '下载安装版', portable: '下载免安装版',
+          'macos-arm64': '下载 Apple Silicon 版', 'macos-x86_64': '下载 Intel 版'}[kind]);
       }
     }
-    document.querySelector('[data-macos-status]').textContent = mac
+    const macStatus = mac
       ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包未公证，媒体工具需另行准备。`
       : 'Mac 测试包尚未公开发布，发布后会在此提供下载。';
+    renderCopy(document.querySelector('[data-macos-status]'), `download.macos-status.${mac ? mac.local ? 'local' : 'ready' : 'pending'}`, macStatus);
     const command = panel === 'macos' ? 'uv sync --locked --python 3.14 --extra macos\n./.venv/bin/peach-tray'
       : 'uv sync --locked --python 3.14\n& .\\.venv\\Scripts\\peach-tray.exe';
-    document.querySelector('#src').textContent = 'git clone https://github.com/peach-mitao/peach.git peach-app\ncd peach-app\n' + command;
-    document.querySelector('[data-source-shell]').textContent = panel === 'macos' ? 'zsh' : 'PowerShell';
+    renderCopy(document.querySelector('#src'), `download.source.${panel}`, 'git clone https://github.com/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
+    renderCopy(document.querySelector('[data-source-shell]'), `download.shell.${panel}`, panel === 'macos' ? 'zsh' : 'PowerShell');
   }
 
   document.querySelectorAll('[data-platform-option]').forEach(button => button.addEventListener('click', () => {
@@ -112,6 +120,7 @@ function start() {
     }
   }));
   render();
+  addEventListener('peach:copy-saved', render);
   if (!state.manual) void macArchitecture(navigator).then(architecture => {
     if (!state.manual) {state.architecture = architecture; render()}
   });

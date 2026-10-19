@@ -7,7 +7,8 @@ const base=process.argv[2]??'http://127.0.0.1:8795/';
 const out=new URL('../evidence/mobile/',import.meta.url);
 await mkdir(out,{recursive:true});
 const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
-const published=manifest.files.filter(file=>/-(wide|compact)-20261018\.webp$/.test(file.path));
+const html=await readFile(new URL('../site/index.html',import.meta.url),'utf8');
+const published=manifest.files.filter(file=>/-(wide|compact)-\d{8}\.webp$/.test(file.path)&&html.includes(file.path));
 assert.equal(published.length,12,'六页两套4K展示图均登记哈希');
 for(const file of published){
   const response=await fetch(new URL(file.path,base));
@@ -23,6 +24,7 @@ try {
     page.on('pageerror',e=>errors.push(e.message));
     page.on('request',r=>{if(r.url().includes('/screenshots/'))requests.push(r.url())});
     try {
+      await page.route('https://api.github.com/**',route=>route.fulfill({json:[]}));
       await page.goto(base,{waitUntil:'networkidle'});
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('#screen img[src]').count(),1);
@@ -30,11 +32,11 @@ try {
       assert.equal(requests[0].includes('-compact-'),width<=560,'只读取当前视口的图片');
       assert.equal(await page.locator('.feature-more').isVisible(),width>560);
       assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'),'#download');
-      assert.equal(await page.locator('.package-option').count(),2);
-      const downloads=await page.locator('.package-option a').evaluateAll(ns=>ns.map(n=>({text:n.textContent,href:n.href})));
+      assert.equal(await page.locator('.package-option:visible').count(),2);
+      const downloads=await page.locator('.windows-download .package-option a').evaluateAll(ns=>ns.map(n=>({text:n.textContent.trim(),href:n.href})));
       for(const [index,download] of downloads.entries()) {
         if(download.href==='https://github.com/peach-mitao/peach/releases') {
-          assert.equal(download.text,index===0?'安装包（.exe）':'免安装包（.zip）');
+          assert.equal(download.text,index===0?'下载安装版':'下载免安装版');
         } else {
           assert.match(download.text,index===0?/^Peach-.+-windows-x64-setup\.exe$/:/^Peach-.+-windows-x64\.zip$/);
           assert.ok(download.href.endsWith('/'+encodeURIComponent(download.text)));
@@ -73,7 +75,7 @@ try {
       if(width===390) {
         let releaseImage;
         const imageGate=new Promise(resolve=>{releaseImage=resolve});
-        await page.route('**/people-compact-20261018.webp',async route=>{await imageGate;await route.continue()});
+        await page.route('**/people-compact-*.webp',async route=>{await imageGate;await route.continue()});
         try {
           await page.reload({waitUntil:'networkidle'});
           await page.locator('.dock button[data-k="people"]').click();
@@ -83,7 +85,7 @@ try {
           releaseImage();
           await page.locator('#screen picture[data-k="people"] img').evaluate(img=>img.decode());
           assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'),'stats','较早发起的请求不覆盖最后一次选择');
-        } finally {releaseImage();await page.unroute('**/people-compact-20261018.webp')}
+        } finally {releaseImage();await page.unroute('**/people-compact-*.webp')}
       }
       assert.deepEqual(errors,[]);
       report.push({width,tabs,downloads,errors});

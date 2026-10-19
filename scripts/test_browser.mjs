@@ -9,9 +9,11 @@ try {
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const {port} = server.address();
-  const child = spawn(process.execPath, [fileURLToPath(new URL('./check_downloads.mjs', import.meta.url)), `http://127.0.0.1:${port}/`], {stdio: 'inherit'});
-  const [code] = await once(child, 'exit');
-  if (code !== 0) process.exitCode = code ?? 1;
+  for (const [file,args] of [['check_downloads.mjs',[`http://127.0.0.1:${port}/`]],['check_edit.mjs',[]]]) {
+    const child = spawn(process.execPath, [fileURLToPath(new URL(file, import.meta.url)),...args], {stdio: 'inherit'});
+    const [code] = await once(child, 'exit');
+    if (code !== 0) {process.exitCode = code ?? 1;break}
+  }
 } finally {
   server.closeAllConnections();
   await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));

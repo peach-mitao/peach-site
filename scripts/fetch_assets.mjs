@@ -3,8 +3,8 @@ import {createHash} from 'node:crypto';
 import {readFile,mkdir,writeFile,rename} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-const root=fileURLToPath(new URL('./',import.meta.url));
-const manifest=JSON.parse(await readFile(new URL('./assets-manifest.json',import.meta.url),'utf8'));
+const root=fileURLToPath(new URL('../',import.meta.url));
+const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
 const digest=body=>createHash('sha256').update(body).digest('hex');
 assert.ok(manifest.files.length<=200);
 for(const item of manifest.files){

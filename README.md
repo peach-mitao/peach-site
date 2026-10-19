@@ -1,83 +1,17 @@
 # Peach 官网
 
-[官网](https://peach.video/) · [在线演示](https://demo.peach.video/) · [Peach 应用](https://github.com/peach-mitao/peach)
+Peach 的产品官网，提供产品介绍、功能导览、介绍视频和下载入口。本仓库维护官网页面、素材清单与部署配置。
 
-产品介绍、六页导览、演示动效、下载入口与版权投诉页。页面正文在 `site/index.html`，静态站部署到 Cloudflare Workers Assets。
+[访问官网](https://peach.video/) · [打开演示站](https://demo.peach.video/) · [下载 Peach](https://github.com/peach-mitao/peach/releases)
 
-中文标题的字距、标点与响应式断行见 [官网中文排版](TYPOGRAPHY.md)。
+## 关联项目
 
-下载是导航、首屏和收尾区的主动作，按钮按访问平台显示 Windows 或 macOS 图标、文字和链接。Windows 默认下载安装包；macOS 在浏览器提供可靠芯片信息时直达对应 DMG，否则进入下载区手动选择 Apple Silicon 或 Intel。Safari 的 Intel Mac 标识不能用来判断芯片。下载区始终保留平台切换；同平台的两个版本在宽屏并排、手机纵排。首屏的在线演示与介绍视频并排显示。手机导览展示独立比例的桌面截图。页脚使用深色底面，链接保留足够的点击高度。
+| 仓库 | 用途 |
+| --- | --- |
+| [peach](https://github.com/peach-mitao/peach) | 主仓库：自托管应用、安装包与使用文档 |
+| [peach-demo](https://github.com/peach-mitao/peach-demo) | 演示站：使用录制数据体验应用界面 |
+| [peach-site](https://github.com/peach-mitao/peach-site) | 本仓库：产品官网与下载入口 |
 
-Windows 下载区面向全新安装：安装使用 `Peach-版本号-windows-x64-setup.exe`；免安装使用 `Peach-版本号-windows-x64.zip`，完整解压后运行目录中的 `Peach.exe`。页面自动读取最新公开发布中已上传完整的两种文件，包含预发布版本，显示实际文件名并直接链接到对应资产；下载区无需维护具体版本号。读取失败时，安装和免安装链接均可进入 GitHub Releases。
+使用 Peach 请前往[主仓库](https://github.com/peach-mitao/peach)；维护官网请参阅[维护说明](docs/MAINTAINING.md)。展示素材独立管理，不随源码分发。
 
-macOS 使用 `Peach-版本号-macos-arm64.dmg` 与 `Peach-版本号-macos-x86_64.dmg`，只采用同一次发布中均已上传的两个文件。安装包尚未公开发布时，页面显示说明并禁用对应下载，不伪造链接。公开下载准备与官网部署分别执行，推送代码不会自动上线。应用 Release 构建与上传完成后，再按下文验证并发布官网。
-
-六页导览在宽度不大于 560px 时使用 4:3 桌面截图，其余宽度使用 16:9 桌面截图。两套截图来自更新并验收完成的演示站：4:3 以 1280×960 桌面视口完整拍摄，输出为 3840×2880 无损 PNG；16:9 输出为 3840×2160 无损 PNG。`node capture_compact_desktop.mjs` 生成截图，`node optimize_compact_desktop.mjs` 生成像素完全一致的无损 WebP 展示图；截图回执核对实际像素、完整桌面布局和加载状态，图片哈希登记在 `assets-manifest.json`。导览通过 `picture` 按视口选择图片，切换时按需加载；手机隐藏「还有更多」卡片。
-
-介绍视频保存在 R2 标准存储桶 `peach-public-media`，由 `media.peach.video` 直接提供 MP4 与字节范围响应，支持进度拖动与悬停缩略图。对象地址使用完整 SHA-256，缓存期为一年；视频文件、页面地址与 `assets-manifest.json` 必须一致。页面、图片与其他资源由 Static Assets 提供。视频原地址通过 `site/_redirects` 跳转到媒体域名。R2 自定义域名支持 [Cloudflare CDN 缓存](https://developers.cloudflare.com/r2/buckets/public-buckets/)，实现无新增依赖。
-
-介绍视频为 74.5 秒、14 个章节，分镜与文案跟随本页分区。独立视频工程导出 4K 母版与 1080p 官网文件（H.264 2.6 Mbps、AAC 128k）；MP4 使用 faststart 与 2 秒关键帧间隔。章节、封面和媒体清单与同一版影片匹配。
-
-## 本地预览
-
-使用 Node.js 24 LTS 或更新的 LTS，在仓库目录安装依赖：
-
-```powershell
-npm ci
-```
-
-按清单下载已部署的公开素材并逐文件校验哈希：
-
-```powershell
-npm run assets:fetch
-```
-
-启动只监听回环地址的预览：
-
-```powershell
-npm run dev
-```
-
-普通页面为 `http://127.0.0.1:8790/`，原位改字为 `http://127.0.0.1:8790/?edit`。回车或点别处保存到 `site/index.html`，Esc 取消。保存接口只接受同一预览来源；改字服务位于发布目录之外。
-
-验证 Static Assets 与重定向时运行 `npm run dev:assets`，入口为 `http://127.0.0.1:8794/`；该入口不提供改字模式。运行 `node check_publish.mjs http://127.0.0.1:8794/` 核对 R2 媒体范围、进度点击、拖动、缩略图与桌面／手机页面。
-
-## 验证与发布
-
-检查脚本语法：
-
-```powershell
-npm run check
-```
-
-预览运行时验证平台识别、下载匹配、芯片回退与响应式布局：
-
-```powershell
-node check_downloads.mjs http://127.0.0.1:8790/
-```
-
-预览运行时验证桌面、手机、六张 3840×2160 导览、三行资料、播放器与投诉页：
-
-```powershell
-npm run verify
-```
-
-使用已登录的 Cloudflare 账号发布到 `peach.video`：
-
-```powershell
-npm run deploy
-```
-
-发布后严格校验公网文件；`--http-only` 不启动浏览器：
-
-```powershell
-node check_publish.mjs https://peach.video/ --http-only
-```
-
-视频发布到 R2 后再发布页面。使用内容哈希创建新对象并设置 `Content-Type: video/mp4`、`Cache-Control: public, max-age=31536000, immutable`，同步媒体清单、两个播放器地址与静态重定向。公网验收核对完整文件哈希、首段／中段／尾段、后缀范围、无效范围与原地址跳转；桌面和手机分别核对播放、拖动与悬停预览。保留仍有页面引用的媒体对象。
-
-`site/.assetsignore` 排除原型、旧版页面、手写预览与未引用的历史截图。公网不提供本地保存接口。导览按需加载，资料区为厂商、事务所、女优各一行；贴纸每次打开显示「拖我试试」，本次拖动后收起并保留位置。
-
-## 项目边界
-
-`peach-site` 管理官网代码。应用在 `peach-mitao/peach`，演示站在 `peach-mitao/peach-demo`。媒体、截图、原型、本地验收证据与缓存不进入 Git，展示素材由独立清单管理。许可范围见 [NOTICE](NOTICE.md)。
+自有代码采用 [AGPL-3.0-only](LICENSE)。素材及第三方内容的许可范围见 [NOTICE](NOTICE.md)。

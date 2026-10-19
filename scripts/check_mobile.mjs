@@ -4,9 +4,9 @@ import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 const base=process.argv[2]??'http://127.0.0.1:8795/';
-const out=new URL('./evidence/mobile/',import.meta.url);
+const out=new URL('../evidence/mobile/',import.meta.url);
 await mkdir(out,{recursive:true});
-const manifest=JSON.parse(await readFile(new URL('./assets-manifest.json',import.meta.url),'utf8'));
+const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
 const published=manifest.files.filter(file=>/-(wide|compact)-20261018\.webp$/.test(file.path));
 assert.equal(published.length,12,'六页两套4K展示图均登记哈希');
 for(const file of published){

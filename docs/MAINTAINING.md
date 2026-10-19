@@ -2,6 +2,8 @@
 
 页面正文位于 `site/index.html`，部署到 Cloudflare Workers Assets；视频通过 R2 的 `media.peach.video` 分发。中文排版约定见[官网中文排版](../TYPOGRAPHY.md)。脚本集中在 `scripts/`，本地预览与文字编辑使用 TypeScript，浏览器资源保留可直接加载的 JS。
 
+工具选型与复用边界见[复用说明](REUSE.md)。
+
 ## 环境与检查
 
 使用 Node.js 24.12 或更新的受支持 LTS。以下命令均在本仓库根目录执行。

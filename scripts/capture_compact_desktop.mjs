@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 
 const base = process.argv[2] ?? 'https://demo.peach.video/';
-const out = new URL('./site/assets/screenshots/', import.meta.url);
+const out = new URL('../site/assets/screenshots/', import.meta.url);
 await mkdir(out, {recursive:true});
 const browser = await chromium.launch({channel:'chrome'});
 const report = [];
@@ -53,13 +53,13 @@ try {
   }
   }
 } finally {await browser.close()}
-await mkdir(new URL('./evidence/mobile/',import.meta.url),{recursive:true});
-const captureUrl=new URL('./evidence/mobile/capture.json',import.meta.url);
+await mkdir(new URL('../evidence/mobile/',import.meta.url),{recursive:true});
+const captureUrl=new URL('../evidence/mobile/capture.json',import.meta.url);
 let previous=[];
 try{previous=JSON.parse(await readFile(captureUrl,'utf8'))}catch(error){if(error.code!=='ENOENT')throw error}
 const retained=previous.filter(old=>!report.some(shot=>old.name===shot.name&&old.variant===shot.variant));
 await writeFile(captureUrl,JSON.stringify([...retained,...report],null,2));
-const manifestUrl=new URL('./assets-manifest.json',import.meta.url);
+const manifestUrl=new URL('../assets-manifest.json',import.meta.url);
 const manifest=JSON.parse(await readFile(manifestUrl,'utf8'));
 for(const shot of report) {
   const path=`assets/screenshots/${shot.name}-${shot.variant}-20261018.png`;

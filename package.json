@@ -1,30 +1,35 @@
 {
- "name": "peach-site",
- "private": true,
- "type": "module",
- "license": "AGPL-3.0-only",
- "engines": {
-  "node": ">=24"
- },
- "repository": {
-  "type": "git",
-  "url": "https://github.com/peach-mitao/peach-site.git"
- },
- "scripts": {
-  "dev": "node serve.mjs 8790",
-  "dev:assets": "wrangler dev --ip 127.0.0.1 --port 8794",
-  "assets:fetch": "node fetch_assets.mjs",
-  "check": "node --check site/assets/media-01.js && node --check site/assets/downloads.js && node --check serve.mjs && node --check edit-server.mjs && node --check edit-client.js && node --check fetch_assets.mjs && node --check check_publish.mjs && node --check check_typography.mjs && node --check capture_compact_desktop.mjs && node --check optimize_compact_desktop.mjs && node --check check_mobile.mjs && node --check check_downloads.mjs",
-  "verify": "node check_publish.mjs",
-  "verify:typography": "node check_typography.mjs",
-  "verify:mobile": "node check_mobile.mjs",
-  "verify:downloads": "node check_downloads.mjs",
-  "capture:desktop": "node capture_compact_desktop.mjs && node optimize_compact_desktop.mjs",
-  "deploy": "wrangler deploy"
- },
- "devDependencies": {
-  "playwright": "1.58.1",
-  "sharp": "0.35.4",
-  "wrangler": "4.141.0"
- }
+  "name": "peach-site",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=24.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peach-mitao/peach-site.git"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.ts 8790",
+    "dev:assets": "wrangler dev --ip 127.0.0.1 --port 8794",
+    "assets:fetch": "node scripts/fetch_assets.mjs",
+    "check": "tsc --noEmit && node scripts/check.mjs",
+    "check:deploy": "wrangler deploy --dry-run --outdir .cache/worker",
+    "verify": "node scripts/check_publish.mjs",
+    "verify:typography": "node scripts/check_typography.mjs",
+    "verify:mobile": "node scripts/check_mobile.mjs",
+    "verify:downloads": "node scripts/check_downloads.mjs",
+    "capture:desktop": "node scripts/capture_compact_desktop.mjs && node scripts/optimize_compact_desktop.mjs",
+    "deploy": "wrangler deploy",
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node scripts/test_browser.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.64.1",
+    "sharp": "0.35.5",
+    "wrangler": "4.151.2",
+    "typescript": "7.0.2",
+    "@types/node": "24.19.2"
+  }
 }

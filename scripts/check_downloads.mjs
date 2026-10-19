@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
-import {platformFor, macArchitecture, downloadsFor} from './site/assets/downloads.js';
+import {platformFor, macArchitecture, downloadsFor} from '../site/assets/downloads.js';
 
 const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
 const live = process.argv.includes('--live');
@@ -42,7 +42,7 @@ both.assets.push(...['arm64', 'x86_64'].map(arch => ({name: `Peach-0.46.1-macos-
 assert.equal(downloadsFor([both]).macos.version, '0.46.1');
 assert.equal(downloadsFor([{...both, assets: both.assets.slice(0, -1)}]).macos, undefined,
   '同版双架构尚未完整上传时不显示已就绪');
-const browser = await chromium.launch({channel: 'chrome'});
+const browser = await chromium.launch(process.env.PLAYWRIGHT_CHANNEL ? {channel: process.env.PLAYWRIGHT_CHANNEL} : {});
 try {
   for (const width of [390, 1440]) {
     for (const scenario of live ? [{name: '公开 Release 实际文件', live: true}] : cases) {

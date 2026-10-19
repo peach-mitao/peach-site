@@ -20,7 +20,7 @@
 - 采用：保持中文标点字符、缩窄标题标点、保护短语与段末词、按视口控制断行、行末标点不参与居中、中西文间保留空格。
 - Peach 差异：保持现有 Inter 和系统中文字体，不引入 SF Pro SC，不按 Apple 字体的比例缩放汉字。`0.6em` 仅用于首屏标题逗号。
 - 原始 HTML 快照：未取得。PowerShell HTTPS 下载返回 `Authentication failed, see inner exception.`；正文取证使用浏览器。
-- 新增依赖：无。排版使用 CSS 与 HTML；浏览器检查复用项目固定的 Playwright 1.58.1。
+- 新增依赖：无。排版使用 CSS 与 HTML；浏览器检查复用项目固定的 Playwright，版本见 `package.json`。
 
 ## 验证入口
 

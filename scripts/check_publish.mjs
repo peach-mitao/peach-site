@@ -8,13 +8,13 @@ import {chromium} from 'playwright';
 const base = process.argv[2] ?? 'http://127.0.0.1:8790/';
 const publicSite = new URL(base).protocol === 'https:';
 const httpOnly = process.argv.includes('--http-only');
-const out = new URL(`./evidence/deployment/${publicSite ? 'public' : 'local'}/`, import.meta.url);
+const out = new URL(`../evidence/deployment/${publicSite ? 'public' : 'local'}/`, import.meta.url);
 await mkdir(out, {recursive:true});
-const source = await readFile(new URL('./site/index.html', import.meta.url));
+const source = await readFile(new URL('../site/index.html', import.meta.url));
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const withoutBeacon = bytes => Buffer.from(bytes.toString('utf8').replace(/<script type="module" src="https:\/\/static\.cloudflareinsights\.com\/beacon\.min\.js\/[^"\r\n]+"[^>]*><\/script>\r?\n/g,''));
 const report = {base, checkedAt:new Date().toISOString(), sourceHash:hash(source), assets:[], viewports:[]};
-const manifest=JSON.parse(await readFile(new URL('./assets-manifest.json',import.meta.url),'utf8'));
+const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
 const video=manifest.files.find(file=>file.path==='assets/peach-intro-1080p.mp4');
 function request(path, headers={}) {
   const url = new URL(path, base);
@@ -54,9 +54,9 @@ try {
   report.homeWithoutBeaconHash=hash(withoutBeacon(home.body));
   assert.equal(report.homeWithoutBeaconHash,hash(source),'扣除 CDN 统计脚本后官网定稿逐字节一致');
   if(publicSite) {
-    for(const path of (await files(new URL('./site/',import.meta.url))).filter(path=>!excluded(path))) {
+    for(const path of (await files(new URL('../site/',import.meta.url))).filter(path=>!excluded(path))) {
       const response=await request(path==='index.html'?'/':path==='copyright/index.html'?'/copyright/':`/${path}`);
-      const local=await readFile(new URL(`./site/${path}`,import.meta.url));
+      const local=await readFile(new URL(`../site/${path}`,import.meta.url));
       assert.equal(response.status,200,path);
       assert.equal(hash(path.endsWith('.html')?withoutBeacon(response.body):response.body),hash(local),path);
       report.assets.push({path,bytes:local.length,sha256:hash(local)});
@@ -71,7 +71,7 @@ try {
     legacyTarget.search='';
     assert.equal(legacyTarget.href,video.url);
   }
-  const localVideo=await readFile(new URL('./site/'+video.path,import.meta.url));
+  const localVideo=await readFile(new URL('../site/'+video.path,import.meta.url));
   assert.equal(hash(localVideo),video.sha256);
   const videoPath=video.url;
   const fullVideo=await request(videoPath);

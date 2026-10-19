@@ -13,3 +13,17 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run check
+      - name: 安装下载页验收浏览器
+        run: npx playwright install --with-deps chromium
+      - name: 验证平台下载与响应式布局
+        shell: bash
+        run: |
+          set -euo pipefail
+          node serve.mjs 8790 > /tmp/peach-site-check.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8790/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node check_downloads.mjs http://127.0.0.1:8790/

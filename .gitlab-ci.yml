@@ -11,6 +11,9 @@ default:
 
 variables:
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  npm_config_fetch_retries: "5"
+  npm_config_fetch_retry_mintimeout: "10000"
+  npm_config_fetch_retry_maxtimeout: "60000"
 
 verify-site:
   cache:
@@ -18,7 +21,7 @@ verify-site:
       files: [package-lock.json]
     paths: [.npm/]
   script:
-    - npm ci
+    - npm ci --prefer-offline --loglevel verbose
     - npm run check
     - npm test
     - npm run check:deploy

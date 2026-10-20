@@ -6,6 +6,8 @@ const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
 const live = process.argv.includes('--live');
 const api = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
+const r2Base = 'https://downloads.peach.video';
+const r2Api = r2Base + '/releases.json';
 const release = (version, published_at, overrides = {}) => ({
   tag_name: `v${version}`, published_at, prerelease: true, draft: false,
   assets: [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`,
@@ -16,6 +18,7 @@ const release = (version, published_at, overrides = {}) => ({
 const older = release('10.20.30', '2030-01-01T00:00:00Z');
 const newer = release('123.456.789', '2030-02-01T00:00:00Z');
 const cases = [
+  {name: 'R2 可下载且 GitHub 不可用', body: [newer], version: '123.456.789', source: 'r2'},
   {name: '公开预发布的两种全新安装包', body: [newer, older], version: '123.456.789'},
   {name: '按发布时间选择版本', body: [older, newer], version: '123.456.789'},
   {name: '草稿发布', body: [{...newer, draft: true}, older], version: '10.20.30'},
@@ -52,13 +55,16 @@ try {
         const failedRequests = [];
         page.on('pageerror', error => errors.push(error.message));
         page.on('requestfailed', request => failedRequests.push({url: request.url(), error: request.failure()?.errorText}));
-        if (!scenario.live) await page.route(api, route => scenario.abort ? route.abort() : route.fulfill({
+        if (!scenario.live) await page.route(r2Api, route => route.fulfill({json: scenario.source === 'r2' ? scenario.body : [],
+          headers: {'access-control-allow-origin': '*'}}));
+        if (!scenario.live) await page.route(api, route => scenario.abort || scenario.source === 'r2' ? route.abort() : route.fulfill({
           status: scenario.status ?? 200, contentType: 'application/json',
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));
         const responsePromise = scenario.live ? page.waitForResponse(api) : null;
         const navigation = await page.goto(base, {waitUntil: 'networkidle'});
         assert.equal(navigation.status(), 200, `预览响应：${navigation.status()} ${page.url()}`);
+        await page.waitForLoadState('domcontentloaded');
         assert.deepEqual(errors, [], `页面脚本错误：${JSON.stringify({errors, failedRequests})}`);
         let version = scenario.version;
         if (scenario.live) {
@@ -71,6 +77,10 @@ try {
           assert.ok(ready, '公开发布具有两种完整下载包');
           version = ready.tag_name.replace(/^v/, '');
         }
+        if (version) await page.waitForFunction(expected => {
+          const links = [...document.querySelectorAll('.windows-download .package-option a')];
+          return links.length === 2 && links.every(link => link.title.startsWith(`Peach-${expected}-windows-x64`));
+        }, version);
         const downloads = await page.locator('.windows-download .package-option a').evaluateAll(links => links.map(link => ({text: link.textContent, href: link.href, title: link.title})));
         assert.equal(downloads.length, 2, `预览页面：${JSON.stringify({url: page.url(), title: await page.title(),
           body: (await page.locator('body').innerText()).slice(0, 1000), errors, failedRequests})}`);
@@ -79,7 +89,7 @@ try {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];
           assert.deepEqual(downloads.map(d => d.title), names,
             `下载状态：${JSON.stringify({errors, failedRequests, scripts: await page.locator('script[src]').evaluateAll(elements => elements.map(element => element.src))})}`);
-          assert.deepEqual(downloads.map(d => d.href), names.map(name => `${releasesUrl}/download/v${version}/${name}`));
+          assert.deepEqual(downloads.map(d => d.href), names.map(name => `${scenario.source === 'r2' ? r2Base : releasesUrl + '/download'}/v${version}/${name}`));
         } else {
           assert.ok(downloads.every(d => d.href === releasesUrl));
         }
@@ -117,6 +127,7 @@ try {
             platform: 'macOS', getHighEntropyValues: async () => ({architecture: s.architecture, bitness: '64'}),
           } : undefined, configurable: true});
         }, scenario);
+        await page.route(r2Api, route => route.fulfill({json: [], headers: {'access-control-allow-origin': '*'}}));
         await page.route(api, route => route.fulfill({json: [both], headers: {'access-control-allow-origin': '*'}}));
         await page.goto(base, {waitUntil: 'networkidle'});
         const primary = page.locator('[data-primary-download]');

@@ -17,6 +17,8 @@ test('下载识别依据实际浏览器芯片提示和完整公开发行包', as
   assert.equal(await macArchitecture({...mac, userAgentData: {getHighEntropyValues: async () => ({architecture: 'arm', bitness: '64'})}}), 'arm64');
   const release = {tag_name: 'v2.3.4', published_at: '2030-01-01', assets: ['setup.exe', 'zip'].map(suffix => ({name: `Peach-2.3.4-windows-x64${suffix === 'zip' ? '.' : '-'}${suffix}`, state: 'uploaded'}))};
   assert.equal(downloadsFor([release]).windows.version, '2.3.4');
+  assert.equal(downloadsFor([release], 'r2').windows.files.setup.href,
+    'https://downloads.peach.video/v2.3.4/Peach-2.3.4-windows-x64-setup.exe');
   assert.deepEqual(downloadsFor([{...release, assets: release.assets.slice(0, 1)}]), {});
   assert.deepEqual(downloadsFor([{...release, draft: true}]), {});
 });

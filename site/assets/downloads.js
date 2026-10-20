@@ -1,5 +1,7 @@
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const releasesApi = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
+const downloadsBase = 'https://downloads.peach.video';
+const downloadsApi = downloadsBase + '/releases.json';
 
 export function platformFor(nav) {
   const ua = String(nav.userAgent || '');
@@ -23,7 +25,7 @@ export async function macArchitecture(nav) {
   return null;
 }
 
-export function downloadsFor(releases) {
+export function downloadsFor(releases, source = 'github') {
   const result = {};
   if (!Array.isArray(releases)) return result;
   for (const release of releases.filter(r => r && !r.draft && Number.isFinite(Date.parse(r.published_at)))
@@ -37,7 +39,7 @@ export function downloadsFor(releases) {
       if (result[platform] || !Object.values(names).every(name => release.assets?.some(asset =>
         asset.name === name && asset.state === 'uploaded'))) continue;
       result[platform] = {version, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) =>
-        [key, {name, href: `${releasesUrl}/download/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}`}]))};
+        [key, {name, href: `${source === 'r2' ? downloadsBase : releasesUrl + '/download'}/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}`}]))};
     }
   }
   return result;
@@ -123,10 +125,17 @@ function start() {
         if (response.ok) {state.localMac = await response.json(); render()}
       } catch { /* 本地包不可用时仍展示公开发布状态。 */ }
     }
-    try {
-      const response = await fetch(releasesApi, {headers: {Accept: 'application/vnd.github+json'}, signal: AbortSignal.timeout(8000)});
-      if (response.ok) {state.downloads = downloadsFor(await response.json()); render()}
-    } catch { /* 限流或离线时，Windows 可进入 Releases，Mac 不伪造下载链接。 */ }
+    for (const [endpoint, source] of [[downloadsApi, 'r2'], [releasesApi, 'github']]) {
+      try {
+        const response = await fetch(endpoint, {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(8000)});
+        if (!response.ok) continue;
+        const downloads = downloadsFor(await response.json(), source);
+        if (!Object.keys(downloads).length) continue;
+        state.downloads = downloads;
+        render();
+        break;
+      } catch { /* 公开下载源不可用时继续检查下一来源。 */ }
+    }
   })();
 }
 

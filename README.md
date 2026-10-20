@@ -2,7 +2,9 @@
 
 Peach 的产品官网，提供产品介绍、功能导览、介绍视频和下载入口。本仓库维护官网页面、素材清单与部署配置。
 
-[访问官网](https://peach.video/) · [打开演示站](https://demo.peach.video/) · [下载 Peach](https://github.com/peach-mitao/peach/releases)
+[访问官网](https://peach.video/) · [打开演示站](https://demo.peach.video/) · [下载 Peach](https://peach.video/#download)
+
+下载入口优先读取 R2 公开发行清单，不可用时读取 GitHub。Windows 安装包与免安装包、macOS 双架构 DMG 均以完整上传记录为准。
 
 ## 关联项目
 

@@ -1,0 +1,26 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
+default:
+  image: node:24-bookworm
+  tags: [docker]
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+verify-site:
+  cache:
+    key:
+      files: [package-lock.json]
+    paths: [.npm/]
+  script:
+    - npm ci
+    - npm run check
+    - npm test
+    - npm run check:deploy
+    - npx --no-install playwright install --with-deps chromium
+    - npm run test:browser

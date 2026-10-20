@@ -57,7 +57,8 @@ try {
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));
         const responsePromise = scenario.live ? page.waitForResponse(api) : null;
-        await page.goto(base, {waitUntil: 'networkidle'});
+        const navigation = await page.goto(base, {waitUntil: 'networkidle'});
+        assert.equal(navigation.status(), 200, `预览响应：${navigation.status()} ${page.url()}`);
         assert.deepEqual(errors, [], `页面脚本错误：${JSON.stringify({errors, failedRequests})}`);
         let version = scenario.version;
         if (scenario.live) {
@@ -71,7 +72,8 @@ try {
           version = ready.tag_name.replace(/^v/, '');
         }
         const downloads = await page.locator('.windows-download .package-option a').evaluateAll(links => links.map(link => ({text: link.textContent, href: link.href, title: link.title})));
-        assert.equal(downloads.length, 2);
+        assert.equal(downloads.length, 2, `预览页面：${JSON.stringify({url: page.url(), title: await page.title(),
+          body: (await page.locator('body').innerText()).slice(0, 1000), errors, failedRequests})}`);
         assert.deepEqual(downloads.map(d => d.text), ['下载安装版', '下载免安装版']);
         if (version) {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];

@@ -49,13 +49,16 @@ try {
       const page = await browser.newPage({viewport: {width, height: 900}, reducedMotion: 'reduce', javaScriptEnabled: !scenario.noJS});
       try {
         const errors = [];
+        const failedRequests = [];
         page.on('pageerror', error => errors.push(error.message));
+        page.on('requestfailed', request => failedRequests.push({url: request.url(), error: request.failure()?.errorText}));
         if (!scenario.live) await page.route(api, route => scenario.abort ? route.abort() : route.fulfill({
           status: scenario.status ?? 200, contentType: 'application/json',
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));
         const responsePromise = scenario.live ? page.waitForResponse(api) : null;
         await page.goto(base, {waitUntil: 'networkidle'});
+        assert.deepEqual(errors, [], `页面脚本错误：${JSON.stringify({errors, failedRequests})}`);
         let version = scenario.version;
         if (scenario.live) {
           const response = await responsePromise;
@@ -72,7 +75,8 @@ try {
         assert.deepEqual(downloads.map(d => d.text), ['下载安装版', '下载免安装版']);
         if (version) {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];
-          assert.deepEqual(downloads.map(d => d.title), names);
+          assert.deepEqual(downloads.map(d => d.title), names,
+            `下载状态：${JSON.stringify({errors, failedRequests, scripts: await page.locator('script[src]').evaluateAll(elements => elements.map(element => element.src))})}`);
           assert.deepEqual(downloads.map(d => d.href), names.map(name => `${releasesUrl}/download/v${version}/${name}`));
         } else {
           assert.ok(downloads.every(d => d.href === releasesUrl));

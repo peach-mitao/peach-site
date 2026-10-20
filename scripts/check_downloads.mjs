@@ -18,7 +18,10 @@ const release = (version, published_at, overrides = {}) => ({
 const older = release('10.20.30', '2030-01-01T00:00:00Z');
 const newer = release('123.456.789', '2030-02-01T00:00:00Z');
 const cases = [
-  {name: 'R2 可下载且 GitHub 不可用', body: [newer], version: '123.456.789', source: 'r2'},
+  {name: 'R2 可下载且 GitHub 不可用', r2: [newer], body: [], githubAbort: true, version: '123.456.789', source: 'r2'},
+  {name: 'R2 旧版与 GitHub 新版并存', r2: [older], body: [newer], version: '123.456.789'},
+  {name: '两边同版优先 R2', r2: [newer], body: [newer], version: '123.456.789', source: 'r2'},
+  {name: 'R2 新版与 GitHub 旧版并存', r2: [newer], body: [older], version: '123.456.789', source: 'r2'},
   {name: '公开预发布的两种全新安装包', body: [newer, older], version: '123.456.789'},
   {name: '按发布时间选择版本', body: [older, newer], version: '123.456.789'},
   {name: '草稿发布', body: [{...newer, draft: true}, older], version: '10.20.30'},
@@ -55,9 +58,9 @@ try {
         const failedRequests = [];
         page.on('pageerror', error => errors.push(error.message));
         page.on('requestfailed', request => failedRequests.push({url: request.url(), error: request.failure()?.errorText}));
-        if (!scenario.live) await page.route(r2Api, route => route.fulfill({json: scenario.source === 'r2' ? scenario.body : [],
+        if (!scenario.live) await page.route(r2Api, route => route.fulfill({json: scenario.r2 ?? [],
           headers: {'access-control-allow-origin': '*'}}));
-        if (!scenario.live) await page.route(api, route => scenario.abort || scenario.source === 'r2' ? route.abort() : route.fulfill({
+        if (!scenario.live) await page.route(api, route => scenario.abort || scenario.githubAbort ? route.abort() : route.fulfill({
           status: scenario.status ?? 200, contentType: 'application/json',
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));

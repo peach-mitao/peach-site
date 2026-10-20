@@ -38,7 +38,7 @@ export function downloadsFor(releases, source = 'github') {
     })) {
       if (result[platform] || !Object.values(names).every(name => release.assets?.some(asset =>
         asset.name === name && asset.state === 'uploaded'))) continue;
-      result[platform] = {version, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) =>
+      result[platform] = {version, publishedAt: release.published_at, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) =>
         [key, {name, href: `${source === 'r2' ? downloadsBase : releasesUrl + '/download'}/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}`}]))};
     }
   }
@@ -131,9 +131,13 @@ function start() {
         if (!response.ok) continue;
         const downloads = downloadsFor(await response.json(), source);
         if (!Object.keys(downloads).length) continue;
-        state.downloads = downloads;
+        for (const [platform, entry] of Object.entries(downloads)) {
+          const current = state.downloads[platform];
+          if (!current || (entry.version !== current.version && Date.parse(entry.publishedAt) > Date.parse(current.publishedAt))) {
+            state.downloads[platform] = entry;
+          }
+        }
         render();
-        break;
       } catch { /* 公开下载源不可用时继续检查下一来源。 */ }
     }
   })();

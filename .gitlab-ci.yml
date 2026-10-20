@@ -21,7 +21,8 @@ verify-site:
       files: [package-lock.json]
     paths: [.npm/]
   script:
-    - npm ci --prefer-offline --loglevel verbose
+    - npm ci --ignore-scripts --prefer-offline --loglevel verbose
+    - npm rebuild --foreground-scripts
     - npm run check
     - npm test
     - npm run check:deploy

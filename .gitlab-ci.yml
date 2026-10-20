@@ -17,11 +17,22 @@ variables:
 
 verify-site:
   cache:
+    when: always
     key:
       files: [package-lock.json]
     paths: [.npm/]
   script:
-    - npm ci --ignore-scripts --prefer-offline --loglevel verbose
+    - |
+      set -o pipefail
+      for attempt in 1 2 3; do
+        if npm ci --ignore-scripts --prefer-offline --loglevel verbose 2>&1 | tee npm-install.log; then
+          break
+        fi
+        if [ "$attempt" = 3 ] || ! grep -Eq 'ECONNRESET|ETIMEDOUT|EAI_AGAIN' npm-install.log; then
+          exit 1
+        fi
+        echo "依赖下载中断，使用已校验缓存重试：$attempt/3"
+      done
     - npm rebuild --foreground-scripts
     - npm run check
     - npm test

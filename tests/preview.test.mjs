@@ -77,10 +77,10 @@ test('预览提供 HEAD、Range、错误隔离和同源文字编辑', async () =
     assert.ok((await readFile(path.join(root, 'index.html'), 'utf8')).includes('&lt;新文&gt;'));
     assert.equal((await edit({i: 0, raw: '原文', text: '过期内容'})).status, 409);
     const copy = (body, origin = base) => request('/__edit/copy', {method: 'POST', headers: {origin}, body: JSON.stringify(body)});
-    assert.equal((await copy({key:'download.hint.docker',before:'',text:'容器部署'},'https://outside.example')).status,403);
-    assert.equal((await copy({key:'download.hint.docker',before:'',text:'容器部署 "&<>'})).status,200);
-    assert.equal((await copy({key:'download.hint.docker',before:'',text:'旧页面覆盖'})).status,409);
-    assert.equal((await copy({key:'download.hint.docker',before:'容器部署 "&<>',text:'新提示'})).status,200);
+    assert.equal((await copy({key:'download.caption.docker.version.public',before:'',text:'容器部署'},'https://outside.example')).status,403);
+    assert.equal((await copy({key:'download.caption.docker.version.public',before:'',text:'容器部署 "&<>'})).status,200);
+    assert.equal((await copy({key:'download.caption.docker.version.public',before:'',text:'旧页面覆盖'})).status,409);
+    assert.equal((await copy({key:'download.caption.docker.version.public',before:'容器部署 "&<>',text:'新提示'})).status,200);
     assert.equal((await copy({key:'__proto__',before:'',text:'拒绝'})).status,400);
     assert.equal((await edit({i:0,raw:'&lt;新文&gt;',text:'静态文本仍能改'})).status,200);
     // 文件保存失败也必须是有效 JSON，不能把空响应交给页面解析。

@@ -126,8 +126,9 @@
       const viewport = window.visualViewport, width = viewport?.width ?? innerWidth, height = viewport?.height ?? innerHeight;
       const x = viewport?.offsetLeft ?? 0, y = viewport?.offsetTop ?? 0;
       const inputWidth = Math.min(Math.max(140, rect.width + 60), Math.max(1, width - 32));
+      const inputHeight = editing.box.getBoundingClientRect().height;
       Object.assign(editing.box.style, { left: Math.max(x + 16, Math.min(rect.left - 6, x + width - inputWidth - 16)) + 'px',
-        top: Math.max(y + 16, Math.min(rect.top - 2, y + height - editing.box.getBoundingClientRect().height - 16)) + 'px', width: inputWidth + 'px' });
+        top: Math.max(y + 2, Math.min(rect.top + (rect.height - inputHeight) / 2, y + height - inputHeight - 2)) + 'px', width: inputWidth + 'px' });
     }
     async function begin(node, target) {
       const before = target.element ? target.element.textContent : node.data, originalText = before.trim();
@@ -147,7 +148,11 @@
           box.value = ed.core;
           const style = getComputedStyle(node.parentElement);
           Object.assign(box.style, { position: 'fixed', boxSizing: 'border-box', font: style.font, letterSpacing: style.letterSpacing });
-          (node.parentElement.closest('dialog[open]') || document.body).append(box);
+          const host = node.parentElement.closest('dialog[open]') || document.body;
+          ed.placeholder = document.createElement('span'); ed.placeholder.dataset.copyEditor = '';
+          ed.placeholder.style.visibility = 'hidden';
+          node.replaceWith(ed.placeholder); ed.placeholder.append(node);
+          host.append(box);
         } else {
           box.dataset.copyInline = '';
           if (options.inlineClass) box.className = options.inlineClass;
@@ -177,7 +182,7 @@
       finally { setBusy(false); }
     }
     function putBack(ed) {
-      if (ed.box.tagName === 'INPUT') { ed.box.remove(); return; }
+      if (ed.box.tagName === 'INPUT') { ed.placeholder.replaceWith(ed.node); ed.box.remove(); return; }
       if (ed.element) { ed.box.replaceWith(ed.fragment); return; }
       const a = ed.box.previousSibling, c = ed.box.nextSibling;
       if (ed.lead && a?.nodeType === 3) a.remove();

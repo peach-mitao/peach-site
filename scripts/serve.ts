@@ -25,6 +25,7 @@ export function byteRange(value: string, size: number): {start: number; end: num
 interface PreviewOptions {
   root?: string;
   downloadsManifest?: string;
+  publicReleases?: boolean;
 }
 
 export async function createPreviewServer(options: PreviewOptions = {}) {
@@ -73,17 +74,26 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       const reply = (body: string, type: string) => {
         res.writeHead(200, {'Content-Type': type, 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store'}).end(req.method === 'HEAD' ? undefined : body);
       };
+      if (options.publicReleases && name === '/__preview/releases.json') {
+        const response = await fetch('https://downloads.peach.video/releases.json', {signal: AbortSignal.timeout(8000)});
+        if (!response.ok) {res.writeHead(502).end('Public release index unavailable'); return}
+        reply(JSON.stringify(await response.json()), 'application/json; charset=utf-8'); return;
+      }
       if (previewDownloads && name === '/__preview/downloads.json') {reply(JSON.stringify(previewDownloads), 'application/json'); return}
       if (name === '/__edit.js') {reply(await readFile(edit.client, 'utf8'), types['.js']); return}
       if (name === '/__edit-core.js') {reply(await readFile(edit.core, 'utf8'), types['.js']); return}
       if (name === '/' || name === '/index.html') {
+        const injectPreview = (body: string) => options.publicReleases
+          ? body.replace('<head>', '<head>\n<meta name="peach-public-downloads" content="/__preview/releases.json">') : body;
         if (url.searchParams.has('edit')) {
           const address = server.address();
-          reply(await edit.page(index, address && typeof address !== 'string' ? address.port : 0), types['.html']); return;
+          reply(injectPreview(await edit.page(index, address && typeof address !== 'string' ? address.port : 0)), types['.html']); return;
         }
+        let body = await readFile(index, 'utf8');
         if (previewDownloads) {
-          reply((await readFile(index, 'utf8')).replace('<head>', '<head>\n<meta name="peach-local-downloads" content="/__preview/downloads.json">'), types['.html']); return;
+          body = body.replace('<head>', '<head>\n<meta name="peach-local-downloads" content="/__preview/downloads.json">');
         }
+        reply(injectPreview(body), types['.html']); return;
       }
       const file = previewFiles.get(name) ?? path.resolve(root, '.' + (name.endsWith('/') ? name + 'index.html' : name));
       const relative = path.relative(root, file);
@@ -118,7 +128,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const port = Number(process.argv[2] ?? 8790);
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw Error('预览端口无效');
-  const server = await createPreviewServer({downloadsManifest: process.env.PEACH_PREVIEW_DOWNLOADS});
+  const server = await createPreviewServer({downloadsManifest: process.env.PEACH_PREVIEW_DOWNLOADS, publicReleases: true});
   server.on('error', error => {console.error(error); process.exitCode = 1});
   server.listen(port, '127.0.0.1', () => {
     const address = server.address();

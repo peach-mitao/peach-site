@@ -2,6 +2,16 @@ import {renderCopy} from './copy.js';
 
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const releasesApi = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
+const downloadsBase = 'https://downloads.peach.video';
+const downloadsApi = downloadsBase + '/releases.json';
+const dockerVersionApi = 'https://img.shields.io/docker/v/longmeidao/peach.json?sort=semver';
+
+export function downloadCaption(platform, version) {
+  const label = {windows: 'Windows', macos: 'macOS', docker: 'Docker'}[platform];
+  if (!label) return 'Windows、macOS 与 Docker';
+  const value = String(version || '').replace(/^v/, '');
+  return label + (/^\d+\.\d+\.\d+(?:-[\da-z.-]+)?(?:\+[\da-z.-]+)?$/i.test(value) ? ` · v${value}` : '');
+}
 
 export function platformFor(nav) {
   const ua = String(nav.userAgent || '');
@@ -26,7 +36,7 @@ export async function macArchitecture(nav) {
   return null;
 }
 
-export function downloadsFor(releases) {
+export function downloadsFor(releases, source = 'github') {
   const result = {};
   if (!Array.isArray(releases)) return result;
   for (const release of releases.filter(r => r && !r.draft && Number.isFinite(Date.parse(r.published_at)))
@@ -39,8 +49,8 @@ export function downloadsFor(releases) {
     })) {
       if (result[platform] || !Object.values(names).every(name => release.assets?.some(asset =>
         asset.name === name && asset.state === 'uploaded'))) continue;
-      result[platform] = {version, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) =>
-        [key, {name, href: `${releasesUrl}/download/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}`}]))};
+      result[platform] = {version, publishedAt: release.published_at, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) =>
+        [key, {name, href: `${source === 'r2' ? downloadsBase : releasesUrl + '/download'}/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}`}]))};
     }
   }
   return result;
@@ -51,8 +61,7 @@ function start() {
   const chosenPlatform = ['windows', 'macos', 'docker'].includes(params.get('platform')) ? params.get('platform') : null;
   const chosenArchitecture = ['arm64', 'x86_64'].includes(params.get('arch')) ? params.get('arch') : null;
   const state = {platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
-    manual: !!chosenPlatform, downloads: {}, localMac: null};
-  const macName = () => state.architecture === 'arm64' ? 'Apple Silicon' : 'Intel';
+    manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null};
 
   function render() {
     const mac = state.downloads.macos || state.localMac;
@@ -67,21 +76,15 @@ function start() {
       link.querySelector('use').setAttribute('href', icon);
       link.title = state.platform === 'macos' && !state.architecture ? '选择 Apple Silicon 或 Intel 版本' : label;
     });
-    const caption = state.platform === 'windows' ? 'Windows 64 位 · 安装包与免安装版'
-      : state.platform === 'macos' ? `${state.architecture ? macName() + ' · ' : ''}${ready?.local ? '本地测试包' : 'DMG · 测试版'}`
-      : state.platform === 'docker' ? 'Docker · VPS / NAS · linux/amd64' : 'Windows、macOS 与 Docker 部署';
+    const caption = downloadCaption(state.platform, state.platform === 'docker' ? state.dockerVersion : ready?.version);
     document.querySelectorAll('[data-download-caption]').forEach(element => {
-      renderCopy(element, `download.caption.${state.platform}.${state.architecture || 'unknown'}.${ready?.local ? 'local' : 'public'}`, caption);
+      renderCopy(element, `download.caption.${state.platform}.version.${ready?.local ? 'local' : 'public'}`, caption);
     });
     const panel = ['macos', 'docker'].includes(state.platform) ? state.platform : 'windows';
     document.querySelectorAll('[data-download-panel]').forEach(element => {element.hidden = element.dataset.downloadPanel !== panel});
     document.querySelectorAll('[data-platform-option]').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.platformOption === panel));
     });
-    const hint = state.platform === 'macos'
-      ? state.architecture ? `${macName()} · DMG` : '在「关于本机」中查看芯片或处理器'
-      : state.platform === 'windows' ? 'Windows 64 位' : state.platform === 'docker' ? 'VPS / NAS · linux/amd64' : '支持 Windows、macOS 与 Docker';
-    renderCopy(document.querySelector('[data-platform-hint]'), `download.hint.${state.platform}.${state.architecture || 'unknown'}`, hint);
     document.querySelector('[data-source-panel]').hidden = panel === 'docker';
     for (const [platform, entry] of Object.entries({...state.downloads, ...(mac ? {macos: mac} : {})})) {
       document.querySelector(`[data-release-version="${platform}"]`).textContent = `v${entry.version} · ${entry.local ? '本地测试包' : '测试版'}`;
@@ -96,12 +99,12 @@ function start() {
       }
     }
     const macStatus = mac
-      ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包未公证，媒体工具需另行准备。`
+      ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包尚未签名公证，下载后按 Apple 官方说明打开。`
       : 'Mac 测试包尚未公开发布，发布后会在此提供下载。';
     renderCopy(document.querySelector('[data-macos-status]'), `download.macos-status.${mac ? mac.local ? 'local' : 'ready' : 'pending'}`, macStatus);
     const command = panel === 'macos' ? 'uv sync --locked --python 3.14 --extra macos\n./.venv/bin/peach-tray'
       : 'uv sync --locked --python 3.14\n& .\\.venv\\Scripts\\peach-tray.exe';
-    renderCopy(document.querySelector('#src'), `download.source.${panel}`, 'git clone https://github.com/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
+    renderCopy(document.querySelector('#src'), `download.source.${panel}`, 'git clone https://gitgud.io/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
     renderCopy(document.querySelector('[data-source-shell]'), `download.shell.${panel}`, panel === 'macos' ? 'zsh' : 'PowerShell');
   }
 
@@ -125,6 +128,12 @@ function start() {
     if (!state.manual) {state.architecture = architecture; render()}
   });
   void (async () => {
+    try {
+      const response = await fetch(dockerVersionApi, {signal: AbortSignal.timeout(8000)});
+      if (response.ok) {state.dockerVersion = (await response.json()).message; render()}
+    } catch { /* 镜像版本未取得时只显示平台名。 */ }
+  })();
+  void (async () => {
     const preview = document.querySelector('meta[name="peach-local-downloads"]')?.content;
     if (preview) {
       try {
@@ -132,10 +141,22 @@ function start() {
         if (response.ok) {state.localMac = await response.json(); render()}
       } catch { /* 本地包不可用时仍展示公开发布状态。 */ }
     }
-    try {
-      const response = await fetch(releasesApi, {headers: {Accept: 'application/vnd.github+json'}, signal: AbortSignal.timeout(8000)});
-      if (response.ok) {state.downloads = downloadsFor(await response.json()); render()}
-    } catch { /* 限流或离线时，Windows 可进入 Releases，Mac 不伪造下载链接。 */ }
+    const publicIndex = document.querySelector('meta[name="peach-public-downloads"]')?.content || downloadsApi;
+    for (const [endpoint, source] of [[publicIndex, 'r2'], [releasesApi, 'github']]) {
+      try {
+        const response = await fetch(endpoint, {headers: {Accept: 'application/json'}, signal: AbortSignal.timeout(8000)});
+        if (!response.ok) continue;
+        const downloads = downloadsFor(await response.json(), source);
+        if (!Object.keys(downloads).length) continue;
+        for (const [platform, entry] of Object.entries(downloads)) {
+          const current = state.downloads[platform];
+          if (!current || (entry.version !== current.version && Date.parse(entry.publishedAt) > Date.parse(current.publishedAt))) {
+            state.downloads[platform] = entry;
+          }
+        }
+        render();
+      } catch { /* 公开下载源不可用时继续检查下一来源。 */ }
+    }
   })();
 }
 

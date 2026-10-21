@@ -22,6 +22,8 @@ try {
     await cp(fileURLToPath(new URL('../site/index.html',import.meta.url)),path.join(root,'index.html'));
     const page=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
     await page.route('https://api.github.com/**',route=>route.fulfill({json:[]}));
+    await page.route('https://downloads.peach.video/releases.json',route=>route.fulfill({json:[],headers:{'access-control-allow-origin':'*'}}));
+    await page.route('https://img.shields.io/docker/v/**',route=>route.fulfill({json:{message:'v7.8.9'},headers:{'access-control-allow-origin':'*'}}));
     const pixel=await sharp({create:{width:1,height:1,channels:4,background:'#18191a'}}).webp().toBuffer();
     await page.route('**/assets/screenshots/**',route=>route.fulfill({contentType:'image/webp',body:pixel}));
     await page.goto(base,{waitUntil:'networkidle'});
@@ -64,7 +66,8 @@ try {
     await mac.click();await page.locator('[data-download-panel="macos"]').waitFor({state:'visible'});
     await edit(page.locator('[data-macos-status]'),`Mac 文案 ${width}`);
     await docker.click();await page.locator('[data-download-panel="docker"]').waitFor({state:'visible'});
-    await edit(page.locator('[data-platform-hint]'),`Docker 提示 ${width}`);
+    const caption=page.locator('[data-download-caption]').first();
+    await edit(caption,`Docker · v1.2.${width}`);
     await edit(page.locator('[data-download-panel="docker"] h3'),`Docker 部署 ${width}`);
     await mac.click();assert.equal(await page.locator('[data-macos-status]').innerText(),`Mac 文案 ${width}`);
     await edit(page.locator('[data-macos-status]'),'');
@@ -76,9 +79,9 @@ try {
     await page.reload({waitUntil:'networkidle'});await docker.click();
     assert.equal(await paragraph.innerText(),'');
     assert.equal(await page.locator('[data-download-panel="docker"] > p').last().innerText(),`删除后继续编辑 ${width}`);
-    await docker.click();assert.equal(await page.locator('[data-platform-hint]').innerText(),`Docker 提示 ${width}`);
+    await docker.click();assert.equal(await caption.innerText(),`Docker · v1.2.${width}`);
     await page.reload({waitUntil:'networkidle'});
-    await docker.click();assert.equal(await page.locator('[data-platform-hint]').innerText(),`Docker 提示 ${width}`);
+    await docker.click();assert.equal(await caption.innerText(),`Docker · v1.2.${width}`);
     assert.match(await page.locator('[data-download-panel="docker"] h3').innerText(),new RegExp(`Docker 部署 ${width}`));
     await mac.click();assert.equal(await page.locator('[data-macos-status]').innerText(),'');
     // 其他切换区也照常工作，切换后生成的导览标题仍能保存。
@@ -97,7 +100,7 @@ try {
     assert.equal(await page.locator('[data-download-panel="docker"] > p').last().innerText(),`删除默认导览说明后继续 ${width}`);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     const html=await readFile(path.join(root,'index.html'),'utf8');
-    assert.match(html,/data-copy-overrides=/);assert.match(html,new RegExp(`Docker 提示 ${width}`));
+    assert.match(html,/data-copy-overrides=/);assert.ok(html.includes(`Docker · v1.2.${width}`));
     console.log(`PASS ${width}: 编辑模式平台切换、静态与动态文案、刷新持久化、导览切换与窄屏`);
     await page.close();
   }

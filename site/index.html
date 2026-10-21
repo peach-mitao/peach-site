@@ -426,7 +426,6 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .download-platforms+.dl{margin-top:20px}
 .docker-download{grid-column:1/-1}
 .panel[data-source-panel][hidden]{display:none}
-.download-platforms p{margin:0;font-size:13px;color:var(--muted)}
 .download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
 .platform-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
 .platform-packages .package-option+.package-option{margin:0;padding:0;border:0}
@@ -538,7 +537,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 </style>
 </head>
-<body data-copy-overrides="{&quot;download.macos-status.ready&quot;:&quot;测试包未公证。&quot;,&quot;download.hint.docker.unknown&quot;:&quot;VPS / NAS · Linux / AMD64&quot;}">
+<body data-copy-overrides="{&quot;download.macos-status.ready&quot;:&quot;测试包尚未签名公证，下载后按 Apple 官方说明打开。&quot;}">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -637,7 +636,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <p class="say"><span class="nowrap">本地硬盘、在线网盘</span><br class="caption-break"><span class="nowrap">和关注的创作者，</span><span class="nowrap">整理合一。</span></p>
       <div class="cta cta-download">
         <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
-        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker 部署</p><a class="download-alternatives" href="#download">其他平台</a></div>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker</p><a class="download-alternatives" href="#download">其他平台</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>介绍视频</button>
@@ -697,7 +696,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-367 涼森れむの「顔」で</b><small>2026-07-17</small></div>
               <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>PASN-027 神女優で童貞卒業</b><small>2026-06-18</small></div>
             </div>
-          </div></div></div><span class="live-go">打开演示 →</span></div>
+          </div></div></div><span class="live-go">打开演示 ↗</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/follow-manage?tab=add" data-mock="follow">
           <div class="txt"><p class="say"><b>关注创作者</b><span class="sub">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></span></p></div>
@@ -725,7 +724,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
             </div>
             <div class="mk-toast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>已添加 2 个关注来源</span></div>
-          </div></div></div><span class="live-go">打开演示 →</span></div>
+          </div></div></div><span class="live-go">打开演示 ↗</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
           <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
@@ -765,7 +764,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 </div>
               </div>
             </div>
-          </div></div></div><span class="live-go">打开演示 →</span></div>
+          </div></div></div><span class="live-go">打开演示 ↗</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/" data-mock="theme">
           <div class="txt"><p class="say"><b>丰富的自定义选项</b><span class="sub">一键切换深色浅色，配色<span class="nowrap">任你选。</span></span></p></div>
@@ -815,7 +814,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
               <span class="mk-btn">详细设置</span>
             </div>
-          </div></div></div><span class="live-go">打开演示 →</span></div>
+          </div></div></div><span class="live-go">打开演示 ↗</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
           <div class="txt"><p class="say" data-copy-draft><b>影片墙</b><span class="sub">拖动封面墙，沉浸式挑片。</span></p></div>
@@ -850,7 +849,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">00:00 / 2:04:00</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
               </div><div class="mk-wall-seek"><i></i></div></div>
             </div>
-          </div></div></div><span class="live-go" data-copy-draft>打开演示 →</span></div>
+          </div></div></div><span class="live-go" data-copy-draft>打开演示 ↗</span></div>
         </a>
         <div class="feature-more reveal">
           <img src="/assets/peach-logo.png" alt="" width="96" height="96" loading="lazy">
@@ -924,7 +923,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <button type="button" data-platform-option="macos" aria-pressed="false"><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS</button>
           <button type="button" data-platform-option="docker" aria-pressed="false"><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker</button>
         </div>
-        <p data-platform-hint>选择适合你电脑的版本</p>
       </div>
       <div class="dl reveal">
         <div class="panel windows-download" data-download-panel="windows">
@@ -939,7 +937,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <p>解压后打开 Peach.exe（.zip）</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">Windows 测试包未签名。若 Windows 提示「已保护你的电脑」，选择「更多信息 → 仍要运行」。<a href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本 →</a></p>
+          <p class="note" style="margin-top:22px">Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。<a href="https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft 官方说明 ↗</a> <a href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本 ↗</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
@@ -953,18 +951,18 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <p>Intel 处理器 · macOS 14 或更新版本</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">打开 DMG，将 Peach 拖入「应用程序」。<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明 →</a></p>
-          <p class="note" style="margin-top:10px" data-macos-status>Mac 测试包尚未公开发布。</p>
+          <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明 ↗</a></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <a href="https://support.apple.com/zh-cn/102445">Apple 官方说明 ↗</a></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
-          <p>在自己的服务器或 NAS 上运行，通过浏览器管理馆藏。</p>
+          <p>在你自己的服务器或 NAS 上运行</p>
           <div class="platform-packages" style="margin-top:22px">
             <div class="package-option"><a class="btn btn-primary" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
             <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">打开镜像仓库</a><p><code>longmeidao/peach</code></p></div>
           </div>
           <p class="note" style="margin-top:22px">默认情况下，配置与数据库保存在 <code>/data</code>，媒体单独挂载到 <code>/media</code>。</p>
-          <p class="note" style="margin-top:10px">CloudDrive2 单独部署，可复用已有挂载。</p>
+          <p class="note" style="margin-top:10px">CloudDrive2 需要单独安装。如果你已经用它挂载了网盘，Peach 在配置后能够直接识别。</p>
         </div>
         <div class="panel" data-source-panel>
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>
@@ -988,7 +986,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <p class="say lg center"><b><span class="nowrap">Peach 蜜桃</span></b></p>
       <div class="cta cta-download">
         <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
-        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker 部署</p><a class="download-alternatives" href="#download">其他平台</a></div>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker</p><a class="download-alternatives" href="#download">其他平台</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
         <a class="btn btn-quiet btn-lg" href="https://github.com/peach-mitao/peach"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>

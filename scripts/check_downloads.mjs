@@ -6,6 +6,9 @@ const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
 const live = process.argv.includes('--live');
 const api = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
+const mirrorBase = 'https://downloads.peach.video';
+const mirrorApi = mirrorBase + '/releases.json';
+const dockerVersionApi = 'https://img.shields.io/docker/v/longmeidao/peach.json?sort=semver';
 const release = (version, published_at, overrides = {}) => ({
   tag_name: `v${version}`, published_at, prerelease: true, draft: false,
   assets: [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`,
@@ -16,6 +19,9 @@ const release = (version, published_at, overrides = {}) => ({
 const older = release('10.20.30', '2030-01-01T00:00:00Z');
 const newer = release('123.456.789', '2030-02-01T00:00:00Z');
 const cases = [
+  {name: 'R2 可下载且 GitHub 不可用', r2: [newer], body: [], githubAbort: true, version: '123.456.789', source: 'r2'},
+  {name: 'R2 旧版与 GitHub 新版并存', r2: [older], body: [newer], version: '123.456.789'},
+  {name: '两边同版优先 R2', r2: [newer], body: [newer], version: '123.456.789', source: 'r2'},
   {name: '公开预发布的两种全新安装包', body: [newer, older], version: '123.456.789'},
   {name: '按发布时间选择版本', body: [older, newer], version: '123.456.789'},
   {name: '草稿发布', body: [{...newer, draft: true}, older], version: '10.20.30'},
@@ -50,7 +56,9 @@ try {
       try {
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));
-        if (!scenario.live) await page.route(api, route => scenario.abort ? route.abort() : route.fulfill({
+        if (!scenario.live) await page.route(mirrorApi, route => route.fulfill({json: scenario.r2 ?? [],headers:{'access-control-allow-origin':'*'}}));
+        await page.route(dockerVersionApi, route => route.fulfill({json:{message:'v7.8.9'},headers:{'access-control-allow-origin':'*'}}));
+        if (!scenario.live) await page.route(api, route => scenario.abort || scenario.githubAbort ? route.abort() : route.fulfill({
           status: scenario.status ?? 200, contentType: 'application/json',
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));
@@ -74,7 +82,7 @@ try {
         if (version) {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];
           assert.deepEqual(downloads.map(d => d.title), names);
-          assert.deepEqual(downloads.map(d => d.href), names.map(name => `${releasesUrl}/download/v${version}/${name}`));
+          assert.deepEqual(downloads.map(d => d.href), names.map(name => `${scenario.source === 'r2' ? mirrorBase : releasesUrl + '/download'}/v${version}/${name}`));
         } else {
           assert.ok(downloads.every(d => d.href === releasesUrl));
         }
@@ -113,9 +121,13 @@ try {
           } : undefined, configurable: true});
         }, scenario);
         await page.route(api, route => route.fulfill({json: [both], headers: {'access-control-allow-origin': '*'}}));
+        await page.route(mirrorApi, route => route.fulfill({json:[],headers:{'access-control-allow-origin':'*'}}));
+        await page.route(dockerVersionApi, route => route.fulfill({json:{message:'v7.8.9'},headers:{'access-control-allow-origin':'*'}}));
         await page.goto(base, {waitUntil: 'networkidle'});
         const primary = page.locator('[data-primary-download]');
         assert.equal(await primary.count(), 3);
+        const expectedCaption = {windows:'Windows · v0.46.1',macos:'macOS · v0.46.1',docker:'Docker · v7.8.9',other:'Windows、macOS 与 Docker'}[scenario.system];
+        assert.deepEqual(await page.locator('[data-download-caption]').allTextContents(),[expectedCaption,expectedCaption]);
         const expected = scenario.system === 'docker' ? '部署 Docker 版' : scenario.system === 'other' ? '下载 Peach' : `下载 ${scenario.system === 'macos' ? 'macOS' : 'Windows'} 版`;
         assert.deepEqual(await primary.locator('span').allTextContents(), [expected, expected, expected]);
         for (const link of await primary.all()) {
@@ -124,6 +136,8 @@ try {
         }
         assert.equal(await page.locator('[data-source-shell]').innerText(), scenario.system === 'macos' ? 'zsh' : 'PowerShell');
         await page.locator('[data-platform-option="macos"]').click();
+        assert.equal((await page.locator('.download-platforms').innerText()).replace(/\s+/g,' ').trim(),'Windows macOS Docker');
+        assert.deepEqual(await page.locator('[data-download-caption]').allTextContents(),Array(2).fill('macOS · v0.46.1'));
         assert.equal(await page.locator('[data-download-panel="macos"]').isVisible(), true);
         assert.equal(await page.locator('[data-platform-option="macos"]').getAttribute('aria-pressed'), 'true');
         const arm = await page.locator('[data-download="macos-arm64"]').boundingBox();
@@ -181,14 +195,14 @@ try {
         }
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         await page.locator('[data-platform-option="docker"]').click();
+        assert.deepEqual(await page.locator('[data-download-caption]').allTextContents(),Array(2).fill('Docker · v7.8.9'));
         const docker = page.locator('[data-download-panel="docker"]');
         assert.equal(await docker.isVisible(), true);
         assert.equal(await page.locator('[data-source-panel]').isVisible(), false);
         assert.deepEqual(await primary.locator('span').allTextContents(), Array(3).fill('部署 Docker 版'));
         assert.equal(await docker.getByRole('link', {name: '查看部署指南'}).getAttribute('href'), 'https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md');
         assert.equal(await docker.getByRole('link', {name: '打开镜像仓库'}).getAttribute('href'), 'https://hub.docker.com/r/longmeidao/peach');
-        assert.match(await docker.innerText(), /默认情况下，配置与数据库保存在 \/data，媒体单独挂载到 \/media。/);
-        assert.match(await docker.innerText(), /CloudDrive2 单独部署，可复用已有挂载。/);
+        assert.deepEqual(await docker.locator('> p:has(code) code').allTextContents(),['/data','/media']);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(errors, []);
         console.log('PASS', width, scenario.name, '按钮、图标、链接、手动切换');

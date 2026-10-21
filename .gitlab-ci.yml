@@ -1,0 +1,41 @@
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+
+default:
+  image: node:24-bookworm
+  tags: [docker]
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  npm_config_fetch_retries: "5"
+  npm_config_fetch_retry_mintimeout: "10000"
+  npm_config_fetch_retry_maxtimeout: "60000"
+
+verify-site:
+  cache:
+    when: always
+    key:
+      files: [package-lock.json]
+    paths: [.npm/]
+  script:
+    - |
+      set -o pipefail
+      for attempt in 1 2 3; do
+        if npm ci --ignore-scripts --prefer-offline --loglevel verbose 2>&1 | tee npm-install.log; then
+          break
+        fi
+        if [ "$attempt" = 3 ] || ! grep -Eq 'ECONNRESET|ETIMEDOUT|EAI_AGAIN' npm-install.log; then
+          exit 1
+        fi
+        echo "依赖下载中断，使用已校验缓存重试：$attempt/3"
+      done
+    - npm rebuild --foreground-scripts
+    - npm run check
+    - npm test
+    - npm run check:deploy
+    - npx --no-install playwright install --with-deps chromium
+    - npm run test:browser

@@ -22,6 +22,7 @@ const cases = [
   {name: 'R2 可下载且 GitHub 不可用', r2: [newer], body: [], githubAbort: true, version: '123.456.789', source: 'r2'},
   {name: 'R2 旧版与 GitHub 新版并存', r2: [older], body: [newer], version: '123.456.789'},
   {name: '两边同版优先 R2', r2: [newer], body: [newer], version: '123.456.789', source: 'r2'},
+  {name: 'R2 新版与 GitHub 旧版并存', r2: [newer], body: [older], version: '123.456.789', source: 'r2'},
   {name: '公开预发布的两种全新安装包', body: [newer, older], version: '123.456.789'},
   {name: '按发布时间选择版本', body: [older, newer], version: '123.456.789'},
   {name: '草稿发布', body: [{...newer, draft: true}, older], version: '10.20.30'},
@@ -55,7 +56,9 @@ try {
       const page = await browser.newPage({viewport: {width, height: 900}, reducedMotion: 'reduce', javaScriptEnabled: !scenario.noJS});
       try {
         const errors = [];
+        const failedRequests = [];
         page.on('pageerror', error => errors.push(error.message));
+        page.on('requestfailed', request => failedRequests.push({url: request.url(), error: request.failure()?.errorText}));
         if (!scenario.live) await page.route(mirrorApi, route => route.fulfill({json: scenario.r2 ?? [],headers:{'access-control-allow-origin':'*'}}));
         await page.route(dockerVersionApi, route => route.fulfill({json:{message:'v7.8.9'},headers:{'access-control-allow-origin':'*'}}));
         if (!scenario.live) await page.route(api, route => scenario.abort || scenario.githubAbort ? route.abort() : route.fulfill({
@@ -63,8 +66,10 @@ try {
           headers: {'access-control-allow-origin': '*'}, body: JSON.stringify(scenario.body),
         }));
         const responsePromise = scenario.live ? page.waitForResponse(api) : null;
-        await page.goto(base, {waitUntil: 'networkidle'});
-        assert.deepEqual(errors, []);
+        const navigation = await page.goto(base, {waitUntil: 'networkidle'});
+        assert.equal(navigation.status(), 200, `预览响应：${navigation.status()} ${page.url()}`);
+        await page.waitForLoadState('domcontentloaded');
+        assert.deepEqual(errors, [], `页面脚本错误：${JSON.stringify({errors, failedRequests})}`);
         let version = scenario.version;
         if (scenario.live) {
           const response = await responsePromise;
@@ -76,12 +81,18 @@ try {
           assert.ok(ready, '公开发布具有两种完整下载包');
           version = ready.tag_name.replace(/^v/, '');
         }
+        if (version) await page.waitForFunction(expected => {
+          const links = [...document.querySelectorAll('.windows-download .package-option a')];
+          return links.length === 2 && links.every(link => link.title.startsWith(`Peach-${expected}-windows-x64`));
+        }, version);
         const downloads = await page.locator('.windows-download .package-option a').evaluateAll(links => links.map(link => ({text: link.textContent, href: link.href, title: link.title})));
-        assert.equal(downloads.length, 2);
+        assert.equal(downloads.length, 2, `预览页面：${JSON.stringify({url: page.url(), title: await page.title(),
+          body: (await page.locator('body').innerText()).slice(0, 1000), errors, failedRequests})}`);
         assert.deepEqual(downloads.map(d => d.text), ['下载安装版', '下载免安装版']);
         if (version) {
           const names = [`Peach-${version}-windows-x64-setup.exe`, `Peach-${version}-windows-x64.zip`];
-          assert.deepEqual(downloads.map(d => d.title), names);
+          assert.deepEqual(downloads.map(d => d.title), names,
+            `下载状态：${JSON.stringify({errors, failedRequests, scripts: await page.locator('script[src]').evaluateAll(elements => elements.map(element => element.src))})}`);
           assert.deepEqual(downloads.map(d => d.href), names.map(name => `${scenario.source === 'r2' ? mirrorBase : releasesUrl + '/download'}/v${version}/${name}`));
         } else {
           assert.ok(downloads.every(d => d.href === releasesUrl));

@@ -51,7 +51,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       let name: string;
       try {name = decodeURIComponent(url.pathname)} catch {res.writeHead(400).end(); return}
       if (name.includes('\0') || name.includes('\\')) {res.writeHead(400).end(); return}
-      if (req.method === 'POST' && ['/__edit/tab', '/__edit/text', '/__edit/copy'].includes(name)) {
+      if (req.method === 'POST' && ['/__edit/tab', '/__edit/text', '/__edit/copy', '/__edit/block'].includes(name)) {
         const rejectEdit = (status: number, error: string) => res.writeHead(status, {'Content-Type':'application/json; charset=utf-8'}).end(JSON.stringify({error}));
         const address = server.address();
         const port = address && typeof address !== 'string' ? address.port : 0;
@@ -65,7 +65,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         }
         let input: unknown;
         try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {rejectEdit(400, '编辑请求无效，请刷新后重试'); return}
-        const result = await edit.post(index, name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : 'text', input);
+        const result = await edit.post(index, name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }

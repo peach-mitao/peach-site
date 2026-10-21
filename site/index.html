@@ -63,6 +63,12 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
 .nav-end{display:flex;align-items:center;gap:8px;justify-self:end}
 
+/* 临时公告。 */
+.site-notice{position:relative;z-index:16;border-bottom:1px solid var(--hair-2);background:var(--surface);color:var(--ink-2);font-size:13px;line-height:1.6}
+.site-notice .wrap{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:4px 16px;padding-top:10px;padding-bottom:10px}
+.site-notice p{margin:0}
+.site-notice a{color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+
 /* 按钮：主动作是浅灰反相，阴影叠层照 Raycast */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:0;
   font:500 14px/1 var(--font);white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
@@ -419,6 +425,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .platform-options button:hover{color:var(--ink)}
 .download-platforms+.dl{margin-top:20px}
 .docker-download{grid-column:1/-1}
+.panel[data-source-panel][hidden]{display:none}
 .download-platforms p{margin:0;font-size:13px;color:var(--muted)}
 .download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
 .platform-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
@@ -459,9 +466,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   background:linear-gradient(transparent,var(--page) 28px)}
 .foot-row{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 .foot-row .brand{font-size:14px;min-height:44px;align-items:center}
-.foot-links{display:flex;gap:4px 20px;flex-wrap:wrap}
-.foot-links a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap}
-.foot-links a:hover{color:var(--ink)}
+.foot-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.foot-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 10px;border-radius:8px;white-space:nowrap}
+.foot-links a:hover{color:var(--ink);background:var(--surface)}
+.foot-links .icon-link{width:44px;padding:0}
+.foot-links svg{display:block;width:18px;height:18px;fill:currentColor}
 
 /* 首屏贴纸（assets/stickers.js）：钉在页面上，往下滚跟首屏一起滚走；只在桌面端加载 */
 .stk-layer{position:absolute;left:0;top:0;width:100%;height:0;z-index:14;pointer-events:none}
@@ -494,6 +503,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 @media (max-width:560px){
   .wrap,.nav{padding:0 14px}
+  .site-notice .wrap{padding-top:10px;padding-bottom:10px;justify-content:flex-start;gap:4px 12px}
   .nav-end .btn-quiet span{display:none}
   .code pre{padding:12px;font-size:12px}
   .nav-end .btn-quiet{width:36px;padding:0}
@@ -528,7 +538,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 </style>
 </head>
-<body>
+<body data-copy-overrides="{&quot;download.macos-status.ready&quot;:&quot;测试包未公证。&quot;,&quot;download.hint.docker.unknown&quot;:&quot;VPS / NAS · Linux / AMD64&quot;}">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -588,10 +598,18 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <!-- Apple：Simple Icons，CC0，来源与固定版本见 NOTICE.md。 -->
     <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
     <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></g></symbol>
-    <!-- Docker 官方图标：https://www.docker.com/company/newsroom/media-resources/ -->
     <symbol id="i-docker" viewBox="0 0 340 268"><path fill="currentColor" d="M334,110.1c-8.3-5.6-30.2-8-46.1-3.7-.9-15.8-9-29.2-24-40.8l-5.5-3.7-3.7,5.6c-7.2,11-10.3,25.7-9.2,39,.8,8.2,3.7,17.4,9.2,24.1-20.7,12-39.8,9.3-124.3,9.3H0c-.4,19.1,2.7,55.8,26,85.6,2.6,3.3,5.4,6.5,8.5,9.6,19,19,47.6,32.9,90.5,33,65.4,0,121.4-35.3,155.5-120.8,11.2.2,40.8,2,55.3-26,.4-.5,3.7-7.4,3.7-7.4l-5.5-3.7h0ZM85.2,92.7h-36.7v36.7h36.7v-36.7ZM132.6,92.7h-36.7v36.7h36.7v-36.7ZM179.9,92.7h-36.7v36.7h36.7v-36.7ZM227.3,92.7h-36.7v36.7h36.7v-36.7ZM37.8,92.7H1.1v36.7h36.7v-36.7ZM85.2,46.3h-36.7v36.7h36.7v-36.7ZM132.6,46.3h-36.7v36.7h36.7v-36.7ZM179.9,46.3h-36.7v36.7h36.7v-36.7ZM179.9,0h-36.7v36.7h36.7V0Z"/></symbol>
+    <symbol id="i-telegram" viewBox="0 0 24 24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></symbol>
   </defs>
 </svg>
+
+<aside class="site-notice" aria-label="临时公告">
+  <div class="wrap">
+    <p>开发者的 GitHub 账号暂时被封禁，可通过下方 Telegram 链接来反馈需求和问题。新版仍可在官网下载。</p>
+    <a href="#download">下载最新版 →</a>
+  </div>
+</aside>
 
 <header class="nav">
   <div class="nav-bar">
@@ -634,12 +652,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap tour reveal">
       <div class="window">
         <div class="screen" id="screen">
-          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261020.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261020.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
-          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261020.webp" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261020.webp" alt="女优页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261020.webp" alt="播放页，可记录一次高潮" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261020.webp" alt="关注页" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261020.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261020.webp" alt="统计页" width="3840" height="2160" decoding="async"></picture>
+          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261018.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261018.webp" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
+          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261018.webp" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261018.webp" alt="女优页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261018.webp" alt="播放页，可记录一次高潮" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261018.webp" alt="关注页" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261018.webp" alt="统计页" width="3840" height="2160" decoding="async"></picture>
         </div>
       </div>
       <div class="dock-wrap">
@@ -904,7 +922,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="platform-options" role="group" aria-label="下载平台">
           <button type="button" data-platform-option="windows" aria-pressed="true"><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</button>
           <button type="button" data-platform-option="macos" aria-pressed="false"><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS</button>
-          <button type="button" data-platform-option="docker" aria-pressed="false"><svg aria-hidden="true" width="24" height="24"><use href="#i-docker"/></svg>Docker</button>
+          <button type="button" data-platform-option="docker" aria-pressed="false"><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker</button>
         </div>
         <p data-platform-hint>选择适合你电脑的版本</p>
       </div>
@@ -921,43 +939,43 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <p>解压后打开 Peach.exe（.zip）</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">测试包未签名。若 Windows 提示「已保护你的电脑」，确认文件来自本项目的 Release，再选择「更多信息 → 仍要运行」。<a href="https://github.com/peach-mitao/peach/releases">全部版本 →</a></p>
+          <p class="note" style="margin-top:22px">Windows 测试包未签名。若 Windows 提示「已保护你的电脑」，选择「更多信息 → 仍要运行」。<a href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本 →</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
           <div class="platform-packages">
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon 版准备中</span></a>
-            <p>M 系列芯片</p>
+            <p>M 系列芯片 · macOS 15 或更新版本</p>
           </div>
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel 版准备中</span></a>
-            <p>Intel 处理器</p>
+            <p>Intel 处理器 · macOS 14 或更新版本</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">打开 DMG，将 Peach 拖入「应用程序」。Mac 版可独立运行。<a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">安装与运行说明 →</a></p>
+          <p class="note" style="margin-top:22px">打开 DMG，将 Peach 拖入「应用程序」。<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明 →</a></p>
           <p class="note" style="margin-top:10px" data-macos-status>Mac 测试包尚未公开发布。</p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
-          <h3><svg aria-hidden="true" width="24" height="24"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
+          <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
           <p>在自己的服务器或 NAS 上运行，通过浏览器管理馆藏。</p>
           <div class="platform-packages" style="margin-top:22px">
-            <div class="package-option"><a class="btn btn-primary" href="https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
+            <div class="package-option"><a class="btn btn-primary" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
             <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">打开镜像仓库</a><p><code>longmeidao/peach</code></p></div>
           </div>
-          <p class="note" style="margin-top:22px">支持 <code>linux/amd64</code>。配置与数据库保存在 <code>/data</code>，媒体单独挂载到 <code>/media</code>，默认只读。</p>
-          <p class="note" style="margin-top:10px">CloudDrive2 单独部署，可复用已有挂载。ARM NAS 尚未验收。</p>
+          <p class="note" style="margin-top:22px">默认情况下，配置与数据库保存在 <code>/data</code>，媒体单独挂载到 <code>/media</code>。</p>
+          <p class="note" style="margin-top:10px">CloudDrive2 单独部署，可复用已有挂载。</p>
         </div>
         <div class="panel" data-source-panel>
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>
           <div class="code">
-            <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src">复制</button></div>
-<pre id="src"><span>git clone https://github.com/peach-mitao/peach.git peach-app
+            <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src" data-copy-interact>复制</button></div>
+<pre id="src"><span>git clone https://gitgud.io/peach-mitao/peach.git peach-app
 </span><span>cd peach-app
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">开发者使用，需要 Git 和 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。见<a href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
+          <p class="note">开发者使用，需要 Git 和 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。详见<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
         </div>
       </div>
     </div>
@@ -980,13 +998,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <footer>
       <div class="wrap foot-row">
         <span class="brand">© 2026 Peach</span>
-        <div class="foot-links">
-          <a href="https://github.com/peach-mitao/peach">GitHub</a>
-          <a href="https://github.com/peach-mitao/peach/releases">下载</a>
-          <a href="https://demo.peach.video">在线演示</a>
-          <a href="https://github.com/peach-mitao/peach/issues">问题反馈</a>
-          <a href="/copyright/">版权投诉 / DMCA</a>
-        </div>
+        <nav class="foot-links" id="feedback" aria-label="项目与联系开发者">
+          <a class="icon-link" href="https://github.com/peach-mitao/peach" aria-label="GitHub 源码" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+          <a class="icon-link" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="通过 Telegram 联系 longmeidao" title="Telegram · @longmeidao"><svg aria-hidden="true"><use href="#i-telegram"/></svg></a>
+          <a class="icon-link" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="通过 X 联系 longmeidao" title="X · @longmeidao"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
+          <a href="/copyright/" aria-label="DMCA 版权投诉" title="DMCA 版权投诉">DMCA</a>
+        </nav>
       </div>
     </footer>
   </section>

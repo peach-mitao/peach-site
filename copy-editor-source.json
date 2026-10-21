@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/peach-mitao/peach",
-  "commit": "c8c51eeee3ac6cb0ae06acc2647304134fb876ef",
+  "commit": "d4068c6aa6c3d2daa68571a54595d6d42f5d033f",
   "path": "frontend/src/copy-editor-core.js",
   "target": "copy-editor-core.js",
-  "sha256": "9c2cacdc0fde4d08075f43c168642cacb24e0722d90258fa49b82dba3782f921"
+  "sha256": "b1d80db63136aebeb4272715a90e8ff7edf9d93306f5a4143ec0357639e991ed"
 }

@@ -56,6 +56,8 @@ CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不�
 
 编辑模式中，平台选择、导览标签和展开控件照常操作，Alt+点击可编辑控件文字。脚本生成的下载文案由 `assets/copy.js` 按 `data-copy-key` 区分平台与状态，修改保存在首页的 `data-copy-overrides` 中，刷新、切换和异步重绘后继续生效。新增动态文案应使用 `renderCopy`；新增切换控件可标记 `data-copy-interact`。命令区支持 Shift+回车换行。`npm run test:browser` 同时验证下载与编辑流程，保存测试仅写临时站点。
 
+段落、说明和标题中的连续行内文字共用编辑区域；标题与块级说明、链接和操作控件各自独立。保存保留未修改片段的行内样式，空的样式包装随文字删除。整段保存核对所有原始文字节点，再原子写入 HTML；节点数量变化会重排后续索引，连续编辑和刷新使用同一份源文件。
+
 原位编辑核心唯一维护源为 Peach 应用仓库的 `frontend/src/copy-editor-core.js`。官网 `edit-client.js` 只适配 HTML 原文索引、导览属性与动态文案保存；核心通过本地 `/__edit-core.js` 在页面脚本前同步加载。`edit:sync` 从指定应用提交取得精确内容，`copy-editor-source.json` 记录提交及 SHA-256，`npm run check` 验证副本一致。不要单独修改 `copy-editor-core.js`。清空文案可以删除整行文字；删除默认导览说明时服务端同时重排后续索引。保存异常始终返回 JSON，未确认的响应由共享核心提示核对。
 
 `npm run dev` 通过 cf 启动 `http://127.0.0.1:8794/`，用于验证实际静态资源与重定向，不提供保存接口。普通预览启动后可用 `npm run verify:downloads -- <预览地址>` 检查下载；其他入口为 `verify:typography`、`verify:mobile` 和 `verify`。浏览器验收脚本默认地址各不相同，运行时应明确传入地址；完整验收需要素材。

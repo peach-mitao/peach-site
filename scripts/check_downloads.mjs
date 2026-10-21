@@ -56,6 +56,7 @@ try {
         }));
         const responsePromise = scenario.live ? page.waitForResponse(api) : null;
         await page.goto(base, {waitUntil: 'networkidle'});
+        assert.deepEqual(errors, []);
         let version = scenario.version;
         if (scenario.live) {
           const response = await responsePromise;
@@ -184,10 +185,10 @@ try {
         assert.equal(await docker.isVisible(), true);
         assert.equal(await page.locator('[data-source-panel]').isVisible(), false);
         assert.deepEqual(await primary.locator('span').allTextContents(), Array(3).fill('部署 Docker 版'));
-        assert.equal(await docker.getByRole('link', {name: '查看部署指南'}).getAttribute('href'), 'https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md');
+        assert.equal(await docker.getByRole('link', {name: '查看部署指南'}).getAttribute('href'), 'https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md');
         assert.equal(await docker.getByRole('link', {name: '打开镜像仓库'}).getAttribute('href'), 'https://hub.docker.com/r/longmeidao/peach');
-        assert.match(await docker.innerText(), /linux\/amd64/);
-        assert.match(await docker.innerText(), /ARM NAS 尚未验收/);
+        assert.match(await docker.innerText(), /默认情况下，配置与数据库保存在 \/data，媒体单独挂载到 \/media。/);
+        assert.match(await docker.innerText(), /CloudDrive2 单独部署，可复用已有挂载。/);
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         assert.deepEqual(errors, []);
         console.log('PASS', width, scenario.name, '按钮、图标、链接、手动切换');

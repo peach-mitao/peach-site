@@ -36,6 +36,20 @@
       else if(i>=start)index.delete(node);
     }
   }
+  function textGroup(node){
+    const element=node.parentElement.closest('.sub,p,h1,h2,h3,h4,li');
+    if(!element||element.closest('#stage-say,[data-copy-key]'))return null;
+    const children=[...element.querySelectorAll('*')];
+    if(children.some(child=>!['SPAN','CODE','B','STRONG','EM','I','SMALL','S','MARK'].includes(child.tagName)
+      || !['inline','inline-block'].includes(getComputedStyle(child).display)
+      || child.matches('[id],[data-copy-key],[data-copy-interact],[onclick]')))return null;
+    const nodes=[],walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);
+    for(let part=walker.nextNode();part;part=walker.nextNode()){
+      if(!index.has(part))return null;
+      nodes.push(part);
+    }
+    return nodes.length?{kind:'block',element,nodes,index:index.get(nodes[0]),multiline:false}:null;
+  }
   editor=Core.create({highlight,inlineClass:'__ee',inputClass:'__ei',skip:'#live .mk,.media-01',
     isActive:()=>active,onStatus:say,onBusy:value=>bar.setAttribute('aria-busy',String(value)),
     resolve(node){
@@ -44,6 +58,7 @@
       if(field)return {kind:'copy',key:field.dataset.copyKey,multiline};
       const kind=element.closest('#stage-say')?'say':element.closest('#dock-label')?'label':null;
       if(kind)return {kind,tab:document.querySelector('.dock [aria-selected="true"]'),sub:!!element.closest('.sub')};
+      const group=textGroup(node);if(group)return group;
       return index.has(node)?{kind:'text',index:index.get(node),multiline}:null;
     },
     async save(edit,text){
@@ -51,6 +66,10 @@
       if(edit.kind==='copy'){
         const overrides=JSON.parse(document.body.dataset.copyOverrides||'{}');
         url='/__edit/copy';body={key:edit.key,before:Object.hasOwn(overrides,edit.key)?overrides[edit.key]:'',text};
+      }else if(edit.kind==='block'){
+        url='/__edit/block';body={i:edit.index,tag:edit.element.tagName.toLowerCase(),
+          raw:edit.nodes.map(node=>raw[index.get(node)]),
+          parts:Core.replaceTextParts(edit.parts,edit.lead+text+edit.trail)};
       }else if(edit.kind==='text'){
         url='/__edit/text';body={i:edit.index,raw:raw[edit.index],text};
       }else{
@@ -68,6 +87,13 @@
     onSaved(edit,result){
       if(edit.kind==='copy'){
         document.body.dataset.copyOverrides=JSON.stringify(result.overrides);dispatchEvent(new Event('peach:copy-saved'));
+      }else if(edit.kind==='block'){
+        patchText(result.textPatch);
+        const nodes=[],walker=document.createTreeWalker(edit.element,NodeFilter.SHOW_TEXT);
+        for(let node=walker.nextNode();node;node=walker.nextNode())nodes.push(node);
+        if(nodes.length!==result.textPatch.raw.length||nodes.some((node,i)=>node.data!==decode(result.textPatch.raw[i])))
+          throw Error('当前段落与源文件不一致，请刷新后编辑');
+        nodes.forEach((node,i)=>index.set(node,result.textPatch.start+i));
       }else if(edit.kind==='text'){
         if(result.raw===''){
           raw.splice(edit.index,1);index.delete(edit.node);

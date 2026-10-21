@@ -5,6 +5,27 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {once} from 'node:events';
 import {createPreviewServer, byteRange} from '../scripts/serve.ts';
+import {post} from '../scripts/edit-server.ts';
+
+test('连续行内文字原子保存、空样式清理与过期拒绝', async () => {
+  const root=path.resolve(await mkdtemp(path.join(tmpdir(),'peach-inline-edit-'))),file=path.join(root,'index.html');
+  const html='<html><body><svg><path d="M0 0"/></svg><p>配置 <code>/data</code>，媒体 <code>/media</code>。</p><p>继续</p><script></script></body></html>';
+  try {
+    await writeFile(file,html);
+    const input={i:0,tag:'p',raw:['配置 ','/data','，媒体 ','/media','。'],parts:['配置 ','','，媒体 ','/media','。']};
+    const result=await post(file,'block',input);
+    assert.equal(result.status,200);
+    assert.deepEqual(result.json.textPatch,{start:0,deleteCount:5,raw:['配置 ，媒体 ','/media','。']});
+    assert.match(await readFile(file,'utf8'),/<p>配置 ，媒体 <code>\/media<\/code>。<\/p>/);
+    const saved=await readFile(file,'utf8');
+    assert.equal((await post(file,'block',input)).status,409);
+    assert.equal(await readFile(file,'utf8'),saved);
+    assert.equal((await post(file,'block',{...input,raw:['配置 ，媒体 '],parts:['错误范围']})).status,409);
+    assert.equal((await post(file,'block',{...input,parts:[]})).status,400);
+    assert.equal((await post(file,'block',{i:0,tag:'p',raw:result.json.textPatch.raw,parts:['<新>','','']})).status,200);
+    assert.match(await readFile(file,'utf8'),/<p>&lt;新&gt;<\/p><p>继续<\/p>/);
+  } finally {await rm(root,{recursive:true,force:true})}
+});
 
 test('字节范围支持首段、开放末段和超过文件长度的后缀', () => {
   for (const [range, expected] of [

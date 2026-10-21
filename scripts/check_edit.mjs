@@ -49,6 +49,18 @@ try {
     }
     const mac=page.locator('[data-platform-option="macos"]');
     const docker=page.locator('[data-platform-option="docker"]');
+    const sentence=page.locator('.say.lg .sub').nth(2);
+    await edit(sentence,`Peach 是你的个人资源管理库 ${width}。`);
+    assert.equal(await sentence.innerText(),`Peach 是你的个人资源管理库 ${width}。`);
+    await page.reload({waitUntil:'networkidle'});
+    assert.equal(await sentence.innerText(),`Peach 是你的个人资源管理库 ${width}。`);
+    await docker.click();
+    const styled=page.locator('[data-download-panel="docker"] > p:has(code)');
+    const fullText=await styled.innerText();
+    await edit(styled,fullText.replace('/data',''));
+    assert.deepEqual(await styled.locator('code').allTextContents(),['/media']);
+    await page.reload({waitUntil:'networkidle'});await docker.click();
+    assert.deepEqual(await styled.locator('code').allTextContents(),['/media']);
     await mac.click();await page.locator('[data-download-panel="macos"]').waitFor({state:'visible'});
     await edit(page.locator('[data-macos-status]'),`Mac 文案 ${width}`);
     await docker.click();await page.locator('[data-download-panel="docker"]').waitFor({state:'visible'});

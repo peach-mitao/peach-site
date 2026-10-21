@@ -101,9 +101,70 @@ function editTab(html: string, body: TabEdit) {
   return { html: html.replace(tag[0], t) };
 }
 
-export async function post(file: string, kind: 'tab' | 'text' | 'copy', input: unknown) {
+// 按已有标签边界定位整段，正文仍只接受纯文字，标签与属性由源文件保留。
+function blockBounds(html: string, from: number, to: number, tag: string, first: number, last: number) {
+  const stack: {tag: string; start: number}[] = [];
+  const tokens = /<!--[\s\S]*?-->|<(?:[^>"']|"[^"]*"|'[^']*')*>/g;
+  tokens.lastIndex = from;
+  for (let token = tokens.exec(html); token && token.index < to; token = tokens.exec(html)) {
+    const match = /^<(\/)?([a-z][\w-]*)\b/i.exec(token[0]);
+    if (!match) continue;
+    const name = match[2].toLowerCase();
+    if (match[1]) {
+      const open = stack.pop();
+      if (!open || open.tag !== name) return null;
+      if (name === tag && open.start <= first && token.index >= last) return [open.start, token.index] as const;
+    } else if (!/\/\s*>$/.test(token[0]) && !['area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'].includes(name)) {
+      stack.push({tag: name, start: tokens.lastIndex});
+    }
+  }
+  return null;
+}
+
+function cleanInline(html: string) {
+  const empty = /<(span|code|b|strong|em|i|small|s|mark)\b((?:[^>"']|"[^"]*"|'[^']*')*)>\s*<\/\1\s*>/gi;
+  // 每轮至少移除一个标签；上限由输入的标签数量决定。
+  const limit = (html.match(/</g) || []).length;
+  for (let i = 0; i < limit; i++) {
+    const next = html.replace(empty, (all, _tag, attributes: string) => {
+      const rest = attributes.replace(/\s+(?:class|style)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+      return rest.trim() ? all : '';
+    });
+    if (next === html) break;
+    html = next;
+  }
+  return html;
+}
+
+export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown) {
   if (!input || typeof input !== 'object') return {status: 400, json: {error: '编辑请求格式无效'}};
   const body = input as Record<string, unknown>;
+  if (kind === 'block') {
+    const {i, tag, raw, parts} = body;
+    if (!Number.isInteger(i) || (i as number) < 0 || typeof tag !== 'string' || !/^(p|span|h[1-4]|li)$/.test(tag)
+      || !Array.isArray(raw) || !raw.length || raw.some(value => typeof value !== 'string')
+      || !Array.isArray(parts) || parts.length !== raw.length || parts.some(value => typeof value !== 'string')) {
+      return {status: 400, json: {error: '编辑请求格式无效'}};
+    }
+    const html = await readFile(file, 'utf8'), {from, to} = bounds(html);
+    const slices = textSlices(html, from, to), selected = slices.slice(i as number, (i as number) + raw.length);
+    if (selected.length !== raw.length || selected.some((slice, n) => html.slice(...slice) !== raw[n])) {
+      return {status: 409, json: {error: '源文件里这一段已经变了，刷新再改'}};
+    }
+    const range = blockBounds(html, from, to, tag, selected[0][0], selected.at(-1)![1]);
+    if (!range || slices.some(([a,b], n) => a >= range[0] && b <= range[1] && (n < (i as number) || n >= (i as number) + raw.length))) {
+      return {status: 409, json: {error: '段落边界未取得，请刷新后编辑'}};
+    }
+    let inner = html.slice(...range);
+    for (let n = selected.length - 1; n >= 0; n--) {
+      const [a,b] = selected[n];
+      inner = inner.slice(0, a - range[0]) + esc(parts[n]) + inner.slice(b - range[0]);
+    }
+    inner = cleanInline(inner);
+    const nextRaw = textSlices(inner, 0, inner.length).map(([a,b]) => inner.slice(a,b));
+    await save(file, html.slice(0, range[0]) + inner + html.slice(range[1]));
+    return {status: 200, json: {ok: true, textPatch: {start: i, deleteCount: raw.length, raw: nextRaw}}};
+  }
   const strings = kind === 'copy' ? ['key', 'before', 'text'] : kind === 'tab' ? (typeof body.title === 'string'
     ? ['k', 'title', 'sub', 'oldTitle', 'oldSub'] : ['k', 'label', 'oldLabel']) : ['raw', 'text'];
   if (strings.some(key => typeof body[key] !== 'string') || (kind === 'text' && !Number.isInteger(body.i))) {

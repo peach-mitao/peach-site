@@ -99,7 +99,7 @@ function start() {
       }
     }
     const macStatus = mac
-      ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包尚未签名公证，下载后按 Apple 官方说明打开。`
+      ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。`
       : 'Mac 测试包尚未公开发布，发布后会在此提供下载。';
     renderCopy(document.querySelector('[data-macos-status]'), `download.macos-status.${mac ? mac.local ? 'local' : 'ready' : 'pending'}`, macStatus);
     const command = panel === 'macos' ? 'uv sync --locked --python 3.14 --extra macos\n./.venv/bin/peach-tray'
@@ -113,6 +113,13 @@ function start() {
     state.manual = true;
     render();
   }));
+  // Mac 包未公证，下载开始的同时弹出打开步骤；不阻止链接的默认下载。
+  const macHelp = document.querySelector('[data-mac-help-dialog]');
+  const showMacHelp = () => {if (macHelp && !macHelp.open) macHelp.showModal()};
+  document.querySelectorAll('[data-mac-help]').forEach(button => button.addEventListener('click', showMacHelp));
+  document.querySelectorAll('[data-primary-download]').forEach(link => link.addEventListener('click', () => {
+    if (state.platform === 'macos' && /\.dmg$/i.test(link.pathname)) showMacHelp();
+  }));
   document.querySelectorAll('[data-download]').forEach(link => link.addEventListener('click', event => {
     if (link.getAttribute('aria-disabled') === 'true') {event.preventDefault(); return}
     if (link.dataset.download.startsWith('macos-')) {
@@ -120,6 +127,7 @@ function start() {
       state.architecture = link.dataset.download.slice(6);
       state.manual = true;
       render();
+      showMacHelp();
     }
   }));
   render();

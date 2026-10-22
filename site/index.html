@@ -462,7 +462,24 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 .copybtn{height:26px;padding:0 10px;border-radius:6px;border:0;font:inherit;font-size:12px;cursor:pointer;background:transparent;color:var(--muted)}
 .copybtn:hover{color:var(--ink);background:rgba(255,255,255,.06)}
 .note{font-size:13px;line-height:1.7;color:var(--dim);margin:0}
-.note a{color:var(--tungsten)}
+.note a,.text-action{color:var(--tungsten)}
+.text-action{padding:0;border:0;background:none;font:inherit;cursor:pointer}
+.text-action:hover,.note a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* Mac 打开步骤：点 Mac 安装包时弹出，下载照常开始；面板里的按钮可以再次打开。 */
+.sheet{width:min(560px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;padding:28px;border-radius:16px;border:1px solid var(--hair-3);
+  background:var(--ground);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 64px rgba(0,0,0,.6)}
+.sheet::backdrop{background:rgba(4,6,10,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.sheet h3{margin:0;font-size:18px;font-weight:600;display:flex;align-items:center;gap:10px}
+.sheet h3 svg{width:16px;height:16px;flex:none;color:var(--ink-2)}
+.steps{margin:22px 0 0;padding:0;list-style:none;counter-reset:step;display:grid;gap:18px}
+.steps li{position:relative;padding-left:34px;font-size:14.5px;line-height:1.7;color:var(--ink-2);counter-increment:step}
+.steps li::before{content:counter(step);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font:600 12px/1 var(--font);color:var(--ink);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hair-2)}
+.steps .code{margin:10px 0 0}
+.sheet .note{margin-top:20px}
+.sheet-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px}
+.sheet-actions .note{margin:0}
 
 /* 收尾 */
 .final{position:relative;margin-top:180px;padding:120px 0 0;text-align:center;overflow:hidden;isolation:isolate}
@@ -548,7 +565,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 </style>
 </head>
-<body data-copy-overrides="{&quot;download.macos-status.ready&quot;:&quot;测试包尚未签名公证，下载后按 Apple 官方说明打开。&quot;}">
+<body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -956,7 +973,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           </div>
           </div>
           <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
-          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <a class="ext" href="https://support.apple.com/zh-cn/102445">Apple 官方说明</a></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <button class="text-action" type="button" data-mac-help>查看打开步骤</button></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
@@ -1017,6 +1034,25 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <a href="#download">下载最新版 →</a>
   </div>
 </aside>
+
+<dialog class="sheet" data-mac-help-dialog aria-labelledby="mac-help-title">
+  <h3 id="mac-help-title"><svg aria-hidden="true"><use href="#i-apple"/></svg>在 Mac 上打开 Peach</h3>
+  <ol class="steps">
+    <li>打开下载好的 DMG，将 Peach 拖入「应用程序」文件夹。</li>
+    <li>打开「终端」，粘贴下面的命令并按回车。提示输入密码时，输入这台 Mac 的登录密码；输入过程中屏幕不显示字符。
+      <div class="code">
+        <div class="code-bar"><span class="mono">zsh</span><button class="copybtn" type="button" data-copy="mac-quarantine" data-copy-interact>复制</button></div>
+<pre id="mac-quarantine"><span>sudo /usr/bin/xattr -rd com.apple.quarantine "/Applications/Peach.app"</span></pre>
+      </div>
+    </li>
+    <li>在「应用程序」里双击 Peach 打开。</li>
+  </ol>
+  <p class="note">测试包尚未经过 Apple 公证。从网上下载的 App 带有隔离标记，macOS 会提示「Peach 已损坏，无法打开」。这条命令只移除 Peach 的隔离标记；安装新版本后需要再运行一次。</p>
+  <form class="sheet-actions" method="dialog">
+    <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
+    <button class="btn btn-primary">知道了</button>
+  </form>
+</dialog>
 
 <!-- 介绍视频播放器（media-01） -->
 <div class="media-01" data-media-01-player="demo-player" data-media-modal role="dialog" aria-modal="true" aria-label="介绍视频" hidden>

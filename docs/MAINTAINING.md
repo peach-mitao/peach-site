@@ -58,7 +58,7 @@ CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不�
 
 段落、说明和标题中的连续行内文字共用编辑区域；标题与块级说明、链接和操作控件各自独立。保存保留未修改片段的行内样式，空的样式包装随文字删除。整段保存核对所有原始文字节点，再原子写入 HTML；节点数量变化会重排后续索引，连续编辑和刷新使用同一份源文件。
 
-下载区的系统安全提示分别链接到 [Apple 打开 App 的说明](https://support.apple.com/zh-cn/102445) 和 [Microsoft 应用与浏览器控制说明](https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app)。Mac 状态文字单独使用 `renderCopy`，官方说明链接位于该动态节点之外，状态重绘和编辑不替换链接。提示内容须与构建中的 Developer ID 签名、公证及 Windows 代码签名状态一致。
+Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明](https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app)。Mac 包未经公证时，较新的 macOS 会提示「已损坏，无法打开」，「隐私与安全性」里也不出现「仍要打开」；点击 Mac 安装包时弹出 `[data-mac-help-dialog]` 打开步骤，下载照常开始，面板里的「查看打开步骤」可再次打开。步骤中的命令为 `sudo /usr/bin/xattr -rd com.apple.quarantine "/Applications/Peach.app"`，写全路径以避开 Python 包安装的同名 `xattr`。Mac 状态文字单独使用 `renderCopy`，按钮位于该动态节点之外，状态重绘和编辑不替换按钮。提示内容须与构建中的 Developer ID 签名、公证及 Windows 代码签名状态一致；完成公证后移除弹窗与命令。
 
 原位编辑核心唯一维护源为 Peach 应用仓库的 `frontend/src/copy-editor-core.js`。官网 `edit-client.js` 只适配 HTML 原文索引、导览属性与动态文案保存；核心通过本地 `/__edit-core.js` 在页面脚本前同步加载。`edit:sync` 从指定应用提交取得精确内容，`copy-editor-source.json` 记录提交及 SHA-256，`npm run check` 验证副本一致。不要单独修改 `copy-editor-core.js`。清空文案可以删除整行文字；删除默认导览说明时服务端同时重排后续索引。保存异常始终返回 JSON，未确认的响应由共享核心提示核对。
 

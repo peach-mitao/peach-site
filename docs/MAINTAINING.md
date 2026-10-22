@@ -62,6 +62,8 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 原位编辑核心唯一维护源为 Peach 应用仓库的 `frontend/src/copy-editor-core.js`。官网 `edit-client.js` 只适配 HTML 原文索引、导览属性与动态文案保存；核心通过本地 `/__edit-core.js` 在页面脚本前同步加载。`edit:sync` 从指定应用提交取得精确内容，`copy-editor-source.json` 记录提交及 SHA-256，`npm run check` 验证副本一致。不要单独修改 `copy-editor-core.js`。清空文案可以删除整行文字；删除默认导览说明时服务端同时重排后续索引。保存异常始终返回 JSON，未确认的响应由共享核心提示核对。
 
+常见问题区 `#faq` 沿用主仓库 README 的常见问题，另含 Mac「已损坏」一条；README 的问答变动时同步这里与 `i18n/en.json`，英文措辞对齐 `README.en.md`。Mac 这一条不重复终端命令，按钮打开同一个 `[data-mac-help-dialog]`，命令只在弹窗里维护一处。
+
 首屏下载按钮按访客平台改字，版本号来自发行清单。`<head>` 的内联脚本先给页面加 `dl-label-pending` 与 `dl-meta-pending`，`downloads.js` 首次渲染后显示按钮文字，当前平台取得版本或发行清单查完后显示版本行；最多等 3 秒。按钮的最小宽度容得下各平台最长的文字，换字时位置不变。
 
 ## 多语言

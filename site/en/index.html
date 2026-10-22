@@ -418,6 +418,22 @@ body:has(.site-notice){padding-bottom:96px}
 .key p{margin:18px 0 0;font-size:14.5px;line-height:1.5;color:var(--dim);text-wrap:pretty}
 .key p b{display:block;color:var(--ink);font-weight:600}
 
+/* 常见问题：原生 details 折叠，展开后加号换成减号。 */
+.say .sub a{color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
+.say .sub a:hover{color:var(--ink)}
+.faq{display:grid;gap:8px}
+.faq details{border-radius:12px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .2s}
+.faq details[open],.faq details:hover{border-color:var(--hair-3)}
+.faq summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 20px;list-style:none;cursor:pointer;font-size:15px;font-weight:600;line-height:1.5;color:var(--ink)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";flex:none;width:14px;height:14px;background:var(--muted);
+  -webkit-mask:var(--toggle) center/contain no-repeat;mask:var(--toggle) center/contain no-repeat;
+  --toggle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M12 5v14M5 12h14'/%3E%3C/svg%3E")}
+.faq details[open] summary::after{--toggle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M5 12h14'/%3E%3C/svg%3E")}
+.faq p{margin:0;padding:0 20px 18px;font-size:14.5px;line-height:1.7;color:var(--ink-2);overflow-wrap:anywhere}
+.faq p a,.faq .text-action{color:var(--tungsten)}
+.faq .text-action{display:block;margin-top:8px}
+
 /* 动效卡的卡片底 */
 .card{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--hair);background:var(--ground);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
@@ -673,6 +689,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <a href="#tour">Tour</a>
       <a href="#live">Features</a>
       <a href="#download">Download</a>
+      <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-end">
       <div class="lang-menu">
@@ -1038,6 +1055,22 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           </div>
           <p class="note">For developers. Requires Git and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">running and configuration</a>.</p>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 常见问题：沿用 README，补充 Mac 打开说明 -->
+  <section class="section" id="faq">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="say lg"><b>FAQ</b><span class="sub">Can't find an answer?<br><a href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer">Ask on Telegram</a></span></p>
+      </div>
+      <div class="faq reveal">
+        <details><summary>Will it change my files?</summary><p>Scanning and filling in details leave originals untouched. Manual organization renames or moves files; emptying the trash deletes files, and resource-sync cleanup removes empty folders. Each requires confirmation.</p></details>
+        <details><summary>Which cloud drives work?</summary><p>Drives mounted as local folders through tools such as CloudDrive2; see <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">cloud drive mounts</a>. Cloud download follows the connected provider's reported capabilities, with direct PikPak connections also supported and sign-in tokens stored locally.</p></details>
+        <details><summary>How do I watch on my phone?</summary><p>Allow devices on the same network during setup, connect your phone to that network, open the address shown and set an access password.</p></details>
+        <details><summary>Where is my data?</summary><p>In the local <code>peach-data</code>  folder. The Windows build defaults to <code>%LOCALAPPDATA%\Peach\peach-data</code>, and the macOS build to <code>~/Library/Application Support/Peach/peach-data</code>.</p></details>
+        <details><summary>My Mac says Peach “is damaged and can't be opened”</summary><p>Test builds are not notarized by Apple yet. Downloaded apps carry a quarantine flag, so recent macOS versions show this message and Privacy & Security offers no “Open Anyway”. Run one Terminal command to remove the flag from Peach, then open it; run it again after installing a new version.<button class="text-action" type="button" data-mac-help>How to open</button></p></details>
       </div>
     </div>
   </section>

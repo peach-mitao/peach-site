@@ -74,7 +74,7 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 | `attributes` | 按属性名精确替换的值，如 `lang`、`hreflang` 与站内链接 |
 | `runtime` | 脚本中 `t('原文')` 的译文，生成时注入为 `window.PEACH_I18N` |
 
-`translate="no"` 的子树保留原文；首页的演示界面与应用一致，保持中文。中文改字后 `npm run check` 会列出缺少或不再使用的译文，以及需要重新生成的页面。补齐 `i18n/en.json` 后运行 `npm run i18n`。英文页不提供 `?edit` 原位编辑，改译文直接改 JSON。脚本新增文案时用 `t()` 包住原文：模块从 `/assets/i18n.js` 导入，经典脚本使用同名的单行查表函数。顶栏与页尾提供语言切换，两种语言互相声明 `hreflang`；访问根路径不按浏览器语言自动跳转。
+`translate="no"` 的子树保留原文；首页的演示界面与应用一致，保持中文。中文改字后 `npm run check` 会列出缺少或不再使用的译文，以及需要重新生成的页面。补齐 `i18n/en.json` 后运行 `npm run i18n`。英文页不提供 `?edit` 原位编辑，改译文直接改 JSON。脚本新增文案时用 `t()` 包住原文：模块从 `/assets/i18n.js` 导入，经典脚本使用同名的单行查表函数。顶栏地球仪菜单与页尾链接切换语言，菜单标 `translate="no"`，各语言名称保持原文；两种语言互相声明 `hreflang`，访问根路径不按浏览器语言自动跳转。译文以不超框为准，按钮可只留图标加名称，例如 Mac 面板写「Apple Silicon」；改完运行 `npm run test:browser` 与浏览器截图核对 320、390、768、1280 宽度。
 
 `npm run dev` 通过 cf 启动 `http://127.0.0.1:8794/`，用于验证实际静态资源与重定向，不提供保存接口。普通预览启动后可用 `npm run verify:downloads -- <预览地址>` 检查下载；其他入口为 `verify:typography`、`verify:mobile` 和 `verify`。浏览器验收脚本默认地址各不相同，运行时应明确传入地址；完整验收需要素材。
 

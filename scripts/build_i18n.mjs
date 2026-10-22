@@ -1,5 +1,5 @@
 // 由中文页生成其他语言的页面。中文 HTML 是唯一手编源，译文按原文片段保存在 i18n/<语言>.json。
-// 文字节点与可读属性按整段原文查表；带 translate="no" 的子树保留原文。脚本里的动态文案用 t('原文')，
+// 文字节点与可读属性按整段原文查表；带 translate="no" 的子树连同属性保留原文。脚本里的动态文案用 t('原文')，
 // 生成的页面注入 window.PEACH_I18N 供脚本查表。中文改动后缺译或多余的译文都会让检查失败。
 import {readFile, writeFile, mkdir, readdir} from 'node:fs/promises';
 import path from 'node:path';
@@ -18,12 +18,13 @@ const escapeAttribute = (value, quote) => value.replaceAll('&', '&amp;').replace
   .replaceAll('&amp;amp;', '&amp;').replace(/&amp;(#?\w+;)/g, '&$1');
 
 function translateTag(tag, locale, report, skip) {
+  if (skip) return tag;
   return tag.replace(ATTRIBUTE, (all, space, name, equals, quoted, double, single) => {
     const quote = double === undefined ? "'" : '"';
     const value = double ?? single;
     const mapped = locale.attributes?.[name]?.[value];
     if (mapped !== undefined) return `${space}${name}${equals}${quote}${escapeAttribute(mapped, quote)}${quote}`;
-    if (skip || !TEXT_ATTRIBUTES.has(name) || !CJK.test(value)) return all;
+    if (!TEXT_ATTRIBUTES.has(name) || !CJK.test(value)) return all;
     report.used.add(value);
     if (!Object.hasOwn(locale.text, value)) {report.missing.add(value); return all}
     return `${space}${name}${equals}${quote}${escapeAttribute(locale.text[value], quote)}${quote}`;

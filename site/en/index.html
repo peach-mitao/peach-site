@@ -55,6 +55,8 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .punct{display:inline-block;width:.6em;letter-spacing:normal}
 /* 英文标点跟随单词，不占全角宽度，也不悬挂。 */
 :lang(en) .punct,:lang(en) .hero h1 .headline-first .punct{display:inline;width:auto;position:static}
+/* 英文按单词折行，不需要中文的整短语保护。 */
+:lang(en) .nowrap{white-space:normal}
 .headline-first{position:relative;display:inline-block}
 .hero-break{display:none}
 .say b{color:var(--ink);font-weight:600}
@@ -76,6 +78,17 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .nav-links a{padding:8px 12px;border-radius:8px;transition:color .15s,background .15s}
 .nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
 .nav-end{display:flex;align-items:center;gap:8px;justify-self:end}
+/* 语言菜单：地球仪按钮展开，当前语言带勾；手机顶栏放不下 GitHub 时保留语言入口。 */
+.lang-menu{position:relative}
+.btn.icon-btn{width:36px;padding:0}
+.lang-list{position:absolute;left:0;top:calc(100% + 8px);z-index:20;min-width:156px;margin:0;padding:6px;list-style:none;border-radius:12px;border:1px solid var(--hair-3);
+  background:linear-gradient(137deg,rgba(17,18,20,.94) 4.87%,rgba(12,13,15,.98) 75.88%);box-shadow:inset 0 1px 1px rgba(255,255,255,.12),0 12px 32px rgba(0,0,0,.45)}
+.lang-list a{display:flex;align-items:center;justify-content:space-between;gap:16px;height:36px;padding:0 10px;border-radius:8px;font-size:14px;color:var(--ink-2);white-space:nowrap}
+.lang-list a:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+:is(html[lang="zh-CN"] .lang-list [hreflang="zh-CN"],html[lang="en"] .lang-list [hreflang="en"]){color:var(--ink)}
+:is(html[lang="zh-CN"] .lang-list [hreflang="zh-CN"],html[lang="en"] .lang-list [hreflang="en"])::after{content:"";width:14px;height:14px;background:currentColor;
+  -webkit-mask:var(--check) center/contain no-repeat;mask:var(--check) center/contain no-repeat;
+  --check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
 
 /* 临时公告：悬浮在视口底部，页尾留出同等空间。 */
 body:has(.site-notice){padding-bottom:96px}
@@ -117,8 +130,7 @@ body:has(.site-notice){padding-bottom:96px}
 /* 按钮宽度容得下各平台的文字，换字时不改变位置；文字与版本行定稿后淡入。 */
 .cta-download>.btn{min-width:180px}
 .nav [data-primary-download]{min-width:162px}
-:lang(en) .cta-download>.btn{min-width:224px}
-:lang(en) .nav [data-primary-download]{min-width:206px}
+:lang(en) .nav [data-primary-download]{min-width:124px}
 [data-primary-download]>*,.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]{transition:opacity .2s}
 .dl-label-pending [data-primary-download]>*,.dl-meta-pending :is(.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]){opacity:0}
 .cta-secondary{display:flex;justify-content:center;gap:12px}
@@ -546,9 +558,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   body:has(.site-notice){padding-bottom:132px}
   .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
   .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
-  .nav-end .btn-quiet span,.nav-end .lang-switch{display:none}
+  .nav-end .btn-quiet span,.nav-end .nav-github{display:none}
   .code pre{padding:12px;font-size:12px}
   .nav-end .btn-quiet{width:36px;padding:0}
+  /* 手机按「其他平台」显示通用文字，不会换字，顶栏按钮按实际文字收窄。 */
+  .nav [data-primary-download]{min-width:0}
   .hero{padding:160px 0 72px}
   .hero .say{font-size:17px;line-height:1.65;max-width:21em}
   .caption-break{display:block}
@@ -577,9 +591,13 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 @media (max-width:400px){
   .code pre{padding:12px 10px;font-size:11px}
   .code pre span{padding-left:1ch;text-indent:-1ch}
+  /* 最窄屏顶栏只留标志；平台切换三等分铺满。 */
+  .nav .brand{font-size:0;gap:0}
+  .platform-options{display:flex;width:100%}
+  .platform-options button{flex:1;justify-content:center;gap:6px;padding:10px 6px}
 }
 </style>
-<script>window.PEACH_I18N={"Windows、macOS 与 Docker":"Windows, macOS and Docker","下载 Windows 版":"Download for Windows","下载 macOS 版":"Download for macOS","部署 Docker 版":"Deploy with Docker","下载 Peach":"Download Peach","选择 Apple Silicon 或 Intel 版本":"Choose Apple Silicon or Intel","本地测试包":"Local test build","测试版":"Beta","下载安装版":"Download installer","下载免安装版":"Download portable","下载 Apple Silicon 版":"Download for Apple Silicon","下载 Intel 版":"Download for Intel","本地预览使用本机测试包，尚未公开发布。":"This local preview uses a test build from this machine; it is not public yet. ","测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。":"Test builds are not notarized by Apple yet. Run one Terminal command before the first launch.","Mac 测试包尚未公开发布，发布后会在此提供下载。":"Mac test builds are not public yet. Downloads will appear here once released.","暂停":"Pause","播放":"Play","取消静音":"Unmute","静音":"Mute","退出全屏":"Exit full screen","全屏":"Full screen","退出画中画":"Exit picture in picture","画中画":"Picture in picture","拖我试试":"Drag me","版权投诉 / DMCA":"Copyright notice / DMCA","姓名或机构与联系人：":"Name, or organization and contact person: ","联系邮箱：":"Contact email: ","联系地址与电话：":"Mailing address and phone: ","受保护作品及权利说明：":"Protected work and rights:","被投诉内容网址：":"Reported URLs:","我善意相信，被投诉的使用方式未获得版权人、其代理人或法律的授权。":"I have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law.","我声明通知中的信息准确，并在承担伪证责任的前提下确认，我是相关专有权利的权利人，或已获授权代表其行事。":"I state that the information in this notice is accurate and, under penalty of perjury, that I am the owner of, or authorized to act on behalf of the owner of, an exclusive right that is allegedly infringed.","电子签名：":"Electronic signature: ","日期：":"Date: ","Peach 版权投诉 / DMCA":"Peach copyright notice / DMCA","正文已复制。请在邮箱中检查并发送。":"Text copied. Review and send it from your email.","请手动复制已选中的正文。":"Copy the selected text manually.","已复制":"Copied","复制失败":"Copy failed","复制":"Copy"}</script>
+<script>window.PEACH_I18N={"Windows、macOS 与 Docker":"Windows, macOS and Docker","下载 Windows 版":"Download","下载 macOS 版":"Download","部署 Docker 版":"Deploy","下载 Peach":"Download","选择 Apple Silicon 或 Intel 版本":"Choose your chip","本地测试包":"Local test build","测试版":"Beta","下载安装版":"Installer","下载免安装版":"Portable","下载 Apple Silicon 版":"Apple Silicon","下载 Intel 版":"Intel","本地预览使用本机测试包，尚未公开发布。":"This local preview uses a test build from this machine; it is not public yet. ","测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。":"Test builds are not notarized by Apple yet. Run one Terminal command before the first launch.","Mac 测试包尚未公开发布，发布后会在此提供下载。":"Mac test builds are not public yet. Downloads will appear here once released.","暂停":"Pause","播放":"Play","取消静音":"Unmute","静音":"Mute","退出全屏":"Exit full screen","全屏":"Full screen","退出画中画":"Exit picture in picture","画中画":"Picture in picture","拖我试试":"Drag me","版权投诉 / DMCA":"Copyright notice / DMCA","姓名或机构与联系人：":"Name, or organization and contact person: ","联系邮箱：":"Contact email: ","联系地址与电话：":"Mailing address and phone: ","受保护作品及权利说明：":"Protected work and rights:","被投诉内容网址：":"Reported URLs:","我善意相信，被投诉的使用方式未获得版权人、其代理人或法律的授权。":"I have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law.","我声明通知中的信息准确，并在承担伪证责任的前提下确认，我是相关专有权利的权利人，或已获授权代表其行事。":"I state that the information in this notice is accurate and, under penalty of perjury, that I am the owner of, or authorized to act on behalf of the owner of, an exclusive right that is allegedly infringed.","电子签名：":"Electronic signature: ","日期：":"Date: ","Peach 版权投诉 / DMCA":"Peach copyright notice / DMCA","正文已复制。请在邮箱中检查并发送。":"Text copied. Review and send it from your email.","请手动复制已选中的正文。":"Copy the selected text manually.","已复制":"Copied","复制失败":"Copy failed","复制":"Copy"}</script>
 </head>
 <body>
 
@@ -644,6 +662,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <symbol id="i-docker" viewBox="0 0 340 268"><path fill="currentColor" d="M334,110.1c-8.3-5.6-30.2-8-46.1-3.7-.9-15.8-9-29.2-24-40.8l-5.5-3.7-3.7,5.6c-7.2,11-10.3,25.7-9.2,39,.8,8.2,3.7,17.4,9.2,24.1-20.7,12-39.8,9.3-124.3,9.3H0c-.4,19.1,2.7,55.8,26,85.6,2.6,3.3,5.4,6.5,8.5,9.6,19,19,47.6,32.9,90.5,33,65.4,0,121.4-35.3,155.5-120.8,11.2.2,40.8,2,55.3-26,.4-.5,3.7-7.4,3.7-7.4l-5.5-3.7h0ZM85.2,92.7h-36.7v36.7h36.7v-36.7ZM132.6,92.7h-36.7v36.7h36.7v-36.7ZM179.9,92.7h-36.7v36.7h36.7v-36.7ZM227.3,92.7h-36.7v36.7h36.7v-36.7ZM37.8,92.7H1.1v36.7h36.7v-36.7ZM85.2,46.3h-36.7v36.7h36.7v-36.7ZM132.6,46.3h-36.7v36.7h36.7v-36.7ZM179.9,46.3h-36.7v36.7h36.7v-36.7ZM179.9,0h-36.7v36.7h36.7V0Z"/></symbol>
     <symbol id="i-telegram" viewBox="0 0 24 24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18"/></g></symbol>
   </defs>
 </svg>
 
@@ -656,9 +675,15 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <a href="#download">Download</a>
     </nav>
     <div class="nav-end">
-      <a class="btn btn-quiet lang-switch" href="/" hreflang="zh-CN" lang="zh-CN" aria-label="中文">中文</a>
-      <a class="btn btn-quiet" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
-      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+      <div class="lang-menu">
+        <button class="btn btn-quiet icon-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="lang-list" aria-label="Choose language"><svg aria-hidden="true"><use href="#i-globe"/></svg></button>
+        <ul class="lang-list" id="lang-list" translate="no" hidden>
+          <li><a href="/" hreflang="zh-CN" lang="zh-CN">简体中文</a></li>
+          <li><a href="/en/" hreflang="en" lang="en">English</a></li>
+        </ul>
+      </div>
+      <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
+      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
     </div>
   </div>
 </header>
@@ -673,7 +698,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <h1><span class="headline-first nowrap">All your videos<span class="punct">, </span></span><br class="hero-break"><span class="nowrap">in one place</span></h1>
       <p class="say"><span class="nowrap">Local drives, cloud drives</span><br class="caption-break"><span class="nowrap"> and the creators you follow,</span><span class="nowrap"> brought together.</span></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
         <div class="download-meta"><p class="download-caption" data-download-caption>Windows, macOS and Docker</p><a class="download-alternatives" href="#download">Other platforms</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>Live demo</a>
@@ -967,11 +992,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows<span class="download-version" data-release-version="windows">64-bit · Beta</span></h3>
           <div class="platform-packages">
           <div class="package-option" data-package="exe">
-            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Download installer</span></a>
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Installer</span></a>
             <p>Double-click to install (.exe)</p>
           </div>
           <div class="package-option" data-package="zip">
-            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Download portable</span></a>
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Portable</span></a>
             <p>Extract, then open Peach.exe (.zip)</p>
           </div>
           </div>
@@ -981,11 +1006,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">Beta</span></h3>
           <div class="platform-packages">
           <div class="package-option">
-            <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon coming soon</span></a>
+            <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon</span></a>
             <p>M-series chips · macOS 15 or later</p>
           </div>
           <div class="package-option">
-            <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel coming soon</span></a>
+            <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel</span></a>
             <p>Intel processors · macOS 14 or later</p>
           </div>
           </div>
@@ -1023,7 +1048,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <img src="/assets/peach-logo.png" alt="">
       <p class="say lg center"><b><span class="nowrap">Peach</span></b></p>
       <div class="cta cta-download">
-        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
         <div class="download-meta"><p class="download-caption" data-download-caption>Windows, macOS and Docker</p><a class="download-alternatives" href="#download">Other platforms</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>Live demo</a>
@@ -1211,6 +1236,15 @@ document.querySelectorAll('.copybtn').forEach(btn=>btn.addEventListener('click',
 
 const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// 语言菜单：点地球仪展开，点别处或按 Esc 收起。
+{
+  const menu=document.querySelector('.lang-menu'),button=menu.querySelector('button'),list=menu.querySelector('ul');
+  const toggle=open=>{button.setAttribute('aria-expanded',String(open));list.hidden=!open};
+  button.addEventListener('click',()=>toggle(list.hidden));
+  document.addEventListener('click',e=>{if(!menu.contains(e.target))toggle(false)});
+  menu.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){toggle(false);button.focus()}});
+}
 
 // 资料条：每行复制一份首尾相接。
 document.querySelectorAll('.marks-row').forEach(row=>[...row.children].forEach(el=>{

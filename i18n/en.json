@@ -1,9 +1,16 @@
 {
-  "pages": {"index.html": "en/index.html", "copyright/index.html": "en/copyright/index.html"},
+  "pages": {
+    "index.html": "en/index.html",
+    "copyright/index.html": "en/copyright/index.html"
+  },
   "attributes": {
-    "lang": {"zh-CN": "en", "en": "zh-CN"},
-    "hreflang": {"en": "zh-CN"},
-    "aria-label": {"English": "中文"},
+    "lang": {
+      "zh-CN": "en",
+      "en": "zh-CN"
+    },
+    "hreflang": {
+      "en": "zh-CN"
+    },
     "href": {
       "/": "/en/",
       "/en/": "/",
@@ -13,7 +20,6 @@
     }
   },
   "text": {
-    "EN": "中文",
     "English": "中文",
     "Peach · 蜜桃：私人影片馆藏": "Peach · Your private video library",
     "硬盘、网盘和关注的创作者，一处看完。开源、自托管。": "Local drives, cloud drives and the creators you follow, all in one place. Open source and self-hosted.",
@@ -23,7 +29,7 @@
     "导览": "Tour",
     "功能": "Features",
     "下载": "Download",
-    "下载 Peach": "Download Peach",
+    "下载 Peach": "Download",
     "Peach 蜜桃": "Peach",
     "所有片子": "All your videos",
     "，": ", ",
@@ -110,17 +116,17 @@
     "安装与部署": "Install and deploy",
     "下载平台": "Download platform",
     "64 位 · 测试版": "64-bit · Beta",
-    "下载安装版": "Download installer",
+    "下载安装版": "Installer",
     "双击安装（.exe）": "Double-click to install (.exe)",
-    "下载免安装版": "Download portable",
+    "下载免安装版": "Portable",
     "解压后打开 Peach.exe（.zip）": "Extract, then open Peach.exe (.zip)",
     "Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。": "Windows test builds are unsigned. If you see “Windows protected your PC”, choose “More info → Run anyway”. ",
     "Microsoft 官方说明": "Microsoft guide",
     "全部版本": "All releases",
     "测试版": "Beta",
-    "Apple Silicon 版准备中": "Apple Silicon coming soon",
+    "Apple Silicon 版准备中": "Apple Silicon",
     "M 系列芯片 · macOS 15 或更新版本": "M-series chips · macOS 15 or later",
-    "Intel 版准备中": "Intel coming soon",
+    "Intel 版准备中": "Intel",
     "Intel 处理器 · macOS 14 或更新版本": "Intel processors · macOS 14 or later",
     "打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。": "Open the DMG and drag Peach.app into the Applications folder. ",
     "安装与运行说明": "Install and run guide",
@@ -203,21 +209,22 @@
     "信息不足时，我们可能请求补充定位或权利说明。如果你认为内容被错误识别，请使用同一邮箱说明理由并提供相关依据。商标、肖像或隐私等其他权利问题，也可通过该邮箱联系，并注明问题类型。": "If information is missing, we may ask for more detail on location or rights. If you believe content was misidentified, explain why at the same address and include supporting evidence. For trademark, likeness, privacy or other rights issues, use the same address and state the type of issue.",
     "故意作出重大虚假版权声明可能产生法律责任。通知内容要求参考": "Knowingly making a material misrepresentation in a copyright notice may lead to liability. For notice requirements, see",
     "美国版权局的 Section 512 说明": "the U.S. Copyright Office's Section 512 resources",
-    "。本页不构成对任何具体使用行为的合法性认定。": ". This page does not determine whether any particular use is lawful."
+    "。本页不构成对任何具体使用行为的合法性认定。": ". This page does not determine whether any particular use is lawful.",
+    "选择语言": "Choose language"
   },
   "runtime": {
     "Windows、macOS 与 Docker": "Windows, macOS and Docker",
-    "下载 Windows 版": "Download for Windows",
-    "下载 macOS 版": "Download for macOS",
-    "部署 Docker 版": "Deploy with Docker",
-    "下载 Peach": "Download Peach",
-    "选择 Apple Silicon 或 Intel 版本": "Choose Apple Silicon or Intel",
+    "下载 Windows 版": "Download",
+    "下载 macOS 版": "Download",
+    "部署 Docker 版": "Deploy",
+    "下载 Peach": "Download",
+    "选择 Apple Silicon 或 Intel 版本": "Choose your chip",
     "本地测试包": "Local test build",
     "测试版": "Beta",
-    "下载安装版": "Download installer",
-    "下载免安装版": "Download portable",
-    "下载 Apple Silicon 版": "Download for Apple Silicon",
-    "下载 Intel 版": "Download for Intel",
+    "下载安装版": "Installer",
+    "下载免安装版": "Portable",
+    "下载 Apple Silicon 版": "Apple Silicon",
+    "下载 Intel 版": "Intel",
     "本地预览使用本机测试包，尚未公开发布。": "This local preview uses a test build from this machine; it is not public yet. ",
     "测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。": "Test builds are not notarized by Apple yet. Run one Terminal command before the first launch.",
     "Mac 测试包尚未公开发布，发布后会在此提供下载。": "Mac test builds are not public yet. Downloads will appear here once released.",

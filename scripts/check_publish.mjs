@@ -40,7 +40,7 @@ async function files(dir, prefix='') {
   return result;
 }
 function excluded(path) {
-  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','_redirects','assets/sleeve.jpg',video.path].includes(path)
+  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','_redirects','404.html','assets/sleeve.jpg',video.path].includes(path)
     || /^assets\/dark\/.*\.jpg$/.test(path)
     || (/^assets\/shots\/.*\.jpg$/.test(path) && path!=='assets/shots/h-dark.jpg')
     || /^assets\/vendor\/sticker-forge\/.*\.d\.ts$/.test(path);
@@ -65,6 +65,12 @@ try {
     for(const path of ['/index-v1.html','/hello-preview.html','/_proto/stickers/','/assets/dark/detail.jpg','/assets/sleeve.jpg','/__edit.js','/__edit/save']) {
       assert.equal((await request(path)).status,404,path);
     }
+    // 未匹配的路径由静态资源返回 404 页，不进入 Worker，也不计调用次数。
+    const missing=await request('/__missing__/');
+    assert.equal(missing.status,404,'未匹配路径');
+    assert.equal(hash(withoutBeacon(missing.body)),hash(await readFile(new URL('../site/404.html',import.meta.url))),'未匹配路径返回 404 页');
+    const event=await request('/api/event');
+    assert.equal(event.status,405,'埋点入口只接受 POST');
     assert.equal((await request('/?edit')).body.includes(Buffer.from('/__edit.js')),false);
     const legacyVideo=await request('/'+video.path);
     assert.equal(legacyVideo.status,301,'视频原地址通过静态重定向转到 R2');

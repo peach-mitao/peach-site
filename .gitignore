@@ -15,6 +15,7 @@
 !/tsconfig.json
 !/docs/
 !/scripts/
+!/worker/
 !/tests/
 !/i18n/
 !/edit-client.js
@@ -23,6 +24,7 @@
 !/site/
 /site/*
 !/site/index.html
+!/site/404.html
 !/site/.assetsignore
 !/site/_redirects
 !/site/favicon.ico
@@ -31,6 +33,7 @@
 !/site/assets/
 /site/assets/*
 !/site/assets/i18n.js
+!/site/assets/analytics.js
 !/site/assets/media-01.css
 !/site/assets/media-01.js
 !/site/assets/downloads.js

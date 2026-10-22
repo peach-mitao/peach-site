@@ -94,4 +94,36 @@ Docker 与 Windows、macOS 共用平台选择入口；Linux 桌面默认显示 D
 
 本项目使用固定版本的 `cf` 与 [`cloudflare.config.ts`](https://developers.cloudflare.com/cf/projects/cloudflare-config/)，官网域名、Worker 名称和可观测性在此维护。`wrangler.config.ts` 仅维护打包器设置、素材目录和本地监听地址；Wrangler 是 cf 调用的打包依赖。`.cloudflare/` 保存生成类型和 Build Output，不进 Git。`npm run build` 执行 `cf build`，`npm run deploy` 执行 `cf deploy`。配置由官方 `cf migrate` 转换；这套配置仍为公开测试版，升级须核对构建和本地行为。
 
+站点有一个 Worker（`worker/index.ts`），`assets.runWorkerFirst` 只把 `/api/event` 交给它；页面、资源与未匹配路径都由静态资源层返回，不计 Worker 调用。未匹配路径返回 `site/404.html`，缺少这一页时资源层没有可返回的 404 页，扫描与探测请求会全部落到 Worker。Workers 免费档每天 10 万次调用按账号计，与演示站共用；超出后只有埋点收到 429，页面不受影响。
+
 Dependabot 分别对普通小版本更新与安全更新分组，大版本单独审阅；`@types/node` 保持 Node 24 运行基线，只自动更新同一大版本。CI 在 Windows 和 Linux 运行安装、类型与语法检查、行为测试和 cf 构建，Linux 另跑 Chromium 下载流程测试。依赖版本只在 `package.json` 与锁文件维护，素材清单的内容哈希不随工具版本机械改变。素材许可见 [NOTICE](../NOTICE.md)。
+
+## 访问统计
+
+Cloudflare 在页面里自动注入 Web Analytics 脚本，提供页面访问、国家、路径、来源、设备、浏览器族与系统族，没有语言、版本号和自定义事件。`site/assets/analytics.js` 只补这几项：打开页面和几个关键操作各发一条埋点到 `/api/event`，Worker 归一后写入 Analytics Engine 数据集 `peach_site_events`。数据集在第一次写入时自动创建，数据保留三个月。
+
+| 列 | 来源 | 用途 |
+| --- | --- | --- |
+| `event` | 页面 | `pageview`、`lang_switch`、`download`、`platform`、`mac_help`、`faq`；同时作为唯一的采样键 |
+| `page_lang`、`path` | 页面 | 实际看的语言版本与页面，只接受已知取值 |
+| `pref_lang`、`pref_langs` | `Accept-Language` | 浏览器的首选语言（含地区）与按偏好排序的前三种主语言，用来判断值得投入哪种语言；与页面上的语言切换分开统计 |
+| `country` | Cloudflare 按 IP 判断 | 与语言做交叉，区分「人在哪」与「读什么」 |
+| `browser`、`browser_version` | UA | 浏览器族与主版本，App 内置浏览器（X、微信、QQ）单独归类 |
+| `os`、`os_version`、`arch` | UA 与 Chromium 客户端提示 | 系统与版本、CPU 架构。主流浏览器把 Windows 冻结为 10.0、macOS 冻结为 10.15.7，UA 只能写成 `10+`、`10.15+`；客户端提示给出的 Windows 11、macOS 真实主版本与芯片架构优先 |
+| `device` | UA | 手机、平板与桌面 |
+| `referrer`、`utm_source` | 页面 | 来源只记域名，站内跳转记为 `(internal)` |
+| `detail` | 页面 | 事件补充：切换到的语言、下载的包、选择的平台、展开的问答序号 |
+
+统计匿名：不用 Cookie 或本地存储，不发访客标识，不存 IP 与 UA 原文，任意输入都经白名单或格式校验后才写入。爬虫、脚本与无头浏览器照常收到 204，但不记录，所以浏览器验收不会写入统计。新增维度只能追加到 `worker/events.ts` 的 `BLOBS` 末尾，查询脚本按同一顺序取列。
+
+`npm run verify:analytics -- <地址>` 在页面上逐个触发埋点并核对 204；`npm run test:browser` 已包含这一步。本地 `cf dev` 的 Analytics Engine 绑定不落盘，只能验证路由与返回码，写入与查询要在线上核对。
+
+查询使用 SQL API，需要账号 ID 与带 Account Analytics Read 权限的 API 令牌，计数一律用 `SUM(_sample_interval)` 还原采样：
+
+```powershell
+$env:CLOUDFLARE_ACCOUNT_ID = '<账号 ID>'
+$env:CLOUDFLARE_API_TOKEN = '<只读令牌>'
+npm run analytics -- --days 30 --report languages --report switches
+```
+
+报表有 `languages`、`readable`、`countries`、`switches`、`downloads`、`systems`、`sources`、`actions`，省略 `--report` 输出全部。Web Analytics 的原有数据也可以用 `cf sql query` 查询数据集 `events.rumPageloadEvents`；HTML 请求的完整 UA 在 `events.httpRequests`。

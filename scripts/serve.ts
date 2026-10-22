@@ -70,6 +70,8 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }
+      // 本地预览不记录访问统计，埋点照线上一样返回 204。
+      if (req.method === 'POST' && name === '/api/event') {req.resume(); res.writeHead(204).end(); return}
       if (!['GET', 'HEAD'].includes(req.method ?? '')) {res.writeHead(405, {Allow: 'GET, HEAD'}).end(); return}
       const reply = (body: string, type: string) => {
         res.writeHead(200, {'Content-Type': type, 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store'}).end(req.method === 'HEAD' ? undefined : body);

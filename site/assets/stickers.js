@@ -201,12 +201,14 @@ async function start() {
     pin(); addEventListener("resize", pin);
   }
 
-  // 轮流翘一下角：每 3.2 秒一张，拖过之后 9 秒一张；有人正在拿的那张跳过
+  // 轮流翘一下角：每 3.2 秒一张，拖过之后 9 秒一张；有人正在拿的那张跳过，首屏滚出视口时不播
   if (calm) return stickers;
-  let turn = 0;
+  let turn = 0, inView = true;
+  const hero = document.querySelector(".hero");
+  if (hero) new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; }).observe(hero);
   const tick = async () => {
     const s = stickers[turn++ % stickers.length];
-    if (s.inst && !document.hidden && !active && !s.busy) {
+    if (s.inst && inView && !document.hidden && !active && !s.busy) {
       s.busy = true;
       const motion = {origin: {x: s.item.corner[0], y: s.item.corner[1]}, target: {x: 0.5, y: 0.5}};
       await tween(900, (t) => { if (!active) s.inst.setPeelProgress(0.17 * Math.sin(Math.PI * t) ** 2, motion); });
@@ -219,10 +221,24 @@ async function start() {
   return stickers;
 }
 
+// 没有硬件加速时 WebGL 走软件渲染，九张贴纸的纹理生成与重绘会占满主线程好几秒；这时只留静态贴纸图。
+// 软件渲染作为回退时浏览器按 failIfMajorPerformanceCaveat 拒绝；被显式选中时只能从渲染器名称认出来。
+function accelerated() {
+  for (const type of ["webgl2", "webgl"]) {
+    const gl = document.createElement("canvas").getContext(type, {failIfMajorPerformanceCaveat: true});
+    if (!gl) continue;
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    return !/SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(renderer);
+  }
+  return false;
+}
+
 const mounted = start().catch((err) => { console.warn("贴纸没有加载", err); return []; });
 export async function enhanceStickers() {
   const stickers = await mounted;
-  if (!stickers?.length) return;
+  if (!stickers?.length || !accelerated()) return;
   const {createSticker} = await import('/assets/vendor/sticker-forge/sticker-forge.es.js');
   for (const s of stickers) {
     await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));

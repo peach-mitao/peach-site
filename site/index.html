@@ -30,8 +30,12 @@
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
 body{margin:0;background:var(--page);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit;text-decoration:none}
-/* 正文外链整条换行，末尾的 ↗ 不单独落到下一行。 */
+/* 正文外链整条换行，末尾的箭头不单独落到下一行。 */
 p a[href^="http"]{white-space:nowrap}
+/* 外链箭头用 SVG 遮罩绘制，跟随文字颜色；iOS 不会把它换成 emoji。 */
+.ext::after{content:"";display:inline-block;width:.78em;height:.78em;margin-left:.22em;vertical-align:-.04em;background:currentColor;
+  -webkit-mask:var(--ext-arrow) center/contain no-repeat;mask:var(--ext-arrow) center/contain no-repeat;
+  --ext-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E")}
 img,video{display:block;max-width:100%}
 :focus-visible{outline:2px solid var(--tungsten);outline-offset:2px}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
@@ -696,7 +700,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-367 涼森れむの「顔」で</b><small>2026-07-17</small></div>
               <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>PASN-027 神女優で童貞卒業</b><small>2026-06-18</small></div>
             </div>
-          </div></div></div><span class="live-go">打开演示 ↗</span></div>
+          </div></div></div><span class="live-go ext">打开演示</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/follow-manage?tab=add" data-mock="follow">
           <div class="txt"><p class="say"><b>关注创作者</b><span class="sub">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></span></p></div>
@@ -724,7 +728,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
             </div>
             <div class="mk-toast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>已添加 2 个关注来源</span></div>
-          </div></div></div><span class="live-go">打开演示 ↗</span></div>
+          </div></div></div><span class="live-go ext">打开演示</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
           <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
@@ -764,7 +768,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 </div>
               </div>
             </div>
-          </div></div></div><span class="live-go">打开演示 ↗</span></div>
+          </div></div></div><span class="live-go ext">打开演示</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/" data-mock="theme">
           <div class="txt"><p class="say"><b>丰富的自定义选项</b><span class="sub">一键切换深色浅色，配色<span class="nowrap">任你选。</span></span></p></div>
@@ -814,7 +818,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
               <span class="mk-btn">详细设置</span>
             </div>
-          </div></div></div><span class="live-go">打开演示 ↗</span></div>
+          </div></div></div><span class="live-go ext">打开演示</span></div>
         </a>
         <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
           <div class="txt"><p class="say" data-copy-draft><b>影片墙</b><span class="sub">拖动封面墙，沉浸式挑片。</span></p></div>
@@ -849,7 +853,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">00:00 / 2:04:00</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
               </div><div class="mk-wall-seek"><i></i></div></div>
             </div>
-          </div></div></div><span class="live-go" data-copy-draft>打开演示 ↗</span></div>
+          </div></div></div><span class="live-go ext" data-copy-draft>打开演示</span></div>
         </a>
         <div class="feature-more reveal">
           <img src="/assets/peach-logo.png" alt="" width="96" height="96" loading="lazy">
@@ -937,7 +941,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <p>解压后打开 Peach.exe（.zip）</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。<a href="https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft 官方说明 ↗</a> <a href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本 ↗</a></p>
+          <p class="note" style="margin-top:22px">Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。<a class="ext" href="https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft 官方说明</a> <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
@@ -951,8 +955,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <p>Intel 处理器 · macOS 14 或更新版本</p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明 ↗</a></p>
-          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <a href="https://support.apple.com/zh-cn/102445">Apple 官方说明 ↗</a></p>
+          <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <a class="ext" href="https://support.apple.com/zh-cn/102445">Apple 官方说明</a></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>

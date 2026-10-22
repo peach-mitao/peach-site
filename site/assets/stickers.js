@@ -8,6 +8,8 @@
 // 默认位置只落在首屏标题和按钮两侧的空白里：横坐标按空白宽度等比换算，空白窄了贴纸跟着缩小，太窄就不贴。
 // 提示：进场逐张落下；每隔几秒轮流翘一下角；每次打开时显示「拖我试试」便签，本次拖过就收起。
 
+import {t} from "./i18n.js";
+
 // 按 1440 宽排：x 为正从左边量、为负从右边量，y 从顶上量，size 是贴纸本体的显示宽度（CSS 像素）。
 // size 不超过贴纸图宽度的一半，高分屏上也不糊。corner 是翘角提示从哪一角起（0..1，y 向下）。
 const LIST = [
@@ -187,7 +189,7 @@ async function start() {
   if (!touched && host) {
     tag = document.createElement("div");
     tag.className = "stk-tag"; tag.hidden = true;
-    tag.innerHTML = '拖我试试<svg viewBox="0 0 46 30"><path d="M3 6c10 16 24 20 38 14"/><path d="m35 14 6 6-8 3"/></svg>';
+    tag.innerHTML = t('拖我试试') + '<svg viewBox="0 0 46 30"><path d="M3 6c10 16 24 20 38 14"/><path d="m35 14 6 6-8 3"/></svg>';
     layer.append(tag);
     // 放在贴纸左边；左边会伸进首屏文字时改放到贴纸上方
     const pin = () => {

@@ -56,7 +56,7 @@ try {
   assert.equal(report.homeWithoutBeaconHash,hash(source),'扣除 CDN 统计脚本后官网定稿逐字节一致');
   if(publicSite) {
     for(const path of (await files(new URL('../site/',import.meta.url))).filter(path=>!excluded(path))) {
-      const response=await request(path==='index.html'?'/':path==='copyright/index.html'?'/copyright/':`/${path}`);
+      const response=await request(path.endsWith('index.html')?`/${path.slice(0,-'index.html'.length)}`:`/${path}`);
       const local=await readFile(new URL(`../site/${path}`,import.meta.url));
       assert.equal(response.status,200,path);
       assert.equal(hash(path.endsWith('.html')?withoutBeacon(response.body):response.body),hash(local),path);

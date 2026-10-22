@@ -12,6 +12,9 @@
 <meta name="theme-color" content="#04060A">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="apple-touch-icon" href="/assets/peach-logo.png">
+<link rel="alternate" hreflang="zh-CN" href="https://peach.video/">
+<link rel="alternate" hreflang="en" href="https://peach.video/en/">
+<link rel="alternate" hreflang="x-default" href="https://peach.video/">
 <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/media-01.css">
 <!-- 下载按钮按访客平台改字、版本号来自发行清单；定稿前先隐去，最多等 3 秒。 -->
@@ -49,6 +52,8 @@ img,video{display:block;max-width:100%}
 h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .nowrap{white-space:nowrap}
 .punct{display:inline-block;width:.6em;letter-spacing:normal}
+/* 英文标点跟随单词，不占全角宽度，也不悬挂。 */
+:lang(en) .punct,:lang(en) .hero h1 .headline-first .punct{display:inline;width:auto;position:static}
 .headline-first{position:relative;display:inline-block}
 .hero-break{display:none}
 .say b{color:var(--ink);font-weight:600}
@@ -540,7 +545,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   body:has(.site-notice){padding-bottom:132px}
   .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
   .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
-  .nav-end .btn-quiet span{display:none}
+  .nav-end .btn-quiet span,.nav-end .lang-switch{display:none}
   .code pre{padding:12px;font-size:12px}
   .nav-end .btn-quiet{width:36px;padding:0}
   .hero{padding:160px 0 72px}
@@ -649,6 +654,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <a href="#download">下载</a>
     </nav>
     <div class="nav-end">
+      <a class="btn btn-quiet lang-switch" href="/en/" hreflang="en" lang="en" aria-label="English">EN</a>
       <a class="btn btn-quiet" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
       <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
     </div>
@@ -717,7 +723,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <div class="live-grid">
         <a class="card live reveal" href="https://demo.peach.video/performers/凉森玲梦" data-mock="feed">
           <div class="txt"><p class="say"><b>订阅艺人</b><span class="sub">新发行的片子，第一时间知道。</span></p></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-feed">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-feed">
             <div class="mk-hero"><div class="mk-ava"><img src="/assets/mock/f-remu.webp" alt="" loading="lazy"></div><div><h4>凉森玲梦</h4><p>3 个视频 · T-POWERS · 出道 2019-03-09</p></div></div>
             <div class="mk-sect">订阅新作<small>4 部新发行</small></div>
             <div class="mk-row">
@@ -730,7 +736,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </a>
         <a class="card live reveal" href="https://demo.peach.video/follow-manage?tab=add" data-mock="follow">
           <div class="txt"><p class="say"><b>关注创作者</b><span class="sub">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></span></p></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-follow">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-follow">
             <div class="mk-h"><h4>关注管理</h4></div>
             <div class="mk-stats">
               <div class="mk-stat"><small>关注创作者</small><b><span class="v">0</span><i>位</i></b></div>
@@ -758,7 +764,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </a>
         <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
           <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-taste">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-taste">
             <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
             <div class="mk-stats">
               <div class="mk-stat"><small>浏览记录</small><b><span class="v" data-to="11537">0</span></b><em data-done="4 个数据源 · 2025/9/28—2026/9/27">尚未读取</em></div>
@@ -798,7 +804,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </a>
         <a class="card live reveal" href="https://demo.peach.video/" data-mock="theme">
           <div class="txt"><p class="say"><b>丰富的自定义选项</b><span class="sub">一键切换深色浅色，配色<span class="nowrap">任你选。</span></span></p></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-theme">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-theme">
             <aside class="mk-tside">
               <div class="lib"><img src="/assets/peach-logo.png" alt="" width="18" height="18">Peach</div>
               <div class="mk-nav on"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10"/></svg>首页</div>
@@ -848,7 +854,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </a>
         <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
           <div class="txt"><p class="say" data-copy-draft><b>影片墙</b><span class="sub">拖动封面墙，沉浸式挑片。</span></p></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
             <div class="mk-wall-world">
               <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
               <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
@@ -1031,6 +1037,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <a class="icon-link" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="通过 Telegram 联系 longmeidao" title="Telegram · @longmeidao"><svg aria-hidden="true"><use href="#i-telegram"/></svg></a>
           <a class="icon-link" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="通过 X 联系 longmeidao" title="X · @longmeidao"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
           <a href="/copyright/" aria-label="DMCA 版权投诉" title="DMCA 版权投诉">DMCA</a>
+          <a href="/en/" hreflang="en" lang="en">English</a>
         </nav>
       </div>
     </footer>
@@ -1167,6 +1174,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 <script src="/assets/media-01.js" defer></script>
 <script type="module" src="/assets/downloads.js"></script>
 <script>
+const t=text=>window.PEACH_I18N?.[text]??text;
 const shots=[...document.querySelectorAll('#screen picture')];
 const tabs=[...document.querySelectorAll('.dock button')];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
@@ -1195,8 +1203,8 @@ const pageLoaded=document.readyState==='complete' ? Promise.resolve() : new Prom
 
 document.querySelectorAll('.copybtn').forEach(btn=>btn.addEventListener('click',async()=>{
   const text=document.getElementById(btn.dataset.copy).textContent;
-  try{await navigator.clipboard.writeText(text);btn.textContent='已复制'}catch{btn.textContent='复制失败'}
-  setTimeout(()=>btn.textContent='复制',1600);
+  try{await navigator.clipboard.writeText(text);btn.textContent=t('已复制')}catch{btn.textContent=t('复制失败')}
+  setTimeout(()=>btn.textContent=t('复制'),1600);
 }));
 
 const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});

@@ -16,6 +16,7 @@
 !/docs/
 !/scripts/
 !/tests/
+!/i18n/
 !/edit-client.js
 !/TYPOGRAPHY.md
 !/assets-manifest.json
@@ -26,8 +27,10 @@
 !/site/_redirects
 !/site/favicon.ico
 !/site/copyright/
+!/site/en/
 !/site/assets/
 /site/assets/*
+!/site/assets/i18n.js
 !/site/assets/media-01.css
 !/site/assets/media-01.js
 !/site/assets/downloads.js

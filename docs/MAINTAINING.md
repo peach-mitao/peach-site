@@ -62,6 +62,20 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 原位编辑核心唯一维护源为 Peach 应用仓库的 `frontend/src/copy-editor-core.js`。官网 `edit-client.js` 只适配 HTML 原文索引、导览属性与动态文案保存；核心通过本地 `/__edit-core.js` 在页面脚本前同步加载。`edit:sync` 从指定应用提交取得精确内容，`copy-editor-source.json` 记录提交及 SHA-256，`npm run check` 验证副本一致。不要单独修改 `copy-editor-core.js`。清空文案可以删除整行文字；删除默认导览说明时服务端同时重排后续索引。保存异常始终返回 JSON，未确认的响应由共享核心提示核对。
 
+首屏下载按钮按访客平台改字，版本号来自发行清单。`<head>` 的内联脚本先给页面加 `dl-label-pending` 与 `dl-meta-pending`，`downloads.js` 首次渲染后显示按钮文字，当前平台取得版本或发行清单查完后显示版本行；最多等 3 秒。按钮的最小宽度容得下各平台最长的文字，换字时位置不变。
+
+## 多语言
+
+`site/index.html` 与 `site/copyright/index.html` 是唯一手编的中文源。英文页 `site/en/` 由 `npm run i18n` 生成并随源码提交，译文在 `i18n/en.json`：
+
+| 字段 | 内容 |
+| --- | --- |
+| `text` | 文字节点与 `alt`、`title`、`aria-label`、`placeholder`、`content`、`data-label`、`data-say`、`data-title`、`data-done` 的整段原文到译文 |
+| `attributes` | 按属性名精确替换的值，如 `lang`、`hreflang` 与站内链接 |
+| `runtime` | 脚本中 `t('原文')` 的译文，生成时注入为 `window.PEACH_I18N` |
+
+`translate="no"` 的子树保留原文；首页的演示界面与应用一致，保持中文。中文改字后 `npm run check` 会列出缺少或不再使用的译文，以及需要重新生成的页面。补齐 `i18n/en.json` 后运行 `npm run i18n`。英文页不提供 `?edit` 原位编辑，改译文直接改 JSON。脚本新增文案时用 `t()` 包住原文：模块从 `/assets/i18n.js` 导入，经典脚本使用同名的单行查表函数。顶栏与页尾提供语言切换，两种语言互相声明 `hreflang`；访问根路径不按浏览器语言自动跳转。
+
 `npm run dev` 通过 cf 启动 `http://127.0.0.1:8794/`，用于验证实际静态资源与重定向，不提供保存接口。普通预览启动后可用 `npm run verify:downloads -- <预览地址>` 检查下载；其他入口为 `verify:typography`、`verify:mobile` 和 `verify`。浏览器验收脚本默认地址各不相同，运行时应明确传入地址；完整验收需要素材。
 
 下载区按平台读取最新完整公开发行，包括预发布版本。Windows 安装包与免安装包、macOS 两种架构包须分别完整上传。Safari 的 Intel UA 不代表实际芯片，芯片不明时保留人工选择；下载逻辑的测试使用任意合成版本，不绑定当前发行号。

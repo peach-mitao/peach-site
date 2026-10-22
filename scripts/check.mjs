@@ -20,3 +20,7 @@ const result = spawnSync(process.execPath, ['--check', fileURLToPath(new URL('..
 if (result.error) throw result.error;
 if (result.status !== 0) process.exit(result.status ?? 1);
 await verifyCopyEditor();
+// 外语页面须与中文源和译文表一致：缺译、多余译文或未重新生成都会失败。
+const i18n = spawnSync(process.execPath, [fileURLToPath(new URL('./build_i18n.mjs', import.meta.url)), '--check'], {stdio: 'inherit'});
+if (i18n.error) throw i18n.error;
+if (i18n.status !== 0) process.exit(i18n.status ?? 1);

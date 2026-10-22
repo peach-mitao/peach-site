@@ -1,4 +1,5 @@
 import {renderCopy} from './copy.js';
+import {t} from './i18n.js';
 
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const releasesApi = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
@@ -8,7 +9,7 @@ const dockerVersionApi = 'https://img.shields.io/docker/v/longmeidao/peach.json?
 
 export function downloadCaption(platform, version) {
   const label = {windows: 'Windows', macos: 'macOS', docker: 'Docker'}[platform];
-  if (!label) return 'Windows、macOS 与 Docker';
+  if (!label) return t('Windows、macOS 与 Docker');
   const value = String(version || '').replace(/^v/, '');
   return label + (/^\d+\.\d+\.\d+(?:-[\da-z.-]+)?(?:\+[\da-z.-]+)?$/i.test(value) ? ` · v${value}` : '');
 }
@@ -68,13 +69,14 @@ function start() {
     const ready = state.platform === 'macos' ? mac : state.downloads.windows;
     const file = state.platform === 'windows' ? ready?.files.setup
       : state.platform === 'macos' && state.architecture ? ready?.files[`macos-${state.architecture}`] : null;
-    const label = state.platform === 'windows' ? '下载 Windows 版' : state.platform === 'macos' ? '下载 macOS 版' : state.platform === 'docker' ? '部署 Docker 版' : '下载 Peach';
+    const label = state.platform === 'windows' ? t('下载 Windows 版') : state.platform === 'macos' ? t('下载 macOS 版')
+      : state.platform === 'docker' ? t('部署 Docker 版') : t('下载 Peach');
     const icon = state.platform === 'windows' ? '#i-windows' : state.platform === 'macos' ? '#i-apple' : state.platform === 'docker' ? '#i-docker' : '#i-download';
     document.querySelectorAll('[data-primary-download]').forEach(link => {
       link.href = file?.href || '#download';
       renderCopy(link.querySelector('span'), `download.primary.${state.platform}`, label);
       link.querySelector('use').setAttribute('href', icon);
-      link.title = state.platform === 'macos' && !state.architecture ? '选择 Apple Silicon 或 Intel 版本' : label;
+      link.title = state.platform === 'macos' && !state.architecture ? t('选择 Apple Silicon 或 Intel 版本') : label;
     });
     const caption = downloadCaption(state.platform, state.platform === 'docker' ? state.dockerVersion : ready?.version);
     document.querySelectorAll('[data-download-caption]').forEach(element => {
@@ -87,20 +89,20 @@ function start() {
     });
     document.querySelector('[data-source-panel]').hidden = panel === 'docker';
     for (const [platform, entry] of Object.entries({...state.downloads, ...(mac ? {macos: mac} : {})})) {
-      document.querySelector(`[data-release-version="${platform}"]`).textContent = `v${entry.version} · ${entry.local ? '本地测试包' : '测试版'}`;
+      document.querySelector(`[data-release-version="${platform}"]`).textContent = `v${entry.version} · ${entry.local ? t('本地测试包') : t('测试版')}`;
       for (const [kind, asset] of Object.entries(entry.files)) {
         const link = document.querySelector(`[data-download="${kind}"]`);
         if (!link) continue;
         link.href = asset.href;
         link.title = asset.name;
         link.removeAttribute('aria-disabled');
-        renderCopy(link.querySelector('span'), `download.package.${kind}.ready`, {setup: '下载安装版', portable: '下载免安装版',
-          'macos-arm64': '下载 Apple Silicon 版', 'macos-x86_64': '下载 Intel 版'}[kind]);
+        renderCopy(link.querySelector('span'), `download.package.${kind}.ready`, {setup: t('下载安装版'), portable: t('下载免安装版'),
+          'macos-arm64': t('下载 Apple Silicon 版'), 'macos-x86_64': t('下载 Intel 版')}[kind]);
       }
     }
     const macStatus = mac
-      ? `${mac.local ? '本地预览使用本机测试包，尚未公开发布。' : ''}测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。`
-      : 'Mac 测试包尚未公开发布，发布后会在此提供下载。';
+      ? (mac.local ? t('本地预览使用本机测试包，尚未公开发布。') : '') + t('测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。')
+      : t('Mac 测试包尚未公开发布，发布后会在此提供下载。');
     renderCopy(document.querySelector('[data-macos-status]'), `download.macos-status.${mac ? mac.local ? 'local' : 'ready' : 'pending'}`, macStatus);
     const command = panel === 'macos' ? 'uv sync --locked --python 3.14 --extra macos\n./.venv/bin/peach-tray'
       : 'uv sync --locked --python 3.14\n& .\\.venv\\Scripts\\peach-tray.exe';

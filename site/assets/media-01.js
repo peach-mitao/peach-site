@@ -1,5 +1,6 @@
-// media-01 播放器：照原稿，只把 aria 文案换成中文。
+// media-01 播放器：照原稿，只把 aria 文案换成中文；外语页按 window.PEACH_I18N 查表。
 function media01(scope = document) {
+    const t = text => window.PEACH_I18N?.[text] ?? text;
     const roots = scope.matches?.("[data-media-01-player]")
         ? [scope]
         : [...scope.querySelectorAll("[data-media-01-player]")];
@@ -536,8 +537,8 @@ function media01(scope = document) {
 
             root.classList.toggle("is-playing", isPlaying);
             morphPlayIcon(isPlaying);
-            playButton.setAttribute("aria-label", isPlaying ? "暂停" : "播放");
-            centerButton.setAttribute("aria-label", isPlaying ? "暂停" : "播放");
+            playButton.setAttribute("aria-label", isPlaying ? t("暂停") : t("播放"));
+            centerButton.setAttribute("aria-label", isPlaying ? t("暂停") : t("播放"));
 
             if (isPlaying && isPointerOverStage) {
                 showChrome(true);
@@ -565,7 +566,7 @@ function media01(scope = document) {
             if (!isMuted) {
                 root.classList.add(volumeClass);
             }
-            muteButton.setAttribute("aria-label", isMuted ? "取消静音" : "静音");
+            muteButton.setAttribute("aria-label", isMuted ? t("取消静音") : t("静音"));
             volumeInput.value = String(volume);
             volumeInput.style.setProperty("--volume-percent", `${volume * 100}%`);
         }
@@ -576,7 +577,7 @@ function media01(scope = document) {
             root.classList.toggle("is-fullscreen", isFullscreen);
             fullscreenButton.setAttribute(
                 "aria-label",
-                isFullscreen ? "退出全屏" : "全屏",
+                isFullscreen ? t("退出全屏") : t("全屏"),
             );
         }
 
@@ -606,7 +607,7 @@ function media01(scope = document) {
             pipButton.setAttribute("aria-disabled", String(!isSupported));
             pipButton.setAttribute(
                 "aria-label",
-                isActive ? "退出画中画" : "画中画",
+                isActive ? t("退出画中画") : t("画中画"),
             );
             root.classList.toggle("is-pip", isActive);
         }

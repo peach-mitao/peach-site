@@ -82,18 +82,20 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       if (previewDownloads && name === '/__preview/downloads.json') {reply(JSON.stringify(previewDownloads), 'application/json'); return}
       if (name === '/__edit.js') {reply(await readFile(edit.client, 'utf8'), types['.js']); return}
       if (name === '/__edit-core.js') {reply(await readFile(edit.core, 'utf8'), types['.js']); return}
+      const injectPreview = (body: string) => options.publicReleases
+        ? body.replace('<head>', '<head>\n<meta name="peach-public-downloads" content="/__preview/releases.json">') : body;
+      const injectDownloads = (body: string) => previewDownloads
+        ? body.replace('<head>', '<head>\n<meta name="peach-local-downloads" content="/__preview/downloads.json">') : body;
       if (name === '/' || name === '/index.html') {
-        const injectPreview = (body: string) => options.publicReleases
-          ? body.replace('<head>', '<head>\n<meta name="peach-public-downloads" content="/__preview/releases.json">') : body;
         if (url.searchParams.has('edit')) {
           const address = server.address();
           reply(injectPreview(await edit.page(index, address && typeof address !== 'string' ? address.port : 0)), types['.html']); return;
         }
-        let body = await readFile(index, 'utf8');
-        if (previewDownloads) {
-          body = body.replace('<head>', '<head>\n<meta name="peach-local-downloads" content="/__preview/downloads.json">');
-        }
-        reply(injectPreview(body), types['.html']); return;
+        reply(injectPreview(injectDownloads(await readFile(index, 'utf8'))), types['.html']); return;
+      }
+      // 生成的外语首页同样读取预览下载清单；页面由 build_i18n 生成，不提供原位编辑。
+      if (name === '/en/' || name === '/en/index.html') {
+        reply(injectPreview(injectDownloads(await readFile(path.join(root, 'en', 'index.html'), 'utf8'))), types['.html']); return;
       }
       const file = previewFiles.get(name) ?? path.resolve(root, '.' + (name.endsWith('/') ? name + 'index.html' : name));
       const relative = path.relative(root, file);

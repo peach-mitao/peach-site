@@ -1,0 +1,1369 @@
+<!doctype html>
+<!-- 由 scripts/build_i18n.mjs 从 site/index.html 生成，译文在 i18n/en.json；不要直接编辑本文件。 -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peach · Your private video library</title>
+<meta name="description" content="Local drives, cloud drives and the creators you follow, all in one place. Open source and self-hosted.">
+<meta name="rating" content="adult">
+<meta property="og:title" content="Peach · Your private video library">
+<meta property="og:description" content="Local drives, cloud drives and the creators you follow, all in one place.">
+<meta property="og:image" content="/assets/shots/h-dark.jpg">
+<meta name="theme-color" content="#04060A">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="/assets/peach-logo.png">
+<link rel="alternate" hreflang="zh-CN" href="https://peach.video/">
+<link rel="alternate" hreflang="zh-CN" href="https://peach.video/en/">
+<link rel="alternate" hreflang="x-default" href="https://peach.video/">
+<link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/media-01.css">
+<!-- 下载按钮按访客平台改字、版本号来自发行清单；定稿前先隐去，最多等 3 秒。 -->
+<script>document.documentElement.classList.add('dl-label-pending','dl-meta-pending');setTimeout(()=>document.documentElement.classList.remove('dl-label-pending','dl-meta-pending'),3000)</script>
+<style>
+@font-face{font-family:"Inter Variable";font-style:normal;font-display:swap;font-weight:100 900;
+  src:url(/assets/fonts/inter-latin-wght-normal.woff2) format("woff2")}
+:root{
+  color-scheme:dark;
+  --page:#04060A; --ground:#080A0D; --surface:#0C0F14;
+  --ink:#FFFFFF; --ink-2:#C9CDD4; --muted:#9AA0A8; --dim:#6E737B; --tungsten:#0095F6;
+  --hair:rgba(255,255,255,.06); --hair-2:rgba(255,255,255,.08); --hair-3:rgba(255,255,255,.12);
+  --font:"Inter Variable","Segoe UI","Microsoft YaHei UI","PingFang SC",sans-serif;
+  --mono:"Cascadia Mono",Consolas,ui-monospace,"Microsoft YaHei UI",monospace;
+  --wrap:1204px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+/* 正文外链整条换行，末尾的箭头不单独落到下一行。 */
+p a[href^="http"]{white-space:nowrap}
+/* 外链箭头用 SVG 遮罩绘制，跟随文字颜色；iOS 不会把它换成 emoji。 */
+.ext::after{content:"";display:inline-block;width:.78em;height:.78em;margin-left:.22em;vertical-align:-.04em;background:currentColor;
+  -webkit-mask:var(--ext-arrow) center/contain no-repeat;mask:var(--ext-arrow) center/contain no-repeat;
+  --ext-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E")}
+img,video{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--tungsten);outline-offset:2px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em;color:var(--dim)}
+
+/* 两段色标题：白色标题一行，灰色说明另起一行 */
+.say{font-size:20px;line-height:1.45;font-weight:400;letter-spacing:normal;color:var(--dim);margin:0;text-wrap:balance}
+/* 中文按行首行尾禁则折行，短语由 nowrap 保持完整。 */
+h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
+.nowrap{white-space:nowrap}
+.punct{display:inline-block;width:.6em;letter-spacing:normal}
+/* 英文标点跟随单词，不占全角宽度，也不悬挂。 */
+:lang(en) .punct,:lang(en) .hero h1 .headline-first .punct{display:inline;width:auto;position:static}
+.headline-first{position:relative;display:inline-block}
+.hero-break{display:none}
+.say b{color:var(--ink);font-weight:600}
+.say .sub{display:block;margin-top:.3em;font-size:.85em;text-wrap:pretty}
+.say.lg{font-size:clamp(24px,2.6vw,32px);letter-spacing:normal;line-height:1.3}
+.say.lg .sub{margin-top:12px;font-size:clamp(16px,1.5vw,19px);letter-spacing:normal;line-height:1.5}
+.center{text-align:center;margin-left:auto;margin-right:auto}
+
+/* 浮动顶栏：层级低于播放器弹层 */
+.nav{position:sticky;top:16px;z-index:15;padding:0 24px}
+/* 三栏等宽夹住导航，链接落在顶栏正中，不受两侧宽度影响 */
+.nav-bar{max-width:var(--wrap);margin:16px auto 0;height:60px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:28px;padding:0 12px 0 16px;border-radius:16px;
+  background:linear-gradient(137deg,rgba(17,18,20,.75) 4.87%,rgba(12,13,15,.9) 75.88%);border:1px solid var(--hair);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.15);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.01em}
+.brand img{width:28px;height:28px}
+.brand{justify-self:start}
+.nav-links{display:flex;gap:4px;font-size:14px;color:var(--muted)}
+.nav-links a{padding:8px 12px;border-radius:8px;transition:color .15s,background .15s}
+.nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.nav-end{display:flex;align-items:center;gap:8px;justify-self:end}
+
+/* 临时公告：悬浮在视口底部，页尾留出同等空间。 */
+body:has(.site-notice){padding-bottom:96px}
+.site-notice{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:16;padding:0 24px;pointer-events:none;color:var(--ink-2);font-size:13px;line-height:1.6}
+.site-notice .wrap{width:fit-content;max-width:960px;margin:0 auto;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:4px 16px;padding:12px 20px;border-radius:14px;pointer-events:auto;
+  background:linear-gradient(137deg,rgba(17,18,20,.82) 4.87%,rgba(12,13,15,.94) 75.88%);border:1px solid var(--hair-3);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.15),0 12px 32px rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.site-notice p{margin:0}
+.site-notice a{color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+
+/* 按钮：主动作是浅灰反相，阴影叠层照 Raycast */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:0;
+  font:500 14px/1 var(--font);white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
+.btn svg{width:20px;height:20px;display:block;flex:none}
+.btn-primary{background:#E6E6E6;color:#2F3031;
+  box-shadow:0 0 0 2px rgba(0,0,0,.5),0 0 14px rgba(255,255,255,.19),inset 0 -1px .4px rgba(0,0,0,.2),inset 0 1px .4px #fff}
+.btn-primary:hover{background:#fff}
+.btn-quiet{background:rgba(255,255,255,.04);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--hair-2),inset 0 1px 0 rgba(255,255,255,.06)}
+.btn-quiet:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+.btn-lg{height:44px;padding:0 18px;font-size:15px}
+.btn-lg svg{width:20px;height:20px}
+/* 介绍视频的打开按钮：沿用 media-01 的钩子，外观跟两侧按钮一致 */
+.cta .btn[data-media-01-open]{height:44px;padding:0 18px;gap:8px;border-radius:8px;corner-shape:round;font:500 15px/1 var(--font);
+  color:var(--ink-2);background:rgba(255,255,255,.04);backdrop-filter:none;-webkit-backdrop-filter:none}
+.cta .btn[data-media-01-open]:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+.cta .btn[data-media-01-open] svg{width:24px;height:24px}
+
+/* 首屏：斜向光束 */
+.hero{position:relative;margin-top:-92px;padding:220px 0 120px;text-align:center;overflow:hidden;isolation:isolate}
+.beams{position:absolute;inset:0;z-index:-1;pointer-events:none}
+.hero .beams{opacity:.65;-webkit-mask-image:linear-gradient(#000 50%,transparent 96%);mask-image:linear-gradient(#000 50%,transparent 96%)}
+.beams svg{width:100%;height:100%}
+.hero h1{font-size:clamp(40px,5.4vw,64px);line-height:1.12;font-weight:600;letter-spacing:normal;margin:0 auto;max-width:12em;text-wrap:balance;
+  text-shadow:0 2px 40px rgba(4,6,10,.6)}
+.hero .say{max-width:30em;margin:24px auto 0;color:var(--ink-2);text-shadow:0 1px 20px rgba(4,6,10,.8)}
+.hero .hello{display:block;width:min(440px,85%);height:auto;margin:-60px auto 24px;aspect-ratio:620/165}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+.cta-download{display:grid;justify-items:center}
+/* 按钮宽度容得下各平台的文字，换字时不改变位置；文字与版本行定稿后淡入。 */
+.cta-download>.btn{min-width:180px}
+.nav [data-primary-download]{min-width:162px}
+:lang(en) .cta-download>.btn{min-width:224px}
+:lang(en) .nav [data-primary-download]{min-width:206px}
+[data-primary-download]>*,.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]{transition:opacity .2s}
+.dl-label-pending [data-primary-download]>*,.dl-meta-pending :is(.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]){opacity:0}
+.cta-secondary{display:flex;justify-content:center;gap:12px}
+.caption-break{display:none}
+.hero .mono{margin-top:18px;color:#8C9199}
+.mono .dot::before{content:"·";margin:0 8px}
+
+/* 产品窗口：外层玻璃框加内层屏幕 */
+.window{position:relative;padding:9px;border-radius:19px;border:1px solid var(--hair-2);
+  background:radial-gradient(85.77% 49.97% at 51% 5.12%,rgba(255,170,150,.11) 0%,rgba(222,226,255,.08) 45.83%,rgba(241,242,255,.02) 100%),rgba(0,0,0,.44);
+  box-shadow:0 0 40px 20px rgba(255,255,255,.03),inset 0 .5px 0 rgba(255,255,255,.3)}
+.window .screen{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--hair-2);background:#07080A;aspect-ratio:16/9;
+  box-shadow:0 0 2px rgba(255,255,255,.19),inset 0 .5px 0 rgba(255,255,255,.1)}
+.window .screen picture{position:absolute;inset:0;opacity:0}
+.window .screen picture.on{opacity:1}
+.window .screen img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.tour{position:relative;margin-top:-40px}
+/* 点顶栏「导览」跳过来时，产品窗口落在粘性顶栏下方，不被它盖住 */
+#tour{scroll-margin-top:92px}
+
+/* 窗口底部的切换坞 */
+.dock-wrap{display:flex;flex-direction:column;align-items:center;margin-top:-46px;position:relative;z-index:2}
+.dock-label{font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:10px;height:26px;padding:0 10px;display:grid;place-items:center;border-radius:8px;
+  background:rgba(12,13,16,.8);border:1px solid var(--hair-2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.dock{display:flex;gap:10px;padding:9px;border-radius:20px;border:1px solid var(--hair);
+  background:linear-gradient(181deg,rgba(0,0,0,.1) 4.5%,rgba(255,255,255,.03) 99.51%),rgba(12,13,16,.72);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 1px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.17),0 4px 3px rgba(0,0,0,.1),0 4px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.1)}
+.dock button{width:54px;height:54px;display:grid;place-items:center;border-radius:12px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;
+  transition:background .2s,color .2s,border-color .2s}
+.dock button svg{width:22px;height:22px}
+.dock button:hover{color:var(--ink)}
+.dock button[aria-selected="true"]{color:var(--ink);border-color:#2F3031;
+  background:radial-gradient(1139.98% 138.18% at 0 0,rgba(255,255,255,.1) 0%,rgba(255,255,255,0) 100%);
+  box-shadow:0 7px 3px rgba(0,0,0,.03),0 4px 4px rgba(0,0,0,.25)}
+.stage-say{margin-top:32px;min-height:60px}
+
+/* 动效卡：照 raycast.com 的做法，用 HTML/CSS 画一块简化的 Peach 界面，脚本在上面演一遍，
+   播完复原再来。按 720×450 排版，再整体缩到卡片宽度；卡片进入画面才播，减少动态效果时停在第一帧。 */
+.live-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
+.live{display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
+.live:hover{border-color:var(--hair-3)}
+.live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
+  border:1px solid var(--hair-2);background:#0B0C0F}
+/* 播放墙按真实界面缩排：无圆角作品块、方形展开块、块内标题与两行控制条。 */
+.mk-wall{overflow:hidden;background:#070707;color:#F7F4EE}
+.mk-wall-world{position:absolute;inset:0;width:900px;height:620px;transform:translate(-30px,-30px);transition:transform 950ms cubic-bezier(.77,0,.175,1)}
+.mk-wall.dragged .mk-wall-world{transform:translate(-130px,-65px)}
+.mk-wall-tile{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:var(--h);overflow:hidden;background:#161419}
+.mk-wall-tile>img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.mk-wall-tile::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 34%,rgba(0,0,0,.24) 56%,rgba(0,0,0,.92))}
+.mk-wall-tile>small{position:absolute;top:6px;left:6px;z-index:1;padding:2px 3px;background:rgba(0,0,0,.66);font-size:8px;font-weight:600}
+.mk-wall-tile>.duration{left:auto;right:6px}
+.mk-wall-copy{position:absolute;left:8px;right:8px;bottom:8px;z-index:1}
+.mk-wall-copy b{display:block;font-size:19px;line-height:.96;letter-spacing:-.045em;font-weight:600}
+.mk-wall-copy span{display:block;margin-top:4px;font-size:9px;opacity:.78}
+.mk-wall-dim{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .25s}
+.mk-wall.open .mk-wall-dim{opacity:.6}
+.mk-wall-nav{position:absolute;z-index:3;left:12px;top:12px;display:flex;gap:4px}
+.mk-wall-nav span,.mk-wall-settings,.mk-wall-close{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(40,40,40,.78)}
+.mk-wall-nav svg,.mk-wall-settings svg,.mk-wall-close svg{width:12px;height:12px;stroke-width:1.5}
+.mk-wall-settings{position:absolute;right:12px;bottom:12px}
+.mk-wall-focus{position:absolute;left:206px;top:71px;width:308px;height:308px;overflow:hidden;background:#161419;border:1px solid rgba(247,244,238,.72);box-shadow:0 21px 55px rgba(0,0,0,.74);opacity:0;transform:translate(0,0) scale(.96);transform-origin:0 0;transition:opacity .25s,transform .35s cubic-bezier(.23,1,.32,1)}
+.mk-wall.open .mk-wall-focus{opacity:1;transform:none}
+.mk-wall-focus::after{content:'';position:absolute;inset:0;z-index:6;pointer-events:none;border:1px solid #F7F4EE;box-shadow:inset 0 0 0 1px rgba(0,0,0,.52)}
+.mk-wall-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+.mk-wall-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.86),rgba(0,0,0,.62) 14%,rgba(0,0,0,.26) 30%,transparent 46%),linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.5) 52%,rgba(0,0,0,.08))}
+.mk-wall-head{position:absolute;left:12px;right:12px;bottom:58px;display:flex;flex-direction:column;gap:4px}
+.mk-wall-head b{display:block;max-width:76%;font-size:31px;font-weight:600;line-height:.95;letter-spacing:-.045em;white-space:nowrap}
+.mk-wall-head strong{display:block;max-width:90%;font-size:10px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-wall-head span{font-size:9px;opacity:.8}
+.mk-wall-number{position:absolute;left:6px;top:6px;padding:2px 3px;background:rgba(0,0,0,.66);font-size:8px;font-weight:600}
+.mk-wall-close{position:absolute;right:8px;top:8px;z-index:3;width:20px;height:20px;background:rgba(0,0,0,.66)}
+.mk-wall-actions{position:absolute;bottom:11px;left:12px;right:9px;z-index:3;display:flex;flex-direction:column;gap:5px}
+.mk-wall-controls{display:flex;align-items:center;gap:3px}
+.mk-wall-controls>span:not(.mk-wall-time){display:grid;place-items:center;width:18px;height:18px;flex:none}
+.mk-wall-controls svg{width:11px;height:11px;stroke-width:1.5}
+.mk-wall-time{margin-left:auto;font-size:8px;white-space:nowrap;opacity:.78;font-variant-numeric:tabular-nums}
+.mk-wall-seek{height:2px;background:rgba(247,244,238,.28)}
+.mk-wall-seek i{display:block;height:100%;width:100%;background:#F7F4EE;transform:scaleX(.01);transform-origin:left}
+.mk-wall-seek::after{content:'';display:block;width:4px;height:4px;margin-top:-3px;border-radius:50%;background:#F7F4EE;transform:translateX(var(--seek-dot,0px))}
+.mk-wall-preview{position:absolute;inset:66px 55px;opacity:0}
+.mk-wall-preview img{width:100%;height:100%;object-fit:contain}
+.mk-wall.playing .mk-wall-art{filter:blur(18px);transform:scale(1.1)}
+.mk-wall.playing .mk-wall-preview{opacity:1}
+.mk-wall.playing .mk-wall-head{top:32px;bottom:auto;gap:3px}
+.mk-wall.playing .mk-wall-head b{font-size:14px;line-height:1.1;letter-spacing:-.025em}
+.mk-wall.playing .mk-wall-head strong{font-size:9px}
+.mk-wall-play .pause,.mk-wall.playing:not(.paused) .mk-wall-play .play{display:none}
+.mk-wall.playing:not(.paused) .mk-wall-play .pause{display:block}
+.feature-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:28px;text-align:center}
+.feature-more img{width:96px;height:96px;opacity:.65}
+.mk{position:absolute;left:0;top:0;width:720px;height:450px;transform-origin:0 0;transform:scale(var(--mk-s,.75));
+  font:13px/1.45 var(--font);color:#EDEEF0;text-align:left;
+  --mk-line:rgba(255,255,255,.08);--mk-dim:#8B9098;--mk-surface:#16171B;--mk-raise:#1E2025;--mk-blue:#2F7BF5;--mk-red:#E5484D}
+.mk img{display:block;max-width:none}
+.mk svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mk-win{position:absolute;inset:0;padding:18px 22px;transition:opacity .35s ease}
+.mk-win.out{opacity:0}
+.mk-s{position:relative;height:100%}
+.mk-cursor{position:absolute;left:0;top:0;z-index:20;width:22px;height:22px;pointer-events:none;transform:translate(560px,380px);
+  transition-property:transform;transition-timing-function:cubic-bezier(.45,.05,.25,1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.mk-cursor svg{width:100%;height:100%;stroke:none;transition:transform .12s ease}
+.mk-cursor.down svg{transform:scale(.82)}
+.mk-ripple{position:absolute;z-index:19;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;pointer-events:none;
+  border:2px solid rgba(255,255,255,.85);animation:mk-ripple .5s ease-out forwards}
+@keyframes mk-ripple{from{transform:scale(.3);opacity:1}to{transform:scale(1.5);opacity:0}}
+.mk-key{position:absolute;z-index:21;padding:4px 9px;border-radius:7px;font:600 12px/1.2 var(--font);white-space:nowrap;
+  background:rgba(24,24,27,.94);border:1px solid rgba(255,255,255,.18);box-shadow:0 4px 12px rgba(0,0,0,.4);animation:mk-key .9s ease forwards}
+@keyframes mk-key{0%{opacity:0;transform:translateY(5px)}15%,70%{opacity:1;transform:none}100%{opacity:0}}
+@keyframes mk-blink{50%{opacity:0}}
+@keyframes mk-in{from{opacity:0;transform:translateY(6px)}}
+
+/* 几张卡共用：页标题、读数卡、面板、按钮与回执 */
+.mk-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px}
+.mk-h h4{margin:0;font-size:19px;font-weight:600}
+.mk-stats{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:10px}
+.mk-stat{padding:10px 12px;border-radius:12px;background:var(--mk-surface);border:1px solid var(--mk-line)}
+.mk-stat small{display:block;color:var(--mk-dim);font-size:11px}
+.mk-stat b{display:block;margin-top:2px;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}
+.mk-stat b i{margin-left:3px;font-style:normal;font-size:11px;font-weight:400;color:var(--mk-dim)}
+.mk-stat em{display:block;margin-top:2px;font-style:normal;font-size:10.5px;color:var(--mk-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-panel{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--mk-surface);border:1px solid var(--mk-line)}
+.mk-panel h5{margin:0 0 9px;font-size:14px;font-weight:600}
+.mk-btn{padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:600;color:#fff;background:#2A2C31;border:1px solid rgba(255,255,255,.08);white-space:nowrap;transition:background-color .2s,color .2s}
+.mk-btn.blue{background:var(--mk-blue);border-color:transparent}
+.mk-btn.off{background:#2A2C31;color:var(--mk-dim);border-color:rgba(255,255,255,.08)}
+.mk-toast{position:absolute;left:50%;bottom:4px;z-index:8;display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;
+  white-space:nowrap;background:#1E2025;border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 30px rgba(0,0,0,.5);font-size:12px;
+  opacity:0;transform:translate(-50%,12px);transition:opacity .25s,transform .25s}
+.mk-toast.on{opacity:1;transform:translate(-50%,0)}
+.mk-toast svg{width:14px;height:14px;color:#3FB950}
+.mk-caret{display:none;width:1px;height:14px;margin-left:1px;vertical-align:-3px;background:#EDEEF0;animation:mk-blink 1s steps(1) infinite}
+.mk-dots{display:inline-flex;gap:3px}
+.mk-dots i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:mk-dot 1s ease-in-out infinite}
+.mk-dots i:nth-child(2){animation-delay:.15s}
+.mk-dots i:nth-child(3){animation-delay:.3s}
+@keyframes mk-dot{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+/* 在线关注：查找框、各站候选与添加回执 */
+.mk-find{display:flex;gap:8px}
+.mk-field{flex:1;display:flex;align-items:center;gap:8px;height:32px;padding:0 10px;border-radius:8px;color:var(--mk-dim);
+  background:var(--mk-raise);border:1px solid var(--mk-line);white-space:nowrap;overflow:hidden;transition:border-color .15s}
+.mk-field svg{width:14px;height:14px;flex:none}
+.mk-field.focus{border-color:rgba(255,255,255,.22)}
+.mk-field.focus .mk-caret{display:inline-block}
+.mk-field .typed{color:#EDEEF0}
+.mk-field.typing .ph{display:none}
+.mk-find .mk-btn{display:grid;place-items:center;padding:0 14px}
+.mk-find .src{display:flex;align-items:center;gap:5px;background:transparent}
+.mk-find .src svg{width:12px;height:12px}
+.mk-busy{display:none;align-items:center;gap:8px;margin-top:10px;color:var(--mk-dim);font-size:11.5px}
+.mk-follow.busy .mk-busy{display:flex}
+.mk-found{display:none;margin-top:10px}
+.mk-follow.found .mk-found{display:block;animation:mk-in .3s ease}
+.mk-found>small{display:block;margin-bottom:6px;color:var(--mk-dim);font-size:11px}
+.mk-hits{padding:8px 12px;border-radius:10px;background:var(--mk-raise);border:1px solid var(--mk-line)}
+.mk-hits>b{display:block;margin-bottom:4px;font-weight:600}
+.mk-hit{display:flex;align-items:center;gap:7px;padding:4px 0;white-space:nowrap;overflow:hidden}
+.mk-hit .ck{display:grid;place-items:center;width:14px;height:14px;flex:none;border-radius:4px;background:var(--mk-blue);border:1.5px solid var(--mk-blue);transition:background-color .15s,border-color .15s}
+.mk-hit .ck svg{width:10px;height:10px;color:#fff;stroke-width:3}
+.mk-hit.off .ck{background:transparent;border-color:rgba(255,255,255,.3)}
+.mk-hit.off .ck svg{opacity:0}
+.mk-hit img{width:18px;height:18px;border-radius:4px;flex:none}
+.mk-hit b{font-weight:600}
+.mk-hit small{min-width:0;overflow:hidden;text-overflow:ellipsis;color:var(--mk-dim);font-size:10.5px}
+.mk-acts{display:flex;gap:8px;margin-top:10px}
+
+/* 订阅新作的女优页头 */
+.mk-hero{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:14px;background:var(--mk-surface);border:1px solid var(--mk-line)}
+.mk-ava{position:relative;width:76px;height:76px;flex:none}
+.mk-ava>img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.mk-hero h4{margin:0;font-size:19px;font-weight:600}
+.mk-hero p{margin:3px 0 0;color:var(--mk-dim);font-size:12px}
+.mk-sect{display:flex;align-items:baseline;gap:8px;margin:16px 2px 10px;font-weight:600}
+.mk-sect small{color:var(--mk-dim);font-weight:400;font-size:11.5px}
+.mk-row{display:flex;gap:14px}
+.mk-f{flex:none;width:150px;overflow:hidden;transition:width .45s ease,margin .45s ease,opacity .3s ease}
+.mk-f.gone{width:0;margin-right:-14px;opacity:0}
+.mk-f .pic{position:relative}
+.mk-f .pic img{width:150px;aspect-ratio:3/4;object-fit:cover;border-radius:8px;transition:opacity .3s,filter .3s}
+.mk-f.isread .pic img{opacity:.38;filter:grayscale(.6)}
+.mk-f .read{position:absolute;left:8px;bottom:8px;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.65);font-size:10.5px;opacity:0;transition:opacity .3s}
+.mk-f.isread .read{opacity:1}
+.mk-tools{position:absolute;top:6px;right:6px;display:flex;gap:5px;opacity:0;transition:opacity .15s}
+.mk-f.hover .mk-tools{opacity:1}
+.mk-tools span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:rgba(12,13,16,.75);border:1px solid rgba(255,255,255,.16)}
+.mk-tools svg{width:14px;height:14px}
+.mk-f b{display:block;margin-top:7px;font-size:11.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-f small{color:var(--mk-dim);font-size:10.5px}
+
+/* 口味分析：读取键、四张读数卡、雷达与柱条。读完之前柱条是空的，雷达缩在圆心 */
+.mk-read{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:var(--mk-blue);color:#fff;font-size:12px;font-weight:600}
+.mk-read svg{width:14px;height:14px}
+.mk-read .idle,.mk-read .busy{display:inline-flex;align-items:center;gap:6px}
+.mk-read .busy,.mk-taste.busy .mk-read .idle{display:none}
+.mk-taste.busy .mk-read .busy{display:inline-flex}
+.mk-taste .mk-stats{--n:4}
+.mk-taste .mk-panel h5 small{float:right;font-size:11px;font-weight:400;color:var(--mk-dim);opacity:0;transition:opacity .3s}
+.mk-taste.done .mk-panel h5 small{opacity:1}
+.mk-portrait{display:grid;grid-template-columns:216px 1fr;gap:18px;align-items:center}
+.mk-radar{width:216px;height:178px;overflow:visible}
+.mk-radar .grid{stroke:rgba(255,255,255,.1);stroke-width:1}
+.mk-radar text{fill:var(--mk-dim);stroke:none;font-size:10px}
+.mk-radar .shape{fill:rgba(26,182,240,.18);stroke:#1AB6F0;stroke-width:1.5;transform-origin:115px 95px;transform:scale(0);transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.mk-taste.done .mk-radar .shape{transform:none}
+.mk-bars{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;font-size:11px}
+.mk-bars span{color:var(--mk-dim);text-align:right;white-space:nowrap}
+.mk-bars div{display:flex;align-items:center;gap:6px}
+.mk-bars i{display:block;height:13px;width:0;border-radius:3px;background:#1AB6F0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.mk-taste.done .mk-bars i{width:var(--w)}
+.mk-bars b{font-weight:400;color:var(--mk-dim);opacity:0;transition:opacity .3s .6s}
+.mk-taste.done .mk-bars b{opacity:1}
+
+/* 深浅与配色：整块是一个缩小的 Peach 壳。颜色都走变量，切主题、换光晕、换强调色只改变量，
+   光晕与强调色注册成颜色属性，才能渐变过去而不是跳过去 */
+@property --mk-g1{syntax:'<color>';inherits:true;initial-value:#8f98a4}
+@property --mk-g2{syntax:'<color>';inherits:true;initial-value:#b6bcc4}
+@property --mk-g3{syntax:'<color>';inherits:true;initial-value:#6f7783}
+@property --mk-acc{syntax:'<color>';inherits:true;initial-value:#3B82F6}
+.mk-theme{--t-bg:#0E0F12;--t-side:#15161A;--t-surface:#1A1B1F;--t-text:#EDEEF0;--t-dim:#8B9098;--t-line:rgba(255,255,255,.08);--t-chip:#25272C;
+  position:absolute;inset:0;height:auto;display:grid;grid-template-columns:168px 1fr;gap:14px;padding:12px;
+  background:var(--t-bg);color:var(--t-text);transition:background-color .5s,color .5s,--mk-g1 .8s,--mk-g2 .8s,--mk-g3 .8s,--mk-acc .5s}
+.mk-theme.light{--t-bg:#F2F3F5;--t-side:#FFFFFF;--t-surface:#FFFFFF;--t-text:#17181B;--t-dim:#6B7079;--t-line:rgba(0,0,0,.08);--t-chip:#E9EAED}
+.mk-theme *{transition:background-color .5s,border-color .5s,color .5s}
+.mk-tside{position:relative;display:flex;flex-direction:column;gap:2px;padding:10px 8px;border-radius:14px;overflow:hidden;
+  background:var(--t-side);border:1px solid var(--t-line)}
+.mk-tside::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.6;
+  background:radial-gradient(70% 26% at 20% 70%,var(--mk-g1),transparent 70%),radial-gradient(60% 24% at 85% 82%,var(--mk-g2),transparent 70%),
+    radial-gradient(70% 22% at 40% 98%,var(--mk-g3),transparent 70%)}
+.mk-tside>*{position:relative}
+.mk-tside .lib{display:flex;align-items:center;gap:7px;margin:0 4px 8px;font-size:11.5px;font-weight:600}
+.mk-nav{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:12px;color:var(--t-dim)}
+.mk-nav svg{width:14px;height:14px}
+.mk-nav.on{color:var(--t-text);background:var(--t-chip)}
+.mk-tfoot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding:0 2px}
+.mk-seg{display:flex;padding:2px;border-radius:999px;background:var(--t-chip)}
+.mk-seg span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--t-dim)}
+.mk-seg svg{width:13px;height:13px}
+.mk-theme:not(.light) .t-moon,.mk-theme.light .t-sun{background:var(--t-side);color:var(--t-text);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mk-pal{position:relative;display:grid;place-items:center;width:28px;height:28px;color:var(--t-dim)}
+.mk-pal svg{width:15px;height:15px}
+.mk-pal i{position:absolute;right:3px;bottom:3px;width:8px;height:8px;border-radius:50%;background:var(--mk-acc);box-shadow:0 0 0 2px var(--t-side)}
+.mk-tmain{display:flex;flex-direction:column;gap:10px;min-width:0;overflow:hidden}
+.mk-tmain h4{margin:2px 0 0;font-size:17px;font-weight:600}
+.mk-tmain h4 small{margin-left:8px;font-size:11.5px;font-weight:400;color:var(--t-dim)}
+.mk-tbar{display:flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:16px;font-size:12px;color:var(--t-dim);
+  background:var(--t-surface);border:1px solid var(--t-line)}
+.mk-tbar svg{width:13px;height:13px}
+.mk-chips{display:flex;align-items:center;gap:6px;font-size:11.5px}
+.mk-chips span{padding:4px 10px;border-radius:7px;color:var(--t-dim)}
+.mk-chips .on{color:#fff;background:var(--mk-acc)}
+.mk-chips .shuf{display:grid;place-items:center;width:26px;height:26px;margin-left:auto;padding:0;color:#fff;background:var(--mk-acc)}
+.mk-chips .shuf svg{width:13px;height:13px}
+.mk-tgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.mk-tgrid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px}
+.mk-tgrid b{display:block;margin-top:5px;font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-tgrid small{font-size:10px;color:var(--mk-acc)}
+.mk-pop{position:absolute;left:18px;bottom:54px;z-index:6;width:196px;padding:10px;border-radius:12px;background:var(--t-surface);
+  border:1px solid var(--t-line);box-shadow:0 14px 36px rgba(0,0,0,.4);opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s,background-color .5s}
+.mk-theme.open .mk-pop{opacity:1;transform:none}
+.mk-pop small{display:block;margin:0 0 6px;font-size:10.5px;color:var(--t-dim)}
+.mk-swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px}
+.mk-swatches span{aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--a) 0 33%,var(--b) 0 66%,var(--c) 0)}
+.mk-swatches.glow{grid-template-columns:repeat(8,1fr);gap:5px}
+.mk-swatches.acc span{background:var(--a)}
+.mk-swatches .sel{box-shadow:0 0 0 2px var(--t-surface),0 0 0 3.5px var(--t-text)}
+.mk-pop .mk-btn{display:block;text-align:center;background:var(--mk-acc);border-color:transparent;transition:none}
+.live-go{position:absolute;right:10px;bottom:10px;z-index:1;padding:7px 10px;border-radius:8px;font:500 12px/1 var(--font);
+  color:var(--ink);background:rgba(12,13,16,.78);border:1px solid var(--hair-2);backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .2s}
+.live:hover .live-go,.live:focus-visible .live-go{opacity:1}
+
+/* 通用段落 */
+.section{padding:160px 0 0}
+
+/* 键帽小卡 */
+.split{display:grid;grid-template-columns:4fr 7fr;gap:56px;align-items:start}
+.split .say{max-width:10em}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.key{position:relative;padding:20px 20px 22px;border-radius:12px;border:1px solid var(--hair);min-height:124px;display:flex;flex-direction:column;justify-content:flex-start;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01)),var(--ground);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 4px 4px rgba(0,0,0,.25),0 12px 24px -12px rgba(0,0,0,.6)}
+.key svg{width:20px;height:20px;color:var(--ink-2)}
+.key p{margin:18px 0 0;font-size:14.5px;line-height:1.5;color:var(--dim);text-wrap:pretty}
+.key p b{display:block;color:var(--ink);font-weight:600}
+
+/* 动效卡的卡片底 */
+.card{position:relative;overflow:hidden;border-radius:16px;border:1px solid var(--hair);background:var(--ground);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.card .txt{padding:26px 28px 0;position:relative;z-index:1}
+.card .say{font-size:17px}
+.card .say .sub{font-size:15px}
+.card .pic{margin-top:24px}
+.card .pic img{width:100%;height:auto}
+
+/* 资料条：每行复制一份首尾相接。 */
+.marks{margin-top:44px;display:grid;gap:12px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marks-row{display:flex;gap:12px;width:max-content;padding-right:12px;animation:marks 70s linear infinite}
+.marks-row.rev{animation-direction:reverse;animation-duration:80s}
+.marks:hover .marks-row{animation-play-state:paused}
+.marks-row span{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:14px;border:1px solid var(--hair);
+  background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);font-size:14.5px;color:var(--ink-2);white-space:nowrap}
+.marks-row img{width:48px;height:48px;border-radius:10px}
+.marks-row[data-kind="performer"] img{border-radius:50%;object-fit:cover}
+@keyframes marks{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){
+  .marks{-webkit-mask-image:none;mask-image:none;padding:0 24px}
+  .marks-row{animation:none;width:auto;overflow-x:auto;padding-right:0}
+  .marks-row span{flex-shrink:0}
+  .marks-row [aria-hidden]{display:none}
+}
+
+/* 下载 */
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
+.panel{min-width:0;padding:28px;border-radius:16px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.panel h3{margin:0 0 22px;font-size:17px;font-weight:600;display:flex;align-items:center;gap:10px}
+.panel h3 svg{width:20px;height:20px;flex:none;color:var(--ink-2)}
+.package-option+.package-option{margin-top:22px;padding-top:22px;border-top:1px solid var(--hair-2)}
+.package-option h4{margin:0 0 10px;font-size:15px;font-weight:600;color:var(--ink)}
+.package-option p{margin:0;color:var(--ink-2);font-size:14.5px;line-height:1.7;overflow-wrap:anywhere}
+.download-platforms{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-top:32px}
+.platform-options{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--hair-2);border-radius:12px;background:var(--ground)}
+.platform-options button{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:500 14px/1 var(--font);cursor:pointer}
+.platform-options button svg{width:20px;height:20px;display:block;flex:none}
+.platform-options button[aria-pressed="true"]{background:rgba(255,255,255,.09);color:var(--ink)}
+.platform-options button:hover{color:var(--ink)}
+.download-platforms+.dl{margin-top:20px}
+.docker-download{grid-column:1/-1}
+.panel[data-source-panel][hidden]{display:none}
+.download-version{margin-left:auto;font-size:12px;font-weight:400;color:var(--muted)}
+.platform-packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:20px}
+.platform-packages .package-option+.package-option{margin:0;padding:0;border:0}
+.platform-packages .btn{width:100%;height:40px}
+.platform-packages .package-option p{margin-top:8px;font-size:12px;color:var(--muted)}
+/* 同级入口以实心品牌标与线条图标的实际墨迹校准；不影响插画、演示界面和播放器的尺寸层级。 */
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-apple"]){width:16px;height:16px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-github"]){width:17px;height:17px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-windows"]){width:20px;height:20px}
+:is(.btn,.platform-options button,.panel h3) svg:has(>use[href="#i-docker"]){width:21px;height:21px}
+.download-meta{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 14px}
+.download-caption{margin:0!important;font-size:12px!important;line-height:1.5!important;color:var(--muted)!important}
+.download-alternatives{display:inline-block;font-size:12px;color:var(--muted);text-underline-offset:4px}
+.download-alternatives:hover{color:var(--ink);text-decoration:underline}
+[data-download-panel][hidden],[data-source-platform][hidden]{display:none}
+.btn[aria-disabled="true"]{background:var(--surface);color:var(--dim);box-shadow:inset 0 0 0 1px var(--hair-2);cursor:default}
+.note code{overflow-wrap:anywhere}
+code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:var(--ink)}
+.code{margin:0 0 16px;border-radius:10px;border:1px solid var(--hair-2);background:#06070A;overflow:hidden}
+.code-bar{display:flex;align-items:center;justify-content:space-between;height:36px;padding:0 6px 0 14px;border-bottom:1px solid var(--hair)}
+.code-bar .mono{font-size:12px}
+.code pre{margin:0;padding:14px 16px;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.8 var(--mono);color:var(--ink-2)}
+/* 长命令折行时后续行缩进，看得出是同一条 */
+.code pre span{display:block;padding-left:2ch;text-indent:-2ch}
+.copybtn{height:26px;padding:0 10px;border-radius:6px;border:0;font:inherit;font-size:12px;cursor:pointer;background:transparent;color:var(--muted)}
+.copybtn:hover{color:var(--ink);background:rgba(255,255,255,.06)}
+.note{font-size:13px;line-height:1.7;color:var(--dim);margin:0}
+.note a,.text-action{color:var(--tungsten)}
+.text-action{padding:0;border:0;background:none;font:inherit;cursor:pointer}
+.text-action:hover,.note a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* Mac 打开步骤：点 Mac 安装包时弹出，下载照常开始；面板里的按钮可以再次打开。 */
+.sheet{width:min(560px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;padding:28px;border-radius:16px;border:1px solid var(--hair-3);
+  background:var(--ground);color:var(--ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 24px 64px rgba(0,0,0,.6)}
+.sheet::backdrop{background:rgba(4,6,10,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.sheet h3{margin:0;font-size:18px;font-weight:600;display:flex;align-items:center;gap:10px}
+.sheet h3 svg{width:16px;height:16px;flex:none;color:var(--ink-2)}
+.steps{margin:22px 0 0;padding:0;list-style:none;counter-reset:step;display:grid;gap:18px}
+.steps li{position:relative;padding-left:34px;font-size:14.5px;line-height:1.7;color:var(--ink-2);counter-increment:step}
+.steps li::before{content:counter(step);position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font:600 12px/1 var(--font);color:var(--ink);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hair-2)}
+.steps .code{margin:10px 0 0}
+.sheet .note{margin-top:20px}
+.sheet-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:24px}
+.sheet-actions .note{margin:0}
+
+/* 收尾 */
+.final{position:relative;margin-top:180px;padding:120px 0 0;text-align:center;overflow:hidden;isolation:isolate}
+.final .beams{top:auto;height:420px;bottom:0;-webkit-mask-image:linear-gradient(transparent,#000 40%);mask-image:linear-gradient(transparent,#000 40%)}
+.final img{width:64px;height:64px;margin:0 auto 28px;filter:drop-shadow(0 10px 30px rgba(240,138,140,.25))}
+
+/* 页脚文字位于深色底面，光束在上缘淡出。 */
+.final footer{position:relative;margin-top:128px;padding:44px 0 28px;color:var(--ink-2);font-size:14px;text-align:left;
+  background:linear-gradient(transparent,var(--page) 28px)}
+.foot-row{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.foot-row .brand{font-size:14px;min-height:44px;align-items:center}
+.foot-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.foot-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 10px;border-radius:8px;white-space:nowrap}
+.foot-links a:hover{color:var(--ink);background:var(--surface)}
+.foot-links .icon-link{width:44px;padding:0}
+.foot-links svg{display:block;width:18px;height:18px;fill:currentColor}
+
+/* 首屏贴纸（assets/stickers.js）：钉在页面上，往下滚跟首屏一起滚走；只在桌面端加载 */
+.stk-layer{position:absolute;left:0;top:0;width:100%;height:0;z-index:14;pointer-events:none}
+.stk{position:absolute;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .2s}
+.stk.on{opacity:1}
+.stk.hot{pointer-events:auto}
+.stk-preview{position:absolute;left:50%;top:50%;object-fit:contain;filter:drop-shadow(2px 0 white) drop-shadow(-2px 0 white) drop-shadow(0 2px white) drop-shadow(0 -2px white) drop-shadow(0 5px 8px #0005);pointer-events:none}
+.stk-tag{position:absolute;pointer-events:none;font:700 16px/1.3 "Segoe Print","Comic Sans MS","KaiTi",cursive;color:#FFD6D0;
+  transform:rotate(-6deg);opacity:0;animation:tag-in .5s ease 1.8s forwards,tag-bob 2.4s ease-in-out 2.3s infinite;transition:opacity .3s}
+.stk-tag svg{display:block;width:46px;height:30px;margin:2px 0 0 40px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.stk-tag.gone{animation:none;opacity:0}
+@keyframes tag-in{to{opacity:1}}
+@keyframes tag-bob{50%{translate:0 -4px}}
+@media (prefers-reduced-motion:reduce){.stk-tag:not(.gone){animation:none;opacity:1}}
+
+/* 进场：只淡入一次 */
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.window .screen picture{transition:none}html{scroll-behavior:auto}}
+
+/* 窄屏 */
+@media (max-width:960px){
+  .stk-layer{display:none}
+  .nav-links{display:none}
+  .nav-bar{display:flex;justify-content:space-between}
+  .split{grid-template-columns:1fr;gap:32px}
+  .keys{grid-template-columns:repeat(2,1fr)}
+  .live-grid{grid-template-columns:1fr}
+  .dl{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wrap,.nav{padding:0 14px}
+  body:has(.site-notice){padding-bottom:132px}
+  .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
+  .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
+  .nav-end .btn-quiet span,.nav-end .lang-switch{display:none}
+  .code pre{padding:12px;font-size:12px}
+  .nav-end .btn-quiet{width:36px;padding:0}
+  .hero{padding:160px 0 72px}
+  .hero .say{font-size:17px;line-height:1.65;max-width:21em}
+  .caption-break{display:block}
+  .cta-download{margin-top:28px}
+  .cta-download>.btn{min-width:220px}
+  .cta-secondary .btn{padding:0 14px}
+  .hero-break{display:block}
+  /* 行末逗号悬挂，标题短语按汉字主体居中。 */
+  .hero h1 .headline-first .punct{position:absolute}
+  .say{font-size:18px}
+  .key{min-height:0;padding:16px}
+  .dock{gap:4px;padding:6px;border-radius:16px}
+  .dock button{width:44px;height:44px}
+  .dock button svg{width:19px;height:19px}
+  .dock-wrap{margin-top:-30px}
+  .section{padding-top:88px}
+  .window .screen{aspect-ratio:4/3}
+  .feature-more{display:none}
+  .stage-say{margin-top:24px}
+  .live-grid,.dl{margin-top:32px}
+  .final{margin-top:112px;padding-top:88px}
+  .final footer{margin-top:72px}
+  .foot-row{gap:8px}
+  .panel{padding:22px}
+}
+@media (max-width:400px){
+  .code pre{padding:12px 10px;font-size:11px}
+  .code pre span{padding-left:1ch;text-indent:-1ch}
+}
+</style>
+<script>window.PEACH_I18N={"Windows、macOS 与 Docker":"Windows, macOS and Docker","下载 Windows 版":"Download for Windows","下载 macOS 版":"Download for macOS","部署 Docker 版":"Deploy with Docker","下载 Peach":"Download Peach","选择 Apple Silicon 或 Intel 版本":"Choose Apple Silicon or Intel","本地测试包":"Local test build","测试版":"Beta","下载安装版":"Download installer","下载免安装版":"Download portable","下载 Apple Silicon 版":"Download for Apple Silicon","下载 Intel 版":"Download for Intel","本地预览使用本机测试包，尚未公开发布。":"This local preview uses a test build from this machine; it is not public yet. ","测试包尚未经过 Apple 公证，首次打开前需要在终端运行一条命令。":"Test builds are not notarized by Apple yet. Run one Terminal command before the first launch.","Mac 测试包尚未公开发布，发布后会在此提供下载。":"Mac test builds are not public yet. Downloads will appear here once released.","暂停":"Pause","播放":"Play","取消静音":"Unmute","静音":"Mute","退出全屏":"Exit full screen","全屏":"Full screen","退出画中画":"Exit picture in picture","画中画":"Picture in picture","拖我试试":"Drag me","版权投诉 / DMCA":"Copyright notice / DMCA","姓名或机构与联系人：":"Name, or organization and contact person: ","联系邮箱：":"Contact email: ","联系地址与电话：":"Mailing address and phone: ","受保护作品及权利说明：":"Protected work and rights:","被投诉内容网址：":"Reported URLs:","我善意相信，被投诉的使用方式未获得版权人、其代理人或法律的授权。":"I have a good faith belief that use of the material in the manner complained of is not authorized by the copyright owner, its agent, or the law.","我声明通知中的信息准确，并在承担伪证责任的前提下确认，我是相关专有权利的权利人，或已获授权代表其行事。":"I state that the information in this notice is accurate and, under penalty of perjury, that I am the owner of, or authorized to act on behalf of the owner of, an exclusive right that is allegedly infringed.","电子签名：":"Electronic signature: ","日期：":"Date: ","Peach 版权投诉 / DMCA":"Peach copyright notice / DMCA","正文已复制。请在邮箱中检查并发送。":"Text copied. Review and send it from your email.","请手动复制已选中的正文。":"Copy the selected text manually.","已复制":"Copied","复制失败":"Copy failed","复制":"Copy"}</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- 光束：沿长度从透明到桃晕三色再回透明 -->
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFB892" stop-opacity="0"/>
+      <stop offset=".28" stop-color="#FFB892"/>
+      <stop offset=".52" stop-color="#FF6F80"/>
+      <stop offset=".78" stop-color="#C8468F" stop-opacity=".9"/>
+      <stop offset="1" stop-color="#C8468F" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beam-cool" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7A6FD0" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#7A6FD0" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#7A6FD0" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx=".5" cy=".5" r=".6">
+      <stop offset="0" stop-color="#04060A" stop-opacity=".5"/>
+      <stop offset=".55" stop-color="#04060A" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="edge" cx=".5" cy=".45" r=".72">
+      <stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#000"/>
+    </radialGradient>
+    <mask id="edge-mask"><rect width="1440" height="900" fill="url(#edge)"/></mask>
+    <filter id="b-hi" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="46"/></filter>
+    <filter id="b-md" x="-20%" y="-200%" width="140%" height="500%"><feGaussianBlur stdDeviation="16"/></filter>
+    <filter id="b-lo" x="-20%" y="-400%" width="140%" height="900%"><feGaussianBlur stdDeviation="2.4"/></filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <symbol id="beam-art" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+      <g mask="url(#edge-mask)">
+        <g transform="rotate(-38 720 450)">
+          <rect x="-240" y="250" width="1920" height="230" rx="115" fill="url(#beam)" opacity=".4" filter="url(#b-hi)"/>
+          <rect x="-240" y="336" width="1920" height="84" rx="42" fill="url(#beam)" opacity=".95" filter="url(#b-md)"/>
+          <rect x="-240" y="370" width="1920" height="18" rx="9" fill="#FFD9C4" opacity=".55" filter="url(#b-md)"/>
+          <rect x="-240" y="498" width="1920" height="56" rx="28" fill="url(#beam)" opacity=".65" filter="url(#b-md)"/>
+          <rect x="-240" y="560" width="1920" height="130" rx="65" fill="url(#beam-cool)" opacity=".35" filter="url(#b-hi)"/>
+          <rect x="-240" y="120" width="1920" height="40" rx="20" fill="url(#beam)" opacity=".38" filter="url(#b-md)"/>
+          <rect x="-240" y="206" width="1920" height="3" fill="url(#beam)" opacity=".85" filter="url(#b-lo)"/>
+          <rect x="-240" y="324" width="1920" height="2" fill="#FFE2CF" opacity=".55" filter="url(#b-lo)"/>
+          <rect x="-240" y="440" width="1920" height="2.5" fill="url(#beam)" opacity=".9" filter="url(#b-lo)"/>
+          <rect x="-240" y="492" width="1920" height="1.5" fill="#FFE2CF" opacity=".4" filter="url(#b-lo)"/>
+          <rect x="-240" y="716" width="1920" height="3" fill="url(#beam)" opacity=".6" filter="url(#b-lo)"/>
+          <rect x="-240" y="60" width="1920" height="1.5" fill="url(#beam)" opacity=".5" filter="url(#b-lo)"/>
+        </g>
+        <rect width="1440" height="900" fill="url(#vignette)"/>
+        <rect width="1440" height="900" filter="url(#grain)" opacity=".14" style="mix-blend-mode:overlay"/>
+      </g>
+    </symbol>
+    <!-- 按钮图标 -->
+    <symbol id="i-github" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></symbol>
+    <symbol id="i-demo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M12 17v4M8 21h8"/><path d="M10 7.75a.75.75 0 0 1 1.142-.638l3.664 2.249a.75.75 0 0 1 0 1.278l-3.664 2.25a.75.75 0 0 1-1.142-.64z" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5.5 10.5 4.5v7H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></symbol>
+    <!-- Apple：Simple Icons，CC0，来源与固定版本见 NOTICE.md。 -->
+    <symbol id="i-apple" viewBox="0 0 24 24"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></g></symbol>
+    <symbol id="i-docker" viewBox="0 0 340 268"><path fill="currentColor" d="M334,110.1c-8.3-5.6-30.2-8-46.1-3.7-.9-15.8-9-29.2-24-40.8l-5.5-3.7-3.7,5.6c-7.2,11-10.3,25.7-9.2,39,.8,8.2,3.7,17.4,9.2,24.1-20.7,12-39.8,9.3-124.3,9.3H0c-.4,19.1,2.7,55.8,26,85.6,2.6,3.3,5.4,6.5,8.5,9.6,19,19,47.6,32.9,90.5,33,65.4,0,121.4-35.3,155.5-120.8,11.2.2,40.8,2,55.3-26,.4-.5,3.7-7.4,3.7-7.4l-5.5-3.7h0ZM85.2,92.7h-36.7v36.7h36.7v-36.7ZM132.6,92.7h-36.7v36.7h36.7v-36.7ZM179.9,92.7h-36.7v36.7h36.7v-36.7ZM227.3,92.7h-36.7v36.7h36.7v-36.7ZM37.8,92.7H1.1v36.7h36.7v-36.7ZM85.2,46.3h-36.7v36.7h36.7v-36.7ZM132.6,46.3h-36.7v36.7h36.7v-36.7ZM179.9,46.3h-36.7v36.7h36.7v-36.7ZM179.9,0h-36.7v36.7h36.7V0Z"/></symbol>
+    <symbol id="i-telegram" viewBox="0 0 24 24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <div class="nav-bar">
+    <a class="brand" href="#top"><img src="/assets/peach-logo.png" alt="">Peach</a>
+    <nav class="nav-links" aria-label="Page navigation">
+      <a href="#tour">Tour</a>
+      <a href="#live">Features</a>
+      <a href="#download">Download</a>
+    </nav>
+    <div class="nav-end">
+      <a class="btn btn-quiet lang-switch" href="/" hreflang="zh-CN" lang="zh-CN" aria-label="中文">中文</a>
+      <a class="btn btn-quiet" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
+      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="beams" aria-hidden="true"><svg><use href="#beam-art"/></svg></div>
+    <div class="wrap">
+      <!-- peach-hello:start --><svg class="hello" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 165" width="620" height="165" role="img" aria-label="Peach">
+<style>.hello .pen{stroke-dasharray:1;stroke-dashoffset:0;animation:hello-write var(--duration) ease-in-out var(--delay) both}@keyframes hello-write{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.hello .pen{animation:none}}</style>
+<g fill="none" stroke="#F4C0BD" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4 0)"><path class="pen" pathLength="1" style="--duration:.65s;--delay:0s" d="M22 91 Q40 75 49 51 L30 143 M45 76 C64 35 98 49 86 79 C79 100 53 104 45 87"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:0.5s" d="M89 88 C114 85 137 67 129 56 C115 39 94 66 99 87 C105 111 140 98 152 79"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:1s" d="M184 60 C173 44 151 56 145 80 C138 104 163 109 177 83 L184 58 L179 87 Q177 107 200 86"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:1.5s" d="M237 59 C219 42 201 61 198 81 C194 107 226 105 246 81"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:2s" d="M245 90 C265 67 286 29 280 18 C267 1 256 51 250 98 C261 67 278 51 286 64 C295 78 275 99 293 101 Q305 104 320 82"/></g><g color="#F4C0BD"><g transform="translate(344 7) scale(0.7)" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.650s" d="M87 16 Q92 19 97 26"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.815s" d="M44 37 Q45 45 39 56"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.980s" d="M44 44 C70 38 120 33 148 35 Q157 36 148 45 L139 55"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.145s" d="M56 65 Q54 77 46 84"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.310s" d="M70 61 C75 78 89 91 113 89 Q128 88 125 79 L121 67"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.475s" d="M87 52 Q94 57 99 63"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.640s" d="M119 49 C110 72 89 91 62 102 Q50 107 41 108"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.805s" d="M141 63 Q151 67 156 74"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.970s" d="M60 121 Q65 134 65 148"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.135s" d="M62 123 Q95 117 125 115 Q132 115 129 123 L122 140"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.300s" d="M65 145 Q94 139 123 140"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.465s" d="M96 104 C98 121 97 147 94 165"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.630s" d="M47 172 Q81 169 133 158"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.795s" d="M125 149 Q139 160 144 172"/></g><g transform="translate(474 7) scale(0.7)" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.050s" d="M19 74 Q46 71 73 62"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.215s" d="M53 23 C55 60 48 121 45 173"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.380s" d="M48 78 Q38 109 17 133"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.545s" d="M49 94 Q61 99 70 112"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.710s" d="M90 42 C98 78 95 117 86 139 Q80 154 67 163"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.875s" d="M73 77 Q81 82 85 90"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.040s" d="M72 122 Q86 114 95 102"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.205s" d="M120 27 C115 64 110 119 116 147 C120 169 145 163 155 152 Q160 145 163 130"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.370s" d="M150 65 Q139 80 120 91"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.535s" d="M118 110 Q141 118 151 133"/></g></g></svg><!-- peach-hello:end -->
+      <h1><span class="headline-first nowrap">All your videos<span class="punct">, </span></span><br class="hero-break"><span class="nowrap">in one place</span></h1>
+      <p class="say"><span class="nowrap">Local drives, cloud drives</span><br class="caption-break"><span class="nowrap"> and the creators you follow,</span><span class="nowrap"> brought together.</span></p>
+      <div class="cta cta-download">
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows, macOS and Docker</p><a class="download-alternatives" href="#download">Other platforms</a></div>
+        <div class="cta-secondary">
+        <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>Live demo</a>
+        <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Intro video</button>
+        </div>
+      </div>
+      <p class="mono">Open source<span class="dot">Self-hosted</span><span class="dot">18+</span></p>
+    </div>
+  </section>
+
+  <!-- 导览：窗口里切六个页面 -->
+  <section id="tour">
+    <div class="wrap tour reveal">
+      <div class="window">
+        <div class="screen" id="screen">
+          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261018.webp" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261018.webp" alt="Home: grid of video cards" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
+          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261018.webp" alt="Performers page" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261018.webp" alt="Performer profile" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261018.webp" alt="Player, with climax logging" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261018.webp" alt="Following page" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261018.webp" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261018.webp" alt="Statistics page" width="3840" height="2160" decoding="async"></picture>
+        </div>
+      </div>
+      <div class="dock-wrap">
+        <div class="dock-label" id="dock-label" aria-hidden="true">Home</div>
+        <div class="dock" role="tablist" aria-label="Switch page">
+          <button role="tab" aria-selected="true" data-k="home" data-label="Home" data-say='<b>It&#39;s all here</b><span class="sub">Videos on local and cloud drives, managed and played in one place.</span>' aria-label="Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
+          <button role="tab" aria-selected="false" data-k="people" data-label="All performers" data-say='<b>Neatly organized</b><span class="sub">Every performer, sorted into place.</span>' aria-label="All performers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg></button>
+          <button role="tab" aria-selected="false" data-k="profile" data-label="Performer details" data-say='<b>Every detail</b><span class="sub">Aliases, agencies, social accounts, profile facts…</span>' aria-label="Performer details">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10.5" r="2.5"/><path d="M5.5 17a3.8 3.8 0 0 1 7 0M15 9h3M15 13h3"/></svg></button>
+          <button role="tab" aria-selected="false" data-k="play" data-label="Play" data-say='<b>Playback is just the start</b><span class="sub">Log it, analyze it, then find more like it.</span>' aria-label="Play">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor"/></svg></button>
+          <button role="tab" aria-selected="false" data-k="follow" data-label="Following" data-say='<b>Keep up with creators</b><span class="sub">Every source, grouped together.</span>' aria-label="Following">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11a8 8 0 0 1 8 8M5 5a14 14 0 0 1 14 14"/><circle cx="6" cy="18" r="1.5" fill="currentColor"/></svg></button>
+          <button role="tab" aria-selected="false" data-k="stats" data-label="Stats" data-say='<b>Statistics</b><span class="sub">What you&#39;ve collected, what you&#39;ve watched and what you like, at a glance.</span>' aria-label="Stats">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></button>
+        </div>
+      </div>
+      <p class="say center stage-say" id="stage-say" aria-live="polite"><b>It's all here</b><span class="sub">Videos on local and cloud drives, managed and played in one place.</span></p>
+    </div>
+  </section>
+
+  <!-- 动效卡：简化的 Peach 界面，脚本在上面演一遍；点开去演示站亲手试 -->
+  <section class="section" id="live">
+    <div class="wrap">
+      <p class="say lg reveal"><b><span class="nowrap">What Peach can do</span></b><span class="sub">Subscribe to new releases, follow creators, understand your taste,<span class="nowrap"> customize colors…</span></span></p>
+      <div class="live-grid">
+        <a class="card live reveal" href="https://demo.peach.video/performers/凉森玲梦" data-mock="feed">
+          <div class="txt"><p class="say"><b>Subscribe to performers</b><span class="sub">Know about new releases as soon as they're out.</span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-feed">
+            <div class="mk-hero"><div class="mk-ava"><img src="/assets/mock/f-remu.webp" alt="" loading="lazy"></div><div><h4>凉森玲梦</h4><p>3 个视频 · T-POWERS · 出道 2019-03-09</p></div></div>
+            <div class="mk-sect">订阅新作<small>4 部新发行</small></div>
+            <div class="mk-row">
+              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-391 今日も清楚ぶって看護師してます。</b><small>2026-10-16</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-376 新人女子アナ</b><small>2026-08-21</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-367 涼森れむの「顔」で</b><small>2026-07-17</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>PASN-027 神女優で童貞卒業</b><small>2026-06-18</small></div>
+            </div>
+          </div></div></div><span class="live-go ext">Open demo</span></div>
+        </a>
+        <a class="card live reveal" href="https://demo.peach.video/follow-manage?tab=add" data-mock="follow">
+          <div class="txt"><p class="say"><b>Follow creators</b><span class="sub">Type a name or paste a link, and Peach tracks updates across sites for each<span class="nowrap"> creator.</span></span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-follow">
+            <div class="mk-h"><h4>关注管理</h4></div>
+            <div class="mk-stats">
+              <div class="mk-stat"><small>关注创作者</small><b><span class="v">0</span><i>位</i></b></div>
+              <div class="mk-stat"><small>启用来源</small><b><span class="v">0</span><i class="of">/ 0</i></b></div>
+              <div class="mk-stat"><small>未看更新</small><b>0<i>条</i></b></div>
+            </div>
+            <div class="mk-panel"><h5>添加关注</h5>
+              <div class="mk-find">
+                <div class="mk-field"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="typed"></span><i class="mk-caret"></i><span class="ph">粘贴来源链接，或输入创作者名、id…</span></div>
+                <span class="mk-btn src">全部来源<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+                <span class="mk-btn blue off find">查找</span>
+              </div>
+              <div class="mk-busy"><i class="mk-dots"><i></i><i></i><i></i></i>查找中…（首次按名字查要下载创作者索引，可能几十秒）</div>
+              <div class="mk-found"><small>查找结果</small>
+                <div class="mk-hits"><b>billyhhyb</b>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-kemono.webp" alt="" loading="lazy"><b>Kemono</b><span>Billyhhyb · patreon</span><small>创作者名精确匹配</small></div>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-fanbox.webp" alt="" loading="lazy"><b>FANBOX</b><span>Billyhhyb</span><small>FANBOX 官方资料与归档身份一致</small></div>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-rule34xxx.webp" alt="" loading="lazy"><b>rule34.xxx</b><span>billyhhyb</span><small>站内标签 billyhhyb 下有作品</small></div>
+                </div>
+                <div class="mk-acts"><span class="mk-btn blue add">添加选中（3）</span><span class="mk-btn">关闭</span></div>
+              </div>
+            </div>
+            <div class="mk-toast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>已添加 2 个关注来源</span></div>
+          </div></div></div><span class="live-go ext">Open demo</span></div>
+        </a>
+        <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
+          <div class="txt"><p class="say"><b>See your taste</b><span class="sub">With your permission, Peach reads local browser and Peach history to map out<span class="nowrap"> your taste, on your device.</span></span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-taste">
+            <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
+            <div class="mk-stats">
+              <div class="mk-stat"><small>浏览记录</small><b><span class="v" data-to="11537">0</span></b><em data-done="4 个数据源 · 2025/9/28—2026/9/27">尚未读取</em></div>
+              <div class="mk-stat"><small>口味维度</small><b><span class="v" data-to="7">0</span></b><em data-done="制服/角色扮演">尚未读取</em></div>
+              <div class="mk-stat"><small>浏览候选</small><b><span class="v" data-to="12">0</span></b><em data-done="待你确认">尚未读取</em></div>
+              <div class="mk-stat"><small>私有导出</small><b><span class="v" data-to="0">0</span></b><em data-done="0 MB">尚未读取</em></div>
+            </div>
+            <div class="mk-panel"><h5>浏览器画像<small>更新于 2026/9/27</small></h5>
+              <div class="mk-portrait">
+                <svg class="mk-radar" viewBox="0 0 230 190">
+                  <g class="grid">
+                    <polygon points="115,25 175.6,60 175.6,130 115,165 54.4,130 54.4,60"/>
+                    <polygon points="115,48.3 155.4,71.65 155.4,118.35 115,141.7 74.6,118.35 74.6,71.65"/>
+                    <polygon points="115,71.7 135.2,83.35 135.2,106.65 115,118.3 94.8,106.65 94.8,83.35"/>
+                    <path d="M115 95V25M115 95l60.6-35M115 95l60.6 35M115 95v70M115 95l-60.6 35M115 95l-60.6-35"/>
+                  </g>
+                  <polygon class="shape" points="115,25 162.9,67.3 158,119.9 115,141.2 88.3,110.4 90.8,81"/>
+                  <text x="115" y="14" text-anchor="middle">制服/角色扮演</text>
+                  <text x="182" y="58">3D/动画</text>
+                  <text x="182" y="138">乳系</text>
+                  <text x="115" y="184" text-anchor="middle">ASMR/音声</text>
+                  <text x="48" y="138" text-anchor="end">口交</text>
+                  <text x="48" y="58" text-anchor="end">足系</text>
+                </svg>
+                <div class="mk-bars">
+                  <span>制服/角色扮演</span><div><i style="--w:78%"></i><b>436</b></div>
+                  <span>3D/动画</span><div><i style="--w:48.8%"></i><b>273</b></div>
+                  <span>乳系</span><div><i style="--w:39.4%"></i><b>220</b></div>
+                  <span>ASMR/音声</span><div><i style="--w:34.3%"></i><b>192</b></div>
+                  <span>口交</span><div><i style="--w:15%"></i><b>84</b></div>
+                  <span>足系</span><div><i style="--w:12.7%"></i><b>71</b></div>
+                  <span>游戏同人</span><div><i style="--w:11.6%"></i><b>65</b></div>
+                </div>
+              </div>
+            </div>
+          </div></div></div><span class="live-go ext">Open demo</span></div>
+        </a>
+        <a class="card live reveal" href="https://demo.peach.video/" data-mock="theme">
+          <div class="txt"><p class="say"><b>Make it yours</b><span class="sub">Switch between dark and light in one click, and pick<span class="nowrap"> your colors.</span></span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-theme">
+            <aside class="mk-tside">
+              <div class="lib"><img src="/assets/peach-logo.png" alt="" width="18" height="18">Peach</div>
+              <div class="mk-nav on"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10"/></svg>首页</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>关注</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14"/></svg>JAV</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>艺人</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1"/></svg>标签</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h4v12M2 21h20M8 7h4M8 11h4M8 15h4"/></svg>厂牌</div>
+              <div class="mk-tfoot">
+                <div class="mk-seg"><span class="t-sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="t-moon"><svg viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span></div>
+                <span class="mk-pal"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 21 9.8C21 6 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/></svg><i></i></span>
+              </div>
+            </aside>
+            <div class="mk-tmain">
+              <div class="mk-tbar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜索馆藏</div>
+              <h4>首页<small>120 个作品</small></h4>
+              <div class="mk-chips"><span class="on">全部</span><span>没看过</span><span>稍后看</span><span>已标记</span><span class="shuf"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span></div>
+              <div class="mk-tgrid">
+                <div><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><b>ABF-391 今日も清楚ぶって看護師してます。</b><small>新作</small></div>
+                <div><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><b>ABF-376 新人女子アナ</b><small>新作</small></div>
+                <div><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><b>ABF-367 涼森れむの「顔」で</b><small>新作</small></div>
+                <div><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><b>PASN-027 神女優で童貞卒業</b><small>新作</small></div>
+              </div>
+            </div>
+            <div class="mk-pop">
+              <small>光晕</small>
+              <div class="mk-swatches glow">
+                <span class="sel" data-g="#8f98a4,#b6bcc4,#6f7783" data-a="#3B82F6" style="--a:#8f98a4;--b:#b6bcc4;--c:#6f7783"></span>
+                <span data-g="#e08a2f,#c4544a,#a86a52" data-a="#F59E0B" style="--a:#e08a2f;--b:#c4544a;--c:#a86a52"></span>
+                <span class="p-plum" data-g="#b455a0,#6a4fd0,#7a4f96" data-a="#8B5CF6" style="--a:#b455a0;--b:#6a4fd0;--c:#7a4f96"></span>
+                <span data-g="#3f9e57,#7fae4a,#4f9463" data-a="#10B981" style="--a:#3f9e57;--b:#7fae4a;--c:#4f9463"></span>
+                <span data-g="#1e50a2,#f09199,#895b8a" data-a="#6366F1" style="--a:#1e50a2;--b:#f09199;--c:#895b8a"></span>
+                <span data-g="#5ce3e6,#0f9cc2,#274a78" data-a="#14B8A6" style="--a:#5ce3e6;--b:#0f9cc2;--c:#274a78"></span>
+                <span data-g="#ffc24b,#f4664d,#8a2e5e" data-a="#F97316" style="--a:#ffc24b;--b:#f4664d;--c:#8a2e5e"></span>
+                <span class="p-peach" data-g="#ffc9a3,#f08a8c,#b65e8c" data-a="#F43F5E" style="--a:#ffc9a3;--b:#f08a8c;--c:#b65e8c"></span>
+              </div>
+              <small>强调色</small>
+              <div class="mk-swatches acc">
+                <span data-a="#EF4444" style="--a:#EF4444"></span><span data-a="#F97316" style="--a:#F97316"></span><span data-a="#F59E0B" style="--a:#F59E0B"></span>
+                <span data-a="#84CC16" style="--a:#84CC16"></span><span data-a="#10B981" style="--a:#10B981"></span><span data-a="#14B8A6" style="--a:#14B8A6"></span>
+                <span data-a="#0EA5E9" style="--a:#0EA5E9"></span><span class="sel" data-a="#3B82F6" style="--a:#3B82F6"></span><span data-a="#6366F1" style="--a:#6366F1"></span>
+                <span class="a-violet" data-a="#8B5CF6" style="--a:#8B5CF6"></span><span data-a="#D946EF" style="--a:#D946EF"></span><span data-a="#F43F5E" style="--a:#F43F5E"></span>
+              </div>
+              <span class="mk-btn">详细设置</span>
+            </div>
+          </div></div></div><span class="live-go ext">Open demo</span></div>
+        </a>
+        <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
+          <div class="txt"><p class="say" data-copy-draft><b>Video wall</b><span class="sub">Drag through a full-screen wall of covers to pick your next watch.</span></p></div>
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
+            <div class="mk-wall-world">
+              <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>03</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>04</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:0px;--w:180px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>05</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>06</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile mk-wall-target" style="--x:346px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>07</small><small class="duration">2:04:00</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:173px;--w:180px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>08</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>09</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>10</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>11</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>12</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>13</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>14</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:436px;--w:180px;--h:180px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>15</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+            </div>
+            <div class="mk-wall-dim"></div>
+            <div class="mk-wall-nav"><span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span></div>
+            <span class="mk-wall-settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m9 3 6 0 1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z"/></svg></span>
+            <div class="mk-wall-focus">
+              <img class="mk-wall-art" src="/assets/mock/f-n3.webp" alt="" loading="lazy"><div class="mk-wall-preview"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"></div><div class="mk-wall-shade"></div>
+              <span class="mk-wall-number">07</span>
+              <div class="mk-wall-head"><b>ABF-367</b><strong>涼森れむの「顔」で</strong><span>凉森玲梦</span></div>
+              <span class="mk-wall-close"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></span>
+              <div class="mk-wall-actions"><div class="mk-wall-controls">
+                <span class="mk-wall-play"><svg class="play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">00:00 / 2:04:00</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
+              </div><div class="mk-wall-seek"><i></i></div></div>
+            </div>
+          </div></div></div><span class="live-go ext" data-copy-draft>Open demo</span></div>
+        </a>
+        <div class="feature-more reveal">
+          <img src="/assets/peach-logo.png" alt="" width="96" height="96" loading="lazy">
+          <p class="say" data-copy-draft><b>And more</b><span class="sub">Download Peach and explore.</span></p>
+          <a class="btn btn-primary btn-lg" href="#download" data-copy-draft>Download Peach →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 承诺：键帽小卡 -->
+  <section class="section" id="promise">
+    <div class="wrap split">
+      <div class="reveal">
+        <p class="say lg"><b>Always local</b><span class="sub">Your data stays on your own<span class="nowrap"> computer.</span></span></p>
+      </div>
+      <div class="keys reveal">
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <p><b>Read-only scanning</b>Never moves, renames or deletes your files</p></div>
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+          <p><b>Stays on your device</b>Watch history and favorites are never uploaded</p></div>
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v5h5"/><path d="M19 8v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7z"/><path d="m9 14 2 2 4-4"/></svg>
+          <p><b>Reads NFO</b>Keeps the metadata you've already organized</p></div>
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8a4 4 0 0 1 0 10z"/></svg>
+          <p><b>Cloud drives as local drives</b>Cloud drives mounted as local drives join your library</p></div>
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M15 3h6v6M21 3l-9 9"/></svg>
+          <p><b>Metadata scraping</b>Multiple sources fill in complete metadata</p></div>
+        <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>
+          <p><b>Open source</b>AGPL-3.0 licensed, all code public</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 资料：厂商、事务所、女优各一行 -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <p class="say lg reveal"><b>More than a player</b><span class="sub">Peach is your ultimate<span class="nowrap"> media library.</span></span></p>
+    </div>
+    <div class="marks reveal" role="group" aria-label="Studios, agencies and performers">
+      <div class="marks-row"><span><img src="/assets/marks/s1.webp" alt="" width="48" height="48" loading="lazy">S1 NO.1 STYLE</span><span><img src="/assets/marks/moodyz.webp" alt="" width="48" height="48" loading="lazy">MOODYZ</span><span><img src="/assets/marks/prestige.webp" alt="" width="48" height="48" loading="lazy">PRESTIGE</span><span><img src="/assets/marks/sod.webp" alt="" width="48" height="48" loading="lazy">SOD Create</span><span><img src="/assets/marks/kawaii.webp" alt="" width="48" height="48" loading="lazy">kawaii*</span><span><img src="/assets/marks/premium.webp" alt="" width="48" height="48" loading="lazy">PREMIUM</span><span><img src="/assets/marks/maxing.webp" alt="" width="48" height="48" loading="lazy">MAXING</span><span><img src="/assets/marks/rocket.webp" alt="" width="48" height="48" loading="lazy">ROCKET</span><span><img src="/assets/marks/hmjm.webp" alt="" width="48" height="48" loading="lazy">HMJM</span><span><img src="/assets/marks/tma.webp" alt="" width="48" height="48" loading="lazy">TMA</span><span><img src="/assets/marks/kmp.webp" alt="" width="48" height="48" loading="lazy">K.M.Produce</span><span><img src="/assets/marks/doc.webp" alt="" width="48" height="48" loading="lazy">DOC</span></div>
+      <div class="marks-row rev" data-kind="agency" role="group" aria-label="Agencies">
+        <span><img src="/assets/entities/agency-t-powers.webp" alt="" width="48" height="48" loading="lazy">T-POWERS</span>
+        <span><img src="/assets/entities/agency-c-more.webp" alt="" width="48" height="48" loading="lazy">C-more Entertainment</span>
+        <span><img src="/assets/entities/agency-life.webp" alt="" width="48" height="48" loading="lazy">Life Promotion</span>
+        <span><img src="/assets/entities/agency-linx.webp" alt="" width="48" height="48" loading="lazy">LINX</span>
+        <span><img src="/assets/entities/agency-bambi.webp" alt="" width="48" height="48" loading="lazy">Bambi Promotion</span>
+        <span><img src="/assets/entities/agency-nax.webp" alt="" width="48" height="48" loading="lazy">New Actor eXperience</span>
+        <span><img src="/assets/entities/agency-listar.webp" alt="" width="48" height="48" loading="lazy">LiStarPRO</span>
+        <span><img src="/assets/entities/agency-mines.webp" alt="" width="48" height="48" loading="lazy">マインズ</span>
+      </div>
+      <div class="marks-row" data-kind="performer" role="group" aria-label="Performers">
+        <span><img src="/assets/entities/performer-remu.webp" alt="" width="48" height="48" loading="lazy">Remu Suzumori</span>
+        <span><img src="/assets/entities/performer-arina.webp" alt="" width="48" height="48" loading="lazy">Arina Hashimoto</span>
+        <span><img src="/assets/entities/performer-minami.webp" alt="" width="48" height="48" loading="lazy">Minami Aizawa</span>
+        <span><img src="/assets/entities/performer-mia.webp" alt="" width="48" height="48" loading="lazy">Mia Nanasawa</span>
+        <span><img src="/assets/entities/performer-momo.webp" alt="" width="48" height="48" loading="lazy">Momo Sakura</span>
+        <span><img src="/assets/entities/performer-karen.webp" alt="" width="48" height="48" loading="lazy">Karen Kaede</span>
+        <span><img src="/assets/entities/performer-kana.webp" alt="" width="48" height="48" loading="lazy">Kana Momonogi</span>
+        <span><img src="/assets/entities/performer-mayuki.webp" alt="" width="48" height="48" loading="lazy">Mayuki Ito</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 下载 -->
+  <section class="section" id="download">
+    <div class="wrap">
+      <p class="say lg reveal"><b><span class="nowrap">Install and deploy</span></b></p>
+      <div class="download-platforms reveal">
+        <div class="platform-options" role="group" aria-label="Download platform">
+          <button type="button" data-platform-option="windows" aria-pressed="true"><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows</button>
+          <button type="button" data-platform-option="macos" aria-pressed="false"><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS</button>
+          <button type="button" data-platform-option="docker" aria-pressed="false"><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker</button>
+        </div>
+      </div>
+      <div class="dl reveal">
+        <div class="panel windows-download" data-download-panel="windows">
+          <h3><svg aria-hidden="true"><use href="#i-windows"/></svg>Windows<span class="download-version" data-release-version="windows">64-bit · Beta</span></h3>
+          <div class="platform-packages">
+          <div class="package-option" data-package="exe">
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Download installer</span></a>
+            <p>Double-click to install (.exe)</p>
+          </div>
+          <div class="package-option" data-package="zip">
+            <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Download portable</span></a>
+            <p>Extract, then open Peach.exe (.zip)</p>
+          </div>
+          </div>
+          <p class="note" style="margin-top:22px">Windows test builds are unsigned. If you see “Windows protected your PC”, choose “More info → Run anyway”. <a class="ext" href="https://support.microsoft.com/en-us/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft guide</a> <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/releases">All releases</a></p>
+        </div>
+        <div class="panel macos-download" data-download-panel="macos" hidden>
+          <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">Beta</span></h3>
+          <div class="platform-packages">
+          <div class="package-option">
+            <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon coming soon</span></a>
+            <p>M-series chips · macOS 15 or later</p>
+          </div>
+          <div class="package-option">
+            <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel coming soon</span></a>
+            <p>Intel processors · macOS 14 or later</p>
+          </div>
+          </div>
+          <p class="note" style="margin-top:22px">Open the DMG and drag Peach.app into the Applications folder. <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Install and run guide</a></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac test builds are not public yet.</span> <button class="text-action" type="button" data-mac-help>How to open</button></p>
+        </div>
+        <div class="panel docker-download" data-download-panel="docker" hidden>
+          <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
+          <p>Run it on your own server or NAS</p>
+          <div class="platform-packages" style="margin-top:22px">
+            <div class="package-option"><a class="btn btn-primary" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md">Deployment guide</a><p>Deploy with Docker Compose</p></div>
+            <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">Open on Docker Hub</a><p><code>longmeidao/peach</code></p></div>
+          </div>
+          <p class="note" style="margin-top:22px">By default, configuration and the database live in <code>/data</code>, and media is mounted separately at <code>/media</code>.</p>
+          <p class="note" style="margin-top:10px">CloudDrive2 is installed separately. If you already mount cloud drives with it, Peach picks them up once configured.</p>
+        </div>
+        <div class="panel" data-source-panel>
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>Run from source</h3>
+          <div class="code">
+            <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src" data-copy-interact>Copy</button></div>
+<pre id="src"><span>git clone https://gitgud.io/peach-mitao/peach.git peach-app
+</span><span>cd peach-app
+</span><span>uv sync --locked --python 3.14
+</span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
+          </div>
+          <p class="note">For developers. Requires Git and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">running and configuration</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="beams" aria-hidden="true"><svg><use href="#beam-art"/></svg></div>
+    <div class="wrap reveal">
+      <img src="/assets/peach-logo.png" alt="">
+      <p class="say lg center"><b><span class="nowrap">Peach</span></b></p>
+      <div class="cta cta-download">
+        <a class="btn btn-primary btn-lg" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download Peach</span></a>
+        <div class="download-meta"><p class="download-caption" data-download-caption>Windows, macOS and Docker</p><a class="download-alternatives" href="#download">Other platforms</a></div>
+        <div class="cta-secondary">
+        <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>Live demo</a>
+        <a class="btn btn-quiet btn-lg" href="https://github.com/peach-mitao/peach"><svg aria-hidden="true"><use href="#i-github"/></svg>GitHub</a>
+        </div>
+      </div>
+    </div>
+    <footer>
+      <div class="wrap foot-row">
+        <span class="brand">© 2026 Peach</span>
+        <nav class="foot-links" id="feedback" aria-label="Project and contact">
+          <a class="icon-link" href="https://github.com/peach-mitao/peach" aria-label="Source code on GitHub" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+          <a class="icon-link" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="Contact longmeidao on Telegram" title="Telegram · @longmeidao"><svg aria-hidden="true"><use href="#i-telegram"/></svg></a>
+          <a class="icon-link" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer" aria-label="Contact longmeidao on X" title="X · @longmeidao"><svg aria-hidden="true"><use href="#i-x"/></svg></a>
+          <a href="/en/copyright/" aria-label="DMCA copyright notice" title="DMCA copyright notice">DMCA</a>
+          <a href="/" hreflang="zh-CN" lang="zh-CN">中文</a>
+        </nav>
+      </div>
+    </footer>
+  </section>
+</main>
+
+<aside class="site-notice" aria-label="Notice">
+  <div class="wrap">
+    <p>The developer's GitHub account is temporarily suspended. Download the latest version from this site, and send requests and issues through the Telegram link below.</p>
+    <a href="#download">Download latest →</a>
+  </div>
+</aside>
+
+<dialog class="sheet" data-mac-help-dialog aria-labelledby="mac-help-title">
+  <h3 id="mac-help-title"><svg aria-hidden="true"><use href="#i-apple"/></svg>Open Peach on your Mac</h3>
+  <ol class="steps">
+    <li>Open the downloaded DMG and drag Peach into the Applications folder.</li>
+    <li>Open Terminal, paste the command below and press Return. When prompted, enter your Mac login password; nothing appears on screen as you type.
+      <div class="code">
+        <div class="code-bar"><span class="mono">zsh</span><button class="copybtn" type="button" data-copy="mac-quarantine" data-copy-interact>Copy</button></div>
+<pre id="mac-quarantine"><span>sudo /usr/bin/xattr -rd com.apple.quarantine "/Applications/Peach.app"</span></pre>
+      </div>
+    </li>
+    <li>Double-click Peach in Applications to open it.</li>
+  </ol>
+  <p class="note">Test builds are not notarized by Apple yet. Apps downloaded from the internet carry a quarantine flag, so macOS reports “Peach is damaged and can't be opened”. This command removes the quarantine flag from Peach only; run it again after installing a new version.</p>
+  <form class="sheet-actions" method="dialog">
+    <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Install and run guide</a></p>
+    <button class="btn btn-primary">Got it</button>
+  </form>
+</dialog>
+
+<!-- 介绍视频播放器（media-01） -->
+<div class="media-01" data-media-01-player="demo-player" data-media-modal role="dialog" aria-modal="true" aria-label="Intro video" hidden>
+  <div class="backdrop" data-media-close aria-hidden="true"></div>
+  <div class="frame">
+    <button class="close" type="button" data-media-close aria-label="Close">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+    </button>
+    <section class="shell" data-media-shell>
+      <div class="stage" data-media-stage>
+        <video class="video" data-media-video data-default-speed="1" data-src="https://media.peach.video/site/cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c.mp4" poster="/assets/intro-poster.jpg?v=6072b6576c6e" preload="none" playsinline></video>
+        <div class="loader" aria-hidden="true">
+          <svg viewBox="0 0 19 19"><path d="M9.5 2.938v2.625
+                m0 7.875v2.624
+                M2.938 9.5h2.625
+                m7.875 0h2.624
+                M4.86 4.86l1.856 1.856
+                m5.569 5.568 1.856 1.856
+                m-9.28 0 1.855-1.856
+                m5.569-5.568L14.14 4.86" stroke-linecap="round" stroke-width="1.875"></path></svg>
+        </div>
+        <div class="shade" aria-hidden="true"></div>
+        <div class="pulse" data-media-pulse aria-hidden="true">
+          <svg class="pulse-play" viewBox="0 0 36 36"><path d="M11.45 8.68C9.7 7.78 7.7 9 7.7 10.96V25.04C7.7 27 9.7 28.22 11.45 27.32L23.95 20.86C25.96 19.82 27.9 19.12 27.9 18C27.9 16.88 25.96 16.18 23.95 15.14L11.45 8.68Z"></path></svg>
+          <svg class="pulse-pause" viewBox="0 0 36 36"><rect x="10" y="8" width="6.5" height="20" rx="1.75"></rect><rect x="19.5" y="8" width="6.5" height="20" rx="1.75"></rect></svg>
+        </div>
+        <button class="center-toggle" type="button" data-media-center-toggle aria-label="Play">
+          <svg class="center-play" viewBox="0 0 36 36" aria-hidden="true"><path d="M11.45 8.68C9.7 7.78 7.7 9 7.7 10.96V25.04C7.7 27 9.7 28.22 11.45 27.32L23.95 20.86C25.96 19.82 27.9 19.12 27.9 18C27.9 16.88 25.96 16.18 23.95 15.14L11.45 8.68Z"></path></svg>
+          <svg class="center-pause" viewBox="0 0 36 36" aria-hidden="true"><rect x="10" y="8" width="6.5" height="20" rx="1.75"></rect><rect x="19.5" y="8" width="6.5" height="20" rx="1.75"></rect></svg>
+        </button>
+        <div class="seek">
+          <div class="preview" data-media-preview-card aria-hidden="true">
+            <video class="thumb" data-media-preview-video data-src="https://media.peach.video/site/cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c.mp4" preload="none" playsinline muted></video>
+            <div class="meta"><span data-media-preview-time>0:00</span><span data-media-preview-title>Library</span></div>
+          </div>
+          <div class="timeline" data-media-timeline role="slider" tabindex="0" aria-label="Playback position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00">
+            <div class="track" data-media-chapter-track></div>
+            <div class="scrubber" data-media-scrubber></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="control play" type="button" data-media-play aria-label="Play">
+            <svg class="morph" viewBox="0 0 36 36" aria-hidden="true">
+              <defs>
+                <filter id="media-01-round-icon" data-media-round-filter x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="0.7" result="blur"></feGaussianBlur>
+                  <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"></feColorMatrix>
+                </filter>
+              </defs>
+              <path data-media-play-path filter="url(#media-01-round-icon)" d="M 11 10 L 18 13.74 L 18 22.28 L 11 26 Z M 18 13.74 L 26 18 L 26 18 L 18 22.28 Z"></path>
+            </svg>
+          </button>
+          <div class="volume">
+            <button class="control mute" type="button" data-media-mute aria-label="Mute">
+              <svg class="volume-icon volume-low" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path></svg>
+              <svg class="volume-icon volume-mid" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
+              <svg class="volume-icon volume-high" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
+              <svg class="volume-icon muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
+            </button>
+            <input class="range" data-media-volume type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+          </div>
+          <div class="time" aria-live="off"><span data-media-current>0:00</span><span aria-hidden="true">/</span><span data-media-duration>0:00</span></div>
+          <div class="speed" data-media-speed>
+            <button class="control speed-toggle" type="button" data-media-speed-toggle aria-label="Playback speed" aria-expanded="false"><span data-media-speed-label>1x</span></button>
+            <div class="speed-menu" data-media-speed-menu hidden>
+              <button type="button" data-media-speed-option data-speed="1">1x</button>
+              <button type="button" data-media-speed-option data-speed="1.25">1.25x</button>
+              <button type="button" data-media-speed-option data-speed="1.5">1.5x</button>
+              <button type="button" data-media-speed-option data-speed="1.75">1.75x</button>
+              <button type="button" data-media-speed-option data-speed="2">2x</button>
+            </div>
+          </div>
+          <button class="control pip" type="button" data-media-pip aria-label="Picture in picture">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 9V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h4"></path><rect width="10" height="7" x="12" y="13" rx="2"></rect></svg>
+          </button>
+          <button class="control full" type="button" data-media-fullscreen aria-label="Full screen">
+            <svg class="enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
+            <svg class="exit" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"></path></svg>
+          </button>
+        </div>
+      </div>
+      <!-- 章节按介绍片分镜表 -->
+      <ul class="chapters" hidden>
+        <li data-media-chapter data-start="0" data-title="Library"></li>
+        <li data-media-chapter data-start="5" data-title="Filters"></li>
+        <li data-media-chapter data-start="10" data-title="Performers"></li>
+        <li data-media-chapter data-start="15" data-title="Details"></li>
+        <li data-media-chapter data-start="21" data-title="Subscribe to performers"></li>
+        <li data-media-chapter data-start="26" data-title="Play and log"></li>
+        <li data-media-chapter data-start="32" data-title="Follow creators"></li>
+        <li data-media-chapter data-start="38.5" data-title="Stats"></li>
+        <li data-media-chapter data-start="43.5" data-title="Taste"></li>
+        <li data-media-chapter data-start="49.5" data-title="Customize"></li>
+        <li data-media-chapter data-start="55" data-title="Local data"></li>
+        <li data-media-chapter data-start="60.5" data-title="Any device"></li>
+        <li data-media-chapter data-start="66" data-title="Metadata"></li>
+        <li data-media-chapter data-start="70.5" data-title="Outro"></li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script src="/assets/media-01.js" defer></script>
+<script type="module" src="/assets/downloads.js"></script>
+<script>
+const t=text=>window.PEACH_I18N?.[text]??text;
+const shots=[...document.querySelectorAll('#screen picture')];
+const tabs=[...document.querySelectorAll('.dock button')];
+const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
+const loadShot=tab=>{
+  const picture=shots.find(shot=>shot.dataset.k===tab.dataset.k);
+  const source=picture.querySelector('source'),img=picture.querySelector('img');
+  if(source.dataset.srcset&&!source.hasAttribute('srcset'))source.srcset=source.dataset.srcset;
+  if(img.dataset.src&&!img.hasAttribute('src'))img.src=img.dataset.src;
+  return img;
+};
+let shotRequest=0;
+tabs.forEach(tab=>tab.addEventListener('click',async()=>{
+  const request=++shotRequest,img=loadShot(tab);
+  try{await img.decode()}catch{return}
+  if(request!==shotRequest)return;
+  tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
+  shots.forEach(img=>img.classList.toggle('on',img.dataset.k===tab.dataset.k));
+  label.textContent=tab.dataset.label;
+  say.innerHTML=tab.dataset.say;
+}));
+tabs.forEach(tab=>tab.addEventListener('mouseenter',()=>{label.textContent=tab.dataset.label;loadShot(tab)}));
+tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));
+document.querySelector('.dock').addEventListener('mouseleave',()=>{label.textContent=tabs.find(t=>t.getAttribute('aria-selected')==='true').dataset.label});
+// 导览截图在指向、聚焦或切换对应标签时加载。
+const pageLoaded=document.readyState==='complete' ? Promise.resolve() : new Promise(resolve=>addEventListener('load',resolve,{once:true}));
+
+document.querySelectorAll('.copybtn').forEach(btn=>btn.addEventListener('click',async()=>{
+  const text=document.getElementById(btn.dataset.copy).textContent;
+  try{await navigator.clipboard.writeText(text);btn.textContent=t('已复制')}catch{btn.textContent=t('复制失败')}
+  setTimeout(()=>btn.textContent=t('复制'),1600);
+}));
+
+const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// 资料条：每行复制一份首尾相接。
+document.querySelectorAll('.marks-row').forEach(row=>[...row.children].forEach(el=>{
+  const copy=el.cloneNode(true);copy.setAttribute('aria-hidden','true');row.append(copy);
+}));
+
+// 贴纸按显示尺寸生成纹理，逐张启用 WebGL 交互。
+if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
+  pageLoaded.then(()=>import('/assets/stickers.js')).then(module=>module.enhanceStickers()).catch(err=>console.warn('贴纸没有加载',err));
+
+// 动效卡：每张卡里是一块 720×450 的简化界面，按卡宽整体缩放。脚本移光标、打字、点按钮，
+// 播完淡出、复原 DOM 再来一轮。卡片进入画面才往下走，滚走或切走标签页就停在当前步骤。
+{
+  const CURSOR='<svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.3-4.1 2.7 6.2 3-1.3-2.7-6.1h6z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>';
+  const SCENES={
+    async wall(k){
+      const s=k.$('.mk-wall'),target=k.$('.mk-wall-target');
+      await k.sleep(800);
+      await k.move(target,.65,.5);k.down(true);s.classList.add('dragged');
+      await k.move(s,320/720,198/450,950);k.down(false);await k.sleep(700);
+      await k.click(target);
+      const focus=k.$('.mk-wall-focus');focus.style.transition='none';focus.style.transform='none';
+      const a=target.getBoundingClientRect(),b=focus.getBoundingClientRect(),scale=b.width/focus.offsetWidth;
+      const folded=`translate(${(a.left-b.left)/scale}px,${(a.top-b.top)/scale}px) scale(${a.width/b.width},${a.height/b.height})`;
+      focus.style.transform=folded;focus.style.opacity='1';focus.getBoundingClientRect();focus.style.transition='';
+      s.classList.add('open');focus.style.transform='none';await k.sleep(1800);
+      await k.click(k.$('.mk-wall-play'));s.classList.add('playing');k.$('.mk-wall-number').textContent='正在播放 · 07';
+      const bar=k.$('.mk-wall-seek i');
+      for(let i=1;i<=5;i++){bar.style.transform=`scaleX(${i/7440})`;k.$('.mk-wall-seek').style.setProperty('--seek-dot',`${bar.offsetWidth*i/7440}px`);k.$('.mk-wall-time').textContent=`00:0${i} / 2:04:00`;await k.sleep(600)}
+      await k.click(k.$('.mk-wall-play'));s.classList.add('paused');await k.sleep(1000);
+      await k.click(k.$('.mk-wall-close'));focus.style.transform=folded;focus.style.opacity='0';s.classList.remove('open');await k.sleep(1300);
+    },
+    async feed(k){
+      await k.sleep(800);
+      const cards=k.$$('.mk-f');
+      const act=async(card,tool,after)=>{
+        await k.move(card,.5,.45);card.classList.add('hover');await k.sleep(400);
+        await k.click(card.querySelector(tool));card.classList.remove('hover');after(card);await k.sleep(900)};
+      await act(cards[0],'.t-read',c=>c.classList.add('isread'));
+      await act(cards[1],'.t-read',c=>c.classList.add('isread'));
+      await act(cards[2],'.t-skip',c=>c.classList.add('gone'));
+      await k.sleep(1000);
+    },
+    async follow(k){
+      const s=k.$('.mk-s'),field=k.$('.mk-field'),find=k.$('.find'),add=k.$('.add');
+      await k.sleep(700);
+      await k.click(field,.3,.5);field.classList.add('focus');await k.sleep(250);
+      field.classList.add('typing');await k.type(k.$('.mk-field .typed'),'billyhhyb');
+      find.classList.remove('off');await k.sleep(350);
+      await k.click(find);field.classList.remove('focus');s.classList.add('busy');
+      await k.sleep(1500);s.classList.remove('busy');s.classList.add('found');
+      await k.sleep(1100);
+      const hits=k.$$('.mk-hit');
+      await k.move(hits[0],.5,.5);await k.sleep(500);
+      await k.click(hits[2].querySelector('.ck'));hits[2].classList.add('off');add.textContent='添加选中（2）';
+      await k.sleep(700);
+      await k.click(add);
+      s.classList.remove('found');field.classList.remove('typing');k.$('.mk-field .typed').textContent='';find.classList.add('off');
+      k.$('.mk-toast').classList.add('on');
+      const [who,src]=k.$$('.mk-stat .v');k.$('.mk-stat .of').textContent='/ 2';
+      await Promise.all([k.count(who,1,500),k.count(src,2,500)]);
+      await k.sleep(1400);k.$('.mk-toast').classList.remove('on');
+      await k.sleep(1000);
+    },
+    async taste(k){
+      const s=k.$('.mk-s');
+      await k.sleep(800);
+      await k.click(k.$('.mk-read'));s.classList.add('busy');
+      await k.sleep(1500);
+      s.classList.remove('busy');s.classList.add('done');
+      k.$$('.mk-stat em').forEach(em=>{em.textContent=em.dataset.done});
+      await Promise.all(k.$$('.mk-stat .v').map(v=>k.count(v,+v.dataset.to,1100)));
+      await k.sleep(500);
+      await k.move(k.$('.mk-bars div'),.35,.5);await k.sleep(900);
+      await k.move(k.$('.mk-radar .shape'),.5,.3);
+      await k.sleep(2200);
+    },
+    // 光晕与强调色写在 .mk-theme 的变量上，注册过的颜色属性会自己渐变过去
+    async theme(k){
+      const s=k.$('.mk-s');
+      const pick=(el)=>{el.parentElement.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel'));el.classList.add('sel')};
+      const accent=(hex)=>{s.style.setProperty('--mk-acc',hex);pick(k.$(`.acc [data-a="${hex}"]`))};
+      await k.sleep(800);
+      await k.click(k.$('.t-sun'));s.classList.add('light');
+      await k.sleep(1300);
+      await k.click(k.$('.mk-pal'));s.classList.add('open');
+      await k.sleep(700);
+      await k.move(k.$('.p-plum'));await k.sleep(400);
+      const peach=k.$('.p-peach');
+      await k.click(peach);pick(peach);
+      peach.dataset.g.split(',').forEach((c,i)=>s.style.setProperty(`--mk-g${i+1}`,c));accent(peach.dataset.a);
+      await k.sleep(1300);
+      await k.click(k.$('.a-violet'));accent('#8B5CF6');
+      await k.sleep(1100);
+      await k.click(k.$('.mk-tgrid'),.6,.35);s.classList.remove('open');
+      await k.sleep(1000);
+      await k.click(k.$('.t-moon'));s.classList.remove('light');
+      await k.sleep(2000);
+    },
+  };
+
+  function stage(card,script){
+    const mock=card.querySelector('.mk'),win=mock.querySelector('.mk-win'),initial=win.innerHTML;
+    const cursor=document.createElement('div');cursor.className='mk-cursor';cursor.innerHTML=CURSOR;mock.append(cursor);
+    let at={x:560,y:380},seen=false,wake=null;
+    const playing=()=>seen&&!document.hidden;
+    const gate=async()=>{while(!playing())await new Promise(r=>{wake=r});wake=null};
+    const sleep=async ms=>{await gate();await new Promise(r=>setTimeout(r,ms));await gate()};
+    const scale=()=>mock.getBoundingClientRect().width/720;
+    const point=(el,fx=.5,fy=.5)=>{const m=mock.getBoundingClientRect(),r=el.getBoundingClientRect(),s=scale();
+      return {x:(r.left-m.left+r.width*fx)/s,y:(r.top-m.top+r.height*fy)/s}};
+    const k={
+      $:sel=>win.querySelector(sel),$$:sel=>[...win.querySelectorAll(sel)],sleep,
+      down(on){cursor.classList.toggle('down',on)},
+      async move(el,fx,fy,fixed){await gate();const p=point(el,fx,fy);
+        const ms=fixed??Math.round(Math.min(950,Math.max(380,Math.hypot(p.x-at.x,p.y-at.y)*1.4)));
+        cursor.style.transitionDuration=ms+'ms';cursor.style.transform=`translate(${p.x-5}px,${p.y-3}px)`;at=p;await sleep(ms+60)},
+      async click(el,fx,fy){await k.move(el,fx,fy);k.down(true);
+        const ripple=document.createElement('div');ripple.className='mk-ripple';ripple.style.left=at.x+'px';ripple.style.top=at.y+'px';
+        mock.append(ripple);setTimeout(()=>ripple.remove(),550);await sleep(130);k.down(false)},
+      async type(el,text){for(const ch of text){el.textContent+=ch;await sleep(170+Math.random()*120)}},
+      // 数字从当前值涨到 to，先快后慢
+      async count(el,to,ms=900){const from=+el.textContent.replace(/,/g,'')||0,n=Math.max(1,Math.round(ms/50));
+        for(let i=1;i<=n;i++){el.textContent=Math.round(from+(to-from)*(1-(1-i/n)**3)).toLocaleString('en-US');await sleep(ms/n)}},
+      key(label,el){const cap=document.createElement('div');cap.className='mk-key';cap.textContent=label;
+        const p=point(el,.25,1);cap.style.left=p.x+'px';cap.style.top=(p.y+8)+'px';mock.append(cap);setTimeout(()=>cap.remove(),950)},
+      // 收走一张卡：先淡出，再让后面的卡从原位滑到新位置。
+      async remove(el){el.classList.add('gone');await sleep(300);
+        const rest=[...el.parentElement.children].filter(c=>c!==el),before=rest.map(c=>c.getBoundingClientRect());
+        el.remove();const s=scale();
+        rest.forEach((c,i)=>{const a=before[i],b=c.getBoundingClientRect(),dx=(a.left-b.left)/s,dy=(a.top-b.top)/s;
+          if(dx||dy)c.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'})});
+        await sleep(420)},
+    };
+    (async()=>{for(;;){
+      await script(k);
+      win.classList.add('out');await sleep(380);
+      win.innerHTML=initial;win.getBoundingClientRect();win.classList.remove('out');await sleep(500);
+    }})();
+    const resume=()=>{if(playing()&&wake)wake()};
+    document.addEventListener('visibilitychange',resume);
+    return on=>{seen=on;resume()};
+  }
+
+  const cards=[...document.querySelectorAll('.live[data-mock]')];
+  cards.forEach(card=>{const mock=card.querySelector('.mk'),screen=card.querySelector('.live-screen');
+    const fit=()=>mock.style.setProperty('--mk-s',screen.clientWidth/720);fit();new ResizeObserver(fit).observe(screen)});
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const players=new Map(cards.map(card=>[card,stage(card,SCENES[card.dataset.mock])]));
+    const watch=new IntersectionObserver(entries=>entries.forEach(e=>players.get(e.target)(e.isIntersecting)),{threshold:.35});
+    cards.forEach(card=>watch.observe(card));
+  }
+}
+</script>
+</body>
+</html>

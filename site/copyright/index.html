@@ -4,12 +4,14 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>版权投诉 / DMCA · Peach</title>
 <meta name="description" content="就 Peach 官网与演示站展示的内容提交版权投诉。">
+<link rel="alternate" hreflang="zh-CN" href="https://peach.video/copyright/">
+<link rel="alternate" hreflang="en" href="https://peach.video/en/copyright/">
 <style>
-:root{color-scheme:dark;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#080a0f;color:#eee}*{box-sizing:border-box}body{margin:0}main{max-width:760px;margin:auto;padding:40px 24px 72px}a{color:#f4c0bd;text-underline-offset:4px}h1{font-size:clamp(26px,5vw,36px);line-height:1.2;margin:36px 0 20px}h2{font-size:20px;margin-top:32px}p,li{line-height:1.75;color:#bfc1c8}.intro{margin-bottom:32px}form{display:grid;gap:20px}label{display:grid;gap:8px;font-size:14px}input,textarea{font:inherit;width:100%;padding:12px;border:1px solid #45464e;border-radius:8px;background:#14161c;color:#fff}textarea{resize:vertical;min-height:100px}.check{grid-template-columns:20px 1fr;align-items:start;line-height:1.6}.check input{width:18px;height:18px;margin:3px 0}button,.action{display:inline-block;font:inherit;padding:12px 18px;border:1px solid #45464e;border-radius:8px;background:#f4c0bd;color:#171318;text-decoration:none;cursor:pointer}button:disabled{background:#35343a;color:#aaa;cursor:default}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #f4c0bd;outline-offset:4px}.actions{display:flex;gap:12px;flex-wrap:wrap}.subtle{font-size:13px}.result{margin-top:28px;border-top:1px solid #45464e;padding-top:20px}[hidden]{display:none!important}#notice{min-height:280px}
+:root{color-scheme:dark;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#080a0f;color:#eee}*{box-sizing:border-box}body{margin:0}main{max-width:760px;margin:auto;padding:40px 24px 72px}a{color:#f4c0bd;text-underline-offset:4px}h1{font-size:clamp(26px,5vw,36px);line-height:1.2;margin:36px 0 20px}h2{font-size:20px;margin-top:32px}p,li{line-height:1.75;color:#bfc1c8}.intro{margin-bottom:32px}form{display:grid;gap:20px}label{display:grid;gap:8px;font-size:14px}input,textarea{font:inherit;width:100%;padding:12px;border:1px solid #45464e;border-radius:8px;background:#14161c;color:#fff}textarea{resize:vertical;min-height:100px}.check{grid-template-columns:20px 1fr;align-items:start;line-height:1.6}.check input{width:18px;height:18px;margin:3px 0}button,.action{display:inline-block;font:inherit;padding:12px 18px;border:1px solid #45464e;border-radius:8px;background:#f4c0bd;color:#171318;text-decoration:none;cursor:pointer}button:disabled{background:#35343a;color:#aaa;cursor:default}a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #f4c0bd;outline-offset:4px}.actions{display:flex;gap:12px;flex-wrap:wrap}.subtle{font-size:13px}.result{margin-top:28px;border-top:1px solid #45464e;padding-top:20px}.top{display:flex;justify-content:space-between;gap:16px;margin:0}[hidden]{display:none!important}#notice{min-height:280px}
 </style>
 </head>
 <body><main>
-<a href="/">← Peach 官网</a>
+<p class="top"><a href="/">← Peach 官网</a><a href="/en/copyright/" hreflang="en" lang="en">English</a></p>
 <h1>版权投诉 / DMCA</h1>
 <p class="intro">如果你是权利人或其授权代表，认为 <strong>peach.video</strong> 或 <strong>demo.peach.video</strong> 展示的内容侵犯了你的版权，请提供下列信息。我们会核对投诉，并对成立的投诉及时移除相关内容或停用访问。</p>
 <p id="contact" hidden>接收邮箱：<a id="email"></a>。你也可以直接发送包含下列信息的邮件。</p>
@@ -29,5 +31,5 @@
 <section class="result" id="result" hidden aria-labelledby="result-title"><h2 id="result-title">邮件已整理，尚未发送</h2><p>在邮件客户端检查后发送。如果没有配置邮件客户端，可复制正文并发送至上面的接收邮箱。</p><label>投诉正文<textarea id="notice" readonly></textarea></label><div class="actions"><a class="action" id="compose">打开邮件客户端</a><button id="copy" type="button">复制正文</button></div><p id="copy-status" role="status"></p></section>
 <h2>处理与补充信息</h2><p>信息不足时，我们可能请求补充定位或权利说明。如果你认为内容被错误识别，请使用同一邮箱说明理由并提供相关依据。商标、肖像或隐私等其他权利问题，也可通过该邮箱联系，并注明问题类型。</p>
 <p class="subtle">故意作出重大虚假版权声明可能产生法律责任。通知内容要求参考<a href="https://www.copyright.gov/512/">美国版权局的 Section 512 说明</a>。本页不构成对任何具体使用行为的合法性认定。</p>
-<script type="module" src="./notice.js"></script>
+<script type="module" src="/copyright/notice.js"></script>
 </main></body></html>

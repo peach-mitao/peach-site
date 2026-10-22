@@ -125,9 +125,10 @@ try {
       const tabs=[];
       for(const key of ['people','profile','play','follow','stats','home']) {
         await page.locator(`.dock button[data-k="${key}"]`).click();
-        const dimensions=await page.locator(`#screen picture[data-k="${key}"] img`).evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight]});
-        if(width===390)assert.deepEqual(dimensions,[3840,2880],key);
-        else assert.deepEqual(dimensions,[3840,2160],key);
+        const dimensions=await page.locator(`#screen picture[data-k="${key}"] img`).evaluate(async img=>{await img.decode();return [img.naturalWidth,img.naturalHeight,Math.ceil(img.getBoundingClientRect().width*devicePixelRatio),Number(img.currentSrc.match(/-(\d{3,4})\.webp$/)?.[1]??3840)]});
+        assert.ok(Math.abs(dimensions[0]/dimensions[1]-(width===390?4/3:16/9))<.01,key+' 完整桌面截图');
+        // srcset 下 naturalWidth 按候选密度换算，清晰度按选中文件的像素宽度判断。
+        assert.ok(dimensions[3]>=Math.min(3840,dimensions[2]),key+' 清晰度不低于屏幕像素');
         tabs.push({key,dimensions});
       }
       await page.locator('.marks').scrollIntoViewIfNeeded();

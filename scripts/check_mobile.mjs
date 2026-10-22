@@ -8,8 +8,10 @@ const out=new URL('../evidence/mobile/',import.meta.url);
 await mkdir(out,{recursive:true});
 const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
 const html=await readFile(new URL('../site/index.html',import.meta.url),'utf8');
-const published=manifest.files.filter(file=>/-(wide|compact)-\d{8}\.webp$/.test(file.path)&&html.includes(file.path));
-assert.equal(published.length,12,'六页两套4K展示图均登记哈希');
+const referenced=[...new Set(html.match(/assets\/screenshots\/[\w-]+-(?:wide|compact)-\d{8}(?:-\d+)?\.webp/g))];
+const published=manifest.files.filter(file=>referenced.includes(file.path));
+assert.equal(referenced.length,42,'六页两套截图各有 4K 原图与缩小候选');
+assert.equal(published.length,referenced.length,'页面引用的截图均登记哈希');
 for(const file of published){
   const response=await fetch(new URL(file.path,base));
   assert.equal(response.status,200,file.path);
@@ -47,9 +49,13 @@ try {
         await page.locator(`.dock button[data-k="${key}"]`).click();
         await page.waitForFunction(key=>document.querySelector('#screen picture.on')?.dataset.k===key,key);
         const shot=page.locator(`#screen picture[data-k="${key}"] img`);
-        const dimensions=await shot.evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {pixels:[img.naturalWidth,img.naturalHeight],ratio:r.width/r.height,src:img.currentSrc,fit:getComputedStyle(img).objectFit}});
-        if(width<=560)assert.deepEqual(dimensions.pixels,[3840,2880],'4K 4:3桌面图');
-        else assert.deepEqual(dimensions.pixels,[3840,2160]);
+        const dimensions=await shot.evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();return {pixels:[img.naturalWidth,img.naturalHeight],ratio:r.width/r.height,src:img.currentSrc,fit:getComputedStyle(img).objectFit,
+          file:Number(img.currentSrc.match(/-(\d{3,4})\.webp$/)?.[1]??3840),needed:Math.ceil(r.width*devicePixelRatio)}});
+        // 按视口取候选：完整桌面截图，比例对，选中文件的像素宽度不少于显示宽度乘设备像素比。
+        // 用了 srcset 后 naturalWidth 按候选密度换算，不是文件本身的宽度。
+        assert.ok(dimensions.src.includes(width<=560?'-compact-':'-wide-'),'只读取当前视口的那一套');
+        assert.ok(Math.abs(dimensions.pixels[0]/dimensions.pixels[1]-(width<=560?4/3:16/9))<.01,'完整桌面截图');
+        assert.ok(dimensions.file>=Math.min(3840,dimensions.needed),'截图清晰度不低于屏幕像素');
         assert.ok(Math.abs(dimensions.ratio-(width<=560?4/3:16/9))<.01,'画框与截图比例一致');
         assert.equal(dimensions.fit,'contain');
         assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'),key);
@@ -61,13 +67,11 @@ try {
       }
       if(width===390) {
         await page.setViewportSize({width:1440,height:900});
-        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-wide-')&&img.naturalWidth===3840&&img.naturalHeight===2160});
+        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-wide-')&&Math.abs(img.naturalWidth/img.naturalHeight-16/9)<.01});
         await page.locator('#screen picture.on img').evaluate(img=>img.decode());
-        assert.deepEqual(await page.locator('#screen picture.on img').evaluate(img=>[img.naturalWidth,img.naturalHeight]),[3840,2160]);
         await page.setViewportSize({width:390,height:844});
-        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-compact-')&&img.naturalWidth===3840&&img.naturalHeight===2880});
+        await page.waitForFunction(()=>{const img=document.querySelector('#screen picture.on img');return img.currentSrc.includes('-compact-')&&Math.abs(img.naturalWidth/img.naturalHeight-4/3)<.01});
         await page.locator('#screen picture.on img').evaluate(img=>img.decode());
-        assert.ok(await page.locator('#screen picture.on img').evaluate(img=>img.currentSrc.includes('-compact-')&&img.naturalWidth===3840&&img.naturalHeight===2880));
       }
       await page.locator('.hero .cta-download .btn-primary').click();
       assert.equal(new URL(page.url()).hash,'#download');

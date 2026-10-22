@@ -50,6 +50,10 @@ CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不�
 
 通过 `npm run assets:fetch` 按 `assets-manifest.json` 获取公开素材，逐个核对长度和 SHA-256。媒体、截图、原型、验收证据和缓存不进 Git。六页导览按视口选择 16:9 或 4:3 桌面截图；使用 `npm run capture:desktop` 更新截图和清单时，应先验收演示站，生成无损 WebP 并核对像素一致。
 
+每张 4K 截图另有无损的缩小版：16:9 桌面图 1280、1920、2560 宽，4:3 手机图 1440、1920 宽，文件名在日期后加宽度。首页用 `srcset` 与 `sizes` 让浏览器按显示宽度和设备像素比挑选，4K 原图保留为最高一档。截图最宽显示 1134 CSS 像素，手机约 340；改版面宽度时同步调整 `sizes`。手机最小一档约为常见手机设备像素的 1.4 倍，给双指放大留了余量，放大到更大倍数时比 4K 原图模糊。编码脚本只重写像素有变化的文件，已发布的 4K 原图字节不随编码器版本改变。新增的候选图部署前在线上不存在，`assets:fetch` 对这些条目会失败，需要设置 `PEACH_CAPTURE_DATE` 后运行 `node scripts/optimize_compact_desktop.mjs`，从 PNG 原图在本地生成。
+
+页面里的小尺寸 Logo 用 `assets/peach-logo-192.webp`；`peach-logo.png` 保留 1024 原图，供 `apple-touch-icon` 与外部链接使用。
+
 截图脚本以 UTC 日期命名，可用 `PEACH_CAPTURE_DATE` 指定八位日期；捕获和编码使用同一值。2026-10-20 的两套导览来自同步后的 Peach 0.46.1 演示界面，包含首页、艺人、艺人详情、播放、关注与统计；更新后同步替换首页引用，保留历史清单记录。
 
 `npm run dev:edit` 启动 `http://127.0.0.1:8790/`，`?edit` 提供原位改字。回车或失焦写回 `site/index.html`，Esc 取消；保存接口只接受同源请求。`PEACH_PREVIEW_DOWNLOADS` 可指定本地 Mac 包清单，安装包留在原位置，预览仅开放已登记的包。
@@ -97,6 +101,12 @@ Docker 与 Windows、macOS 共用平台选择入口；Linux 桌面默认显示 D
 站点有一个 Worker（`worker/index.ts`），`assets.runWorkerFirst` 只把 `/api/event` 交给它；页面、资源与未匹配路径都由静态资源层返回，不计 Worker 调用。未匹配路径返回 `site/404.html`，缺少这一页时资源层没有可返回的 404 页，扫描与探测请求会全部落到 Worker。Workers 免费档每天 10 万次调用按账号计，与演示站共用；超出后只有埋点收到 429，页面不受影响。
 
 Dependabot 分别对普通小版本更新与安全更新分组，大版本单独审阅；`@types/node` 保持 Node 24 运行基线，只自动更新同一大版本。CI 在 Windows 和 Linux 运行安装、类型与语法检查、行为测试和 cf 构建，Linux 另跑 Chromium 下载流程测试。依赖版本只在 `package.json` 与锁文件维护，素材清单的内容哈希不随工具版本机械改变。素材许可见 [NOTICE](../NOTICE.md)。
+
+## 加载与渲染性能
+
+首屏贴纸只在宽屏且使用精确指针时加载 Sticker Forge，并且要求硬件加速的 WebGL：浏览器因性能问题拒绝创建上下文，或渲染器是 SwiftShader、llvmpipe 等软件实现时，保留静态贴纸图，不生成纹理。软件渲染下九张贴纸的距离场计算与重绘会占用主线程数秒，滚动掉到 30 帧左右。翘角提示在首屏滚出视口或页面隐藏时暂停。
+
+用 Playwright 测性能时，默认的无头 Chromium 使用 SwiftShader 软件渲染，WebGL 与合成的开销被严重放大。测 WebGL、滚动帧率和动画要加 `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist`（Windows）并用 `WEBGL_debug_renderer_info` 确认渲染器；手机档用 4 倍 CPU 降速与慢速 4G 模拟，重点看 LCP 与图片字节。
 
 ## 访问统计
 

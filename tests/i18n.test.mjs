@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import test from 'node:test';
 import {buildLocale, translateHtml} from '../scripts/build_i18n.mjs';
 
@@ -22,6 +23,15 @@ test('translate="no" 子树、脚本与注释保留原文，其余缺译逐条�
     locale, report);
   assert.ok(html.startsWith('<div translate="no"><img alt="演示"><b>演示界面</b></div><!-- 注释 --><script>const a=\'脚本\'</script>'));
   assert.deepEqual([...report.missing], ['新句子']);
+});
+
+test('两种语言的页面各自声明一次中英文 alternate', async () => {
+  for (const [file, path] of [['index.html', ''], ['en/index.html', ''], ['copyright/index.html', 'copyright/'], ['en/copyright/index.html', 'copyright/']]) {
+    const html = await readFile(new URL(`../site/${file}`, import.meta.url), 'utf8');
+    const alternates = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)].map(match => `${match[1]} ${match[2]}`);
+    assert.deepEqual(alternates.filter(item => !item.startsWith('x-default')),
+      [`zh-CN https://peach.video/${path}`, `en https://peach.video/en/${path}`], file);
+  }
 });
 
 test('英文页与中文源、译文表一致', async () => {

@@ -148,7 +148,6 @@
     "通过 X 联系 longmeidao": "Contact longmeidao on X",
     "DMCA 版权投诉": "DMCA copyright notice",
     "临时公告": "Notice",
-    "开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；可通过下方 Telegram 链接来反馈需求和问题。": "The developer's GitHub account is temporarily suspended. Download here and send feedback via Telegram below.",
     "下载最新版 →": "Download latest →",
     "在 Mac 上打开 Peach": "Open Peach on your Mac",
     "打开下载好的 DMG，将 Peach 拖入「应用程序」文件夹。": "Open the downloaded DMG and drag Peach into the Applications folder.",
@@ -237,7 +236,9 @@
     "铃村爱里": "Airi Suzumura",
     "明里䌷": "Tsumugi Akari",
     "葵司": "Tsukasa Aoi",
-    "河北彩花": "Saika Kawakita"
+    "河北彩花": "Saika Kawakita",
+    "开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；需求和问题请在": "The developer's GitHub account is temporarily suspended. Download here, and send feedback on",
+    "反馈。": "."
   },
   "runtime": {
     "Windows、macOS 与 Docker": "Windows, macOS and Docker",

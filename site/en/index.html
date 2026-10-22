@@ -421,7 +421,7 @@ body:has(.site-notice){padding-bottom:96px}
 /* 常见问题：原生 details 折叠，展开后加号换成减号。 */
 .say .sub a{color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
 .say .sub a:hover{color:var(--ink)}
-.say .sub .contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em}
+.contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em;fill:currentColor}
 .faq{display:grid;gap:8px}
 .faq details{border-radius:12px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .2s}
 .faq details[open],.faq details:hover{border-color:var(--hair-3)}
@@ -447,9 +447,9 @@ body:has(.site-notice){padding-bottom:96px}
 /* 资料条：每行复制一份首尾相接。 */
 .marks{margin-top:44px;display:grid;gap:12px;overflow:hidden;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-/* 三行按约 24px/s 同速滚动；单份长度须超过 1920 视口加 15 秒滚动距离（约 2300px），访客短暂停留时看不到重复。增删条目后按单份长度重算时长。 */
+/* 每行单份长度不短于 1920 视口宽度，同一项滚出左边之前不会从右边再出现；三行按约 24px/s 同速滚动，增删条目后按单份长度重算时长。 */
 .marks-row{display:flex;gap:12px;width:max-content;padding-right:12px;animation:marks 108s linear infinite}
-.marks-row.rev{animation-direction:reverse;animation-duration:65s}
+.marks-row.rev{animation-direction:reverse;animation-duration:95s}
 .marks-row[data-kind="performer"]{animation-duration:107s}
 .marks:hover .marks-row{animation-play-state:paused}
 .marks-row span{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:14px;border:1px solid var(--hair);
@@ -982,6 +982,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <span><img src="/assets/entities/agency-nax.webp" alt="" width="48" height="48" loading="lazy">New Actor eXperience</span>
         <span><img src="/assets/entities/agency-listar.webp" alt="" width="48" height="48" loading="lazy">LiStarPRO</span>
         <span><img src="/assets/entities/agency-mines.webp" alt="" width="48" height="48" loading="lazy">マインズ</span>
+        <span><img src="/assets/entities/agency-capsule.webp" alt="" width="48" height="48" loading="lazy">Capsule Agency</span>
+        <span><img src="/assets/entities/agency-so-model.webp" alt="" width="48" height="48" loading="lazy">SO MODEL AGENT</span>
+        <span><img src="/assets/entities/agency-krone.webp" alt="" width="48" height="48" loading="lazy">Krone</span>
+        <span><img src="/assets/entities/agency-dino.webp" alt="" width="48" height="48" loading="lazy">DINO</span>
       </div>
       <div class="marks-row" data-kind="performer" role="group" aria-label="Performers">
         <span><img src="/assets/entities/performer-remu.webp" alt="" width="48" height="48" loading="lazy">Remu Suzumori</span>
@@ -1119,7 +1123,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
 <aside class="site-notice" aria-label="Notice">
   <div class="wrap">
-    <p>The developer's GitHub account is temporarily suspended. Download here and send feedback via Telegram below.</p>
+    <p>The developer's GitHub account is temporarily suspended. Download here, and send feedback on <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a>.</p>
     <a href="#download">Download latest →</a>
   </div>
 </aside>

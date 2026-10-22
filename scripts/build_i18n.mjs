@@ -58,7 +58,9 @@ export function translateHtml(html, locale, report = {missing: new Set(), used: 
     if (skip || !core || !(Object.hasOwn(locale.text, core) || CJK.test(core))) { out += token; continue }
     report.used.add(core);
     if (!Object.hasOwn(locale.text, core)) { report.missing.add(core); out += token; continue }
-    out += before + locale.text[core] + after;
+    // 中文在西文词两侧留空格；译文以标点开头时去掉前面的空格。
+    const text = locale.text[core];
+    out += (/^[.,;:!?)]/.test(text) ? '' : before) + text + after;
   }
   return out;
 }

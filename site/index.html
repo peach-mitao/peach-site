@@ -420,7 +420,7 @@ body:has(.site-notice){padding-bottom:96px}
 /* 常见问题：原生 details 折叠，展开后加号换成减号。 */
 .say .sub a{color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
 .say .sub a:hover{color:var(--ink)}
-.say .sub .contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em}
+.contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em;fill:currentColor}
 .faq{display:grid;gap:8px}
 .faq details{border-radius:12px;border:1px solid var(--hair);background:var(--ground);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:border-color .2s}
 .faq details[open],.faq details:hover{border-color:var(--hair-3)}
@@ -446,9 +446,9 @@ body:has(.site-notice){padding-bottom:96px}
 /* 资料条：每行复制一份首尾相接。 */
 .marks{margin-top:44px;display:grid;gap:12px;overflow:hidden;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
-/* 三行按约 24px/s 同速滚动；单份长度须超过 1920 视口加 15 秒滚动距离（约 2300px），访客短暂停留时看不到重复。增删条目后按单份长度重算时长。 */
+/* 每行单份长度不短于 1920 视口宽度，同一项滚出左边之前不会从右边再出现；三行按约 24px/s 同速滚动，增删条目后按单份长度重算时长。 */
 .marks-row{display:flex;gap:12px;width:max-content;padding-right:12px;animation:marks 108s linear infinite}
-.marks-row.rev{animation-direction:reverse;animation-duration:65s}
+.marks-row.rev{animation-direction:reverse;animation-duration:95s}
 .marks-row[data-kind="performer"]{animation-duration:107s}
 .marks:hover .marks-row{animation-play-state:paused}
 .marks-row span{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 8px;border-radius:14px;border:1px solid var(--hair);
@@ -970,7 +970,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       <p class="say lg reveal"><b>不只是观影</b><span class="sub">Peach 是你的终极<span class="nowrap">资源管理库。</span></span></p>
     </div>
     <div class="marks reveal" role="group" aria-label="厂商、事务所与女优">
-      <div class="marks-row"><span><img src="/assets/marks/s1.webp" alt="" width="48" height="48" loading="lazy">S1 NO.1 STYLE</span><span><img src="/assets/marks/moodyz.webp" alt="" width="48" height="48" loading="lazy">MOODYZ</span><span><img src="/assets/marks/prestige.webp" alt="" width="48" height="48" loading="lazy">PRESTIGE</span><span><img src="/assets/marks/sod.webp" alt="" width="48" height="48" loading="lazy">SOD Create</span><span><img src="/assets/marks/kawaii.webp" alt="" width="48" height="48" loading="lazy">kawaii*</span><span><img src="/assets/marks/premium.webp" alt="" width="48" height="48" loading="lazy">PREMIUM</span><span><img src="/assets/marks/maxing.webp" alt="" width="48" height="48" loading="lazy">MAXING</span><span><img src="/assets/marks/rocket.webp" alt="" width="48" height="48" loading="lazy">ROCKET</span><span><img src="/assets/marks/hmjm.webp" alt="" width="48" height="48" loading="lazy">HMJM</span><span><img src="/assets/marks/tma.webp" alt="" width="48" height="48" loading="lazy">TMA</span><span><img src="/assets/marks/kmp.webp" alt="" width="48" height="48" loading="lazy">K.M.Produce</span><span><img src="/assets/marks/doc.webp" alt="" width="48" height="48" loading="lazy">DOC</span><span data-copy-draft><img src="/assets/marks/dogma.webp" alt="" width="48" height="48" loading="lazy">Dogma</span><span data-copy-draft><img src="/assets/marks/kirakira.webp" alt="" width="48" height="48" loading="lazy">kira☆kira</span><span data-copy-draft><img src="/assets/marks/million.webp" alt="" width="48" height="48" loading="lazy">MILLION</span><span data-copy-draft><img src="/assets/marks/scute.webp" alt="" width="48" height="48" loading="lazy">S-Cute</span></div>
+      <div class="marks-row"><span><img src="/assets/marks/s1.webp" alt="" width="48" height="48" loading="lazy">S1 NO.1 STYLE</span><span><img src="/assets/marks/moodyz.webp" alt="" width="48" height="48" loading="lazy">MOODYZ</span><span><img src="/assets/marks/prestige.webp" alt="" width="48" height="48" loading="lazy">PRESTIGE</span><span><img src="/assets/marks/sod.webp" alt="" width="48" height="48" loading="lazy">SOD Create</span><span><img src="/assets/marks/kawaii.webp" alt="" width="48" height="48" loading="lazy">kawaii*</span><span><img src="/assets/marks/premium.webp" alt="" width="48" height="48" loading="lazy">PREMIUM</span><span><img src="/assets/marks/maxing.webp" alt="" width="48" height="48" loading="lazy">MAXING</span><span><img src="/assets/marks/rocket.webp" alt="" width="48" height="48" loading="lazy">ROCKET</span><span><img src="/assets/marks/hmjm.webp" alt="" width="48" height="48" loading="lazy">HMJM</span><span><img src="/assets/marks/tma.webp" alt="" width="48" height="48" loading="lazy">TMA</span><span><img src="/assets/marks/kmp.webp" alt="" width="48" height="48" loading="lazy">K.M.Produce</span><span><img src="/assets/marks/doc.webp" alt="" width="48" height="48" loading="lazy">DOC</span><span><img src="/assets/marks/dogma.webp" alt="" width="48" height="48" loading="lazy">Dogma</span><span><img src="/assets/marks/kirakira.webp" alt="" width="48" height="48" loading="lazy">kira☆kira</span><span><img src="/assets/marks/million.webp" alt="" width="48" height="48" loading="lazy">MILLION</span><span><img src="/assets/marks/scute.webp" alt="" width="48" height="48" loading="lazy">S-Cute</span></div>
       <div class="marks-row rev" data-kind="agency" role="group" aria-label="事务所">
         <span><img src="/assets/entities/agency-t-powers.webp" alt="" width="48" height="48" loading="lazy">T-POWERS</span>
         <span><img src="/assets/entities/agency-c-more.webp" alt="" width="48" height="48" loading="lazy">C-more Entertainment</span>
@@ -980,6 +980,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <span><img src="/assets/entities/agency-nax.webp" alt="" width="48" height="48" loading="lazy">New Actor eXperience</span>
         <span><img src="/assets/entities/agency-listar.webp" alt="" width="48" height="48" loading="lazy">LiStarPRO</span>
         <span><img src="/assets/entities/agency-mines.webp" alt="" width="48" height="48" loading="lazy">マインズ</span>
+        <span data-copy-draft><img src="/assets/entities/agency-capsule.webp" alt="" width="48" height="48" loading="lazy">Capsule Agency</span>
+        <span data-copy-draft><img src="/assets/entities/agency-so-model.webp" alt="" width="48" height="48" loading="lazy">SO MODEL AGENT</span>
+        <span data-copy-draft><img src="/assets/entities/agency-krone.webp" alt="" width="48" height="48" loading="lazy">Krone</span>
+        <span data-copy-draft><img src="/assets/entities/agency-dino.webp" alt="" width="48" height="48" loading="lazy">DINO</span>
       </div>
       <div class="marks-row" data-kind="performer" role="group" aria-label="女优">
         <span><img src="/assets/entities/performer-remu.webp" alt="" width="48" height="48" loading="lazy">凉森玲梦</span>
@@ -990,15 +994,15 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <span><img src="/assets/entities/performer-karen.webp" alt="" width="48" height="48" loading="lazy">枫花恋</span>
         <span><img src="/assets/entities/performer-kana.webp" alt="" width="48" height="48" loading="lazy">桃乃木香奈</span>
         <span><img src="/assets/entities/performer-mayuki.webp" alt="" width="48" height="48" loading="lazy">伊藤舞雪</span>
-        <span data-copy-draft><img src="/assets/entities/performer-yua.webp" alt="" width="48" height="48" loading="lazy">三上悠亚</span>
-        <span data-copy-draft><img src="/assets/entities/performer-ichika.webp" alt="" width="48" height="48" loading="lazy">星宫一花</span>
-        <span data-copy-draft><img src="/assets/entities/performer-mio.webp" alt="" width="48" height="48" loading="lazy">石川澪</span>
-        <span data-copy-draft><img src="/assets/entities/performer-kojima.webp" alt="" width="48" height="48" loading="lazy">小岛南</span>
-        <span data-copy-draft><img src="/assets/entities/performer-suzu.webp" alt="" width="48" height="48" loading="lazy">本庄铃</span>
-        <span data-copy-draft><img src="/assets/entities/performer-airi.webp" alt="" width="48" height="48" loading="lazy">铃村爱里</span>
-        <span data-copy-draft><img src="/assets/entities/performer-tsumugi.webp" alt="" width="48" height="48" loading="lazy">明里䌷</span>
-        <span data-copy-draft><img src="/assets/entities/performer-tsukasa.webp" alt="" width="48" height="48" loading="lazy">葵司</span>
-        <span data-copy-draft><img src="/assets/entities/performer-saika.webp" alt="" width="48" height="48" loading="lazy">河北彩花</span>
+        <span><img src="/assets/entities/performer-yua.webp" alt="" width="48" height="48" loading="lazy">三上悠亚</span>
+        <span><img src="/assets/entities/performer-ichika.webp" alt="" width="48" height="48" loading="lazy">星宫一花</span>
+        <span><img src="/assets/entities/performer-mio.webp" alt="" width="48" height="48" loading="lazy">石川澪</span>
+        <span><img src="/assets/entities/performer-kojima.webp" alt="" width="48" height="48" loading="lazy">小岛南</span>
+        <span><img src="/assets/entities/performer-suzu.webp" alt="" width="48" height="48" loading="lazy">本庄铃</span>
+        <span><img src="/assets/entities/performer-airi.webp" alt="" width="48" height="48" loading="lazy">铃村爱里</span>
+        <span><img src="/assets/entities/performer-tsumugi.webp" alt="" width="48" height="48" loading="lazy">明里䌷</span>
+        <span><img src="/assets/entities/performer-tsukasa.webp" alt="" width="48" height="48" loading="lazy">葵司</span>
+        <span><img src="/assets/entities/performer-saika.webp" alt="" width="48" height="48" loading="lazy">河北彩花</span>
       </div>
     </div>
   </section>
@@ -1073,14 +1077,14 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>常见问题</b><span class="sub" data-copy-draft>没找到答案？<br>在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a>、<a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 联系开发者</span></p>
+        <p class="say lg"><b>常见问题</b><span class="sub">没找到答案？<br>在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a>、<a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 联系开发者</span></p>
       </div>
       <div class="faq reveal">
         <details><summary>会改我的文件吗？</summary><p>扫描、补资料不碰原文件。手动整理会改名或移动；清空回收站会删除文件，资源同步中的清理会删除空目录，均需确认。</p></details>
         <details><summary>支持哪些网盘？</summary><p>通过 CloudDrive2 等工具挂载为本地目录的网盘，详见<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">网盘挂载</a>。云下载按当前连接器返回的能力开放，PikPak 也可直连，登录令牌保存在本机。</p></details>
         <details><summary>手机上怎么看？</summary><p>首次设置时允许同一局域网的设备访问，手机连同一网络，打开设置页给出的地址，并设置访问密码。</p></details>
         <details><summary>数据存在哪？</summary><p>本机的 <code>peach-data</code> 文件夹。Windows 版默认位于 <code>%LOCALAPPDATA%\Peach\peach-data</code>，macOS 版默认位于 <code>~/Library/Application Support/Peach/peach-data</code>。</p></details>
-        <details data-copy-draft><summary>支持哪些语言？</summary><p>Peach 应用目前只有中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。官网提供中文和英文。</p></details>
+        <details><summary>支持哪些语言？</summary><p>Peach 应用目前只有中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。官网提供中文和英文。</p></details>
         <details><summary>Mac 提示「已损坏，无法打开」怎么办？</summary><p>测试包尚未经过 Apple 公证，从网上下载后带有隔离标记，较新的 macOS 会这样提示，「隐私与安全性」里也不出现「仍要打开」。在终端运行一条命令移除 Peach 的隔离标记即可打开，安装新版本后需要再运行一次。<button class="text-action" type="button" data-mac-help>查看打开步骤</button></p></details>
       </div>
     </div>
@@ -1117,7 +1121,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
 <aside class="site-notice" aria-label="临时公告">
   <div class="wrap">
-    <p>开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；可通过下方 Telegram 链接来反馈需求和问题。</p>
+    <p data-copy-draft>开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；需求和问题请在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> 或 <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 反馈。</p>
     <a href="#download">下载最新版 →</a>
   </div>
 </aside>

@@ -57,6 +57,26 @@
       "sha256": "478b71163ce52586717cc81e0daef69858592c7aa2230d37c6b7a65557cf8498"
     },
     {
+      "path": "assets/entities/agency-capsule.webp",
+      "bytes": 2092,
+      "sha256": "f5cac1fb87c5f75e666369f563c0961d1341d7c16a499af8621e0bec1ec2df1d"
+    },
+    {
+      "path": "assets/entities/agency-so-model.webp",
+      "bytes": 880,
+      "sha256": "88a022d1023875db35c61b76b11da2e9adbab51518572a448d692e0d324fd8a4"
+    },
+    {
+      "path": "assets/entities/agency-krone.webp",
+      "bytes": 1036,
+      "sha256": "f060130466003305db56dc2368d656a5b019a5d5361723d2d5bc6ebabe98bcb7"
+    },
+    {
+      "path": "assets/entities/agency-dino.webp",
+      "bytes": 1506,
+      "sha256": "b560410e376ff175087d94ebf4e38c294e473c244ec78563a82e937fa3e00694"
+    },
+    {
       "path": "assets/entities/performer-arina.webp",
       "bytes": 2644,
       "sha256": "9d4a27e3110281b8f9f3cfc53b38d1fe0f01ee5100232617f1876fcb155d589f"

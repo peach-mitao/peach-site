@@ -49,6 +49,8 @@ export function translateHtml(html, locale, report = {missing: new Set(), used: 
       if (!VOID.has(name) && !token.endsWith('/>')) stack.push({name, skip: skip || /\stranslate\s*=\s*["']?no\b/i.test(token)});
       let tag = translateTag(token, locale, report, skip);
       if (name === 'body') tag = tag.replace(/\sdata-copy-overrides=("[^"]*"|'[^']*')/, '');
+      // 改字高亮只用于中文源的编辑预览，外语页不带。
+      tag = tag.replace(/\sdata-copy-draft(?=[\s>/])/, '');
       out += tag;
       continue;
     }

@@ -61,7 +61,7 @@ function start() {
   const chosenPlatform = ['windows', 'macos', 'docker'].includes(params.get('platform')) ? params.get('platform') : null;
   const chosenArchitecture = ['arm64', 'x86_64'].includes(params.get('arch')) ? params.get('arch') : null;
   const state = {platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
-    manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null};
+    manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null, releasesSettled: false, dockerSettled: false};
 
   function render() {
     const mac = state.downloads.macos || state.localMac;
@@ -106,6 +106,13 @@ function start() {
       : 'uv sync --locked --python 3.14\n& .\\.venv\\Scripts\\peach-tray.exe';
     renderCopy(document.querySelector('#src'), `download.source.${panel}`, 'git clone https://gitgud.io/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
     renderCopy(document.querySelector('[data-source-shell]'), `download.shell.${panel}`, panel === 'macos' ? 'zsh' : 'PowerShell');
+    // 首屏文字定稿后再显示：按钮随首次渲染，版本行等到当前平台取得版本或发行清单查完。
+    const root = document.documentElement;
+    root.classList.remove('dl-label-pending');
+    if (state.platform === 'docker' ? state.dockerSettled
+      : !['windows', 'macos'].includes(state.platform) || state.releasesSettled || ready) {
+      root.classList.remove('dl-meta-pending');
+    }
   }
 
   document.querySelectorAll('[data-platform-option]').forEach(button => button.addEventListener('click', () => {
@@ -138,8 +145,10 @@ function start() {
   void (async () => {
     try {
       const response = await fetch(dockerVersionApi, {signal: AbortSignal.timeout(8000)});
-      if (response.ok) {state.dockerVersion = (await response.json()).message; render()}
+      if (response.ok) state.dockerVersion = (await response.json()).message;
     } catch { /* 镜像版本未取得时只显示平台名。 */ }
+    state.dockerSettled = true;
+    render();
   })();
   void (async () => {
     const preview = document.querySelector('meta[name="peach-local-downloads"]')?.content;
@@ -165,6 +174,8 @@ function start() {
         render();
       } catch { /* 公开下载源不可用时继续检查下一来源。 */ }
     }
+    state.releasesSettled = true;
+    render();
   })();
 }
 

@@ -10,6 +10,7 @@
 | 原位文字编辑 | Peach 主仓库 `frontend/src/copy-editor-core.js`，AGPL-3.0-only | 应用、官网和演示站使用相同核心；保存由各端适配。来源提交与 SHA-256 记录在 `copy-editor-source.json`，检查入口拒绝副本漂移 |
 | 下载版本说明 | 现有 R2／GitHub 发行解析与 Shields Docker 版本 JSON 接口 | 安装包和镜像各取实际版本；保留版本格式校验，未取得时只显示平台。沿用静态官网，无新增运行时依赖 |
 | 图片与浏览器验收 | 既有 Sharp 与 Playwright | 无损 WebP 编解码测试、合成 Release 响应、手机与桌面下载验证；固定版本见依赖清单 |
+| 离屏动效卡 | 浏览器原生 `content-visibility`、ResizeObserver 与现有 IntersectionObserver，无新增依赖 | 固定比例画框保留占位，缩放读取观察结果，首次可见才创建播放脚本；验证滚动、窗口缩放、暂停与减少动态效果。不支持内容可见性的浏览器正常布局。属性行为见 [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility) |
 | 静态资源缓存 | Cloudflare Workers Assets 原生 `_headers`、ETag 与既有 Sharp，无新增依赖 | 日期截图一年不可变，捕获与编码入口按解码像素拒绝覆盖冲突；可更新页面和自有脚本保持校验。真实响应验收覆盖缓存头与 304，不使用 Worker 包装静态资源 |
 | 访问统计 | Cloudflare Web Analytics（平台自动注入）与 Workers Analytics Engine，无新增依赖 | Web Analytics 已有国家、路径、来源、设备、浏览器族与系统族，缺语言、版本号与自定义事件；只补这几项，由 `worker/` 的单一埋点入口写入。D1 要自建聚合，KV 免费档每天只能写 1,000 次，Observability 日志免费档只留 3 天，都不适合看趋势 |
 | 多语言页面 | 自有 `scripts/build_i18n.mjs` 与 `i18n/<语言>.json`，无新增依赖 | 静态双页面，标题、描述与 `hreflang` 可被搜索引擎读取；运行时换字做不到这一点，i18next 等框架又要求把中文源改写成键名，与原位编辑冲突。生成结果随源码提交，`npm run check` 拒绝缺译、多余译文与过期页面 |

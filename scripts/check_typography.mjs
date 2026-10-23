@@ -12,9 +12,15 @@ const browser = await chromium.launch({channel:'chrome'});
 const report = [];
 try {
   for (const width of [1280, 390, 320, 768]) {
-    const context = await browser.newContext({viewport:{width,height:width <= 390 ? 844 : 900}, locale:'zh-CN', reducedMotion:'reduce'});
+    const context = await browser.newContext({viewport:{width,height:width <= 390 ? 844 : 900}, locale:'zh-CN', reducedMotion:'reduce',
+      userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36'});
     try {
       const page = await context.newPage();
+      await page.route('https://downloads.peach.video/releases.json', route=>route.fulfill({json:[{
+        tag_name:'v1.2.3',published_at:'2030-01-01T00:00:00Z',assets:['Peach-1.2.3-windows-x64-setup.exe','Peach-1.2.3-windows-x64.zip'].map(name=>({name,state:'uploaded'}))
+      }]}));
+      await page.route('https://api.github.com/**',route=>route.fulfill({json:[]}));
+      await page.route('https://img.shields.io/docker/v/longmeidao/peach.json?sort=semver',route=>route.fulfill({json:{message:'v1.2.3'}}));
       const errors = [], failures = [];
       page.on('pageerror', error => errors.push(error.message));
       page.on('response', response => {if(response.status() >= 400) failures.push(response.url());});
@@ -62,7 +68,7 @@ try {
           return {primary:primary.getBoundingClientRect().toJSON(),href:primary.href,text:primary.textContent.trim(),
             secondary:secondary.map(button=>button.getBoundingClientRect().toJSON())};
         });
-        assert.ok(actions.href.endsWith('#download'));
+        assert.equal(actions.href,'https://downloads.peach.video/v1.2.3/Peach-1.2.3-windows-x64-setup.exe');
         assert.equal(actions.text,'下载 Windows 版');
         assert.equal(actions.secondary.length,2);
         assert.ok(actions.secondary.every(button=>button.top>actions.primary.bottom),'下载位于次级动作上方');
@@ -92,7 +98,7 @@ try {
     const page = await browser.newPage({viewport:{width:1280,height:900}, reducedMotion:'reduce'});
     try {
       await page.goto(base, {waitUntil:'networkidle'});
-      await page.locator('.stk.on').first().waitFor({state:'visible'});
+      await page.locator('.stk').first().waitFor({state:'visible'});
       await page.setViewportSize({width:390,height:844});
       assert.equal(await page.locator('.stk-layer').isVisible(), false);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));

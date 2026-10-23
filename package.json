@@ -26,6 +26,7 @@
     "verify:mobile": "node scripts/check_mobile.mjs",
     "verify:downloads": "node scripts/check_downloads.mjs",
     "verify:analytics": "node scripts/check_analytics.mjs",
+    "verify:interface": "node scripts/check_interface.mjs",
     "verify:cache": "node scripts/check_cache.mjs",
     "analytics": "node scripts/analytics_report.mjs",
     "capture:desktop": "node scripts/capture_compact_desktop.mjs && node scripts/optimize_compact_desktop.mjs",

@@ -173,7 +173,7 @@ body:has(.site-notice){padding-bottom:96px}
 .live{display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
 .live:hover{border-color:var(--hair-3)}
 .live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
-  border:1px solid var(--hair-2);background:#0B0C0F}
+  border:1px solid var(--hair-2);background:#0B0C0F;content-visibility:auto}
 /* 播放墙按真实界面缩排：无圆角作品块、方形展开块、块内标题与两行控制条。 */
 .mk-wall{overflow:hidden;background:#070707;color:#F7F4EE}
 .mk-wall-world{position:absolute;inset:0;width:900px;height:620px;transform:translate(-30px,-30px);transition:transform 950ms cubic-bezier(.77,0,.175,1)}
@@ -980,10 +980,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <span><img src="/assets/entities/agency-nax.webp" alt="" width="48" height="48" loading="lazy">New Actor eXperience</span>
         <span><img src="/assets/entities/agency-listar.webp" alt="" width="48" height="48" loading="lazy">LiStarPRO</span>
         <span><img src="/assets/entities/agency-mines.webp" alt="" width="48" height="48" loading="lazy">マインズ</span>
-        <span data-copy-draft><img src="/assets/entities/agency-capsule.webp" alt="" width="48" height="48" loading="lazy">Capsule Agency</span>
-        <span data-copy-draft><img src="/assets/entities/agency-so-model.webp" alt="" width="48" height="48" loading="lazy">SO MODEL AGENT</span>
-        <span data-copy-draft><img src="/assets/entities/agency-krone.webp" alt="" width="48" height="48" loading="lazy">Krone</span>
-        <span data-copy-draft><img src="/assets/entities/agency-dino.webp" alt="" width="48" height="48" loading="lazy">DINO</span>
+        <span><img src="/assets/entities/agency-capsule.webp" alt="" width="48" height="48" loading="lazy">Capsule Agency</span>
+        <span><img src="/assets/entities/agency-so-model.webp" alt="" width="48" height="48" loading="lazy">SO MODEL AGENT</span>
+        <span><img src="/assets/entities/agency-krone.webp" alt="" width="48" height="48" loading="lazy">Krone</span>
+        <span><img src="/assets/entities/agency-dino.webp" alt="" width="48" height="48" loading="lazy">DINO</span>
       </div>
       <div class="marks-row" data-kind="performer" role="group" aria-label="女优">
         <span><img src="/assets/entities/performer-remu.webp" alt="" width="48" height="48" loading="lazy">凉森玲梦</span>
@@ -1086,6 +1086,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <details><summary>数据存在哪？</summary><p>本机的 <code>peach-data</code> 文件夹。Windows 版默认位于 <code>%LOCALAPPDATA%\Peach\peach-data</code>，macOS 版默认位于 <code>~/Library/Application Support/Peach/peach-data</code>。</p></details>
         <details><summary>支持哪些语言？</summary><p>Peach 应用目前只有中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。官网提供中文和英文。</p></details>
         <details><summary>Mac 提示「已损坏，无法打开」怎么办？</summary><p>测试包尚未经过 Apple 公证，从网上下载后带有隔离标记，较新的 macOS 会这样提示，「隐私与安全性」里也不出现「仍要打开」。在终端运行一条命令移除 Peach 的隔离标记即可打开，安装新版本后需要再运行一次。<button class="text-action" type="button" data-mac-help>查看打开步骤</button></p></details>
+        <details data-copy-draft><summary>官网如何统计访问？</summary><p>官网使用 Cloudflare Web Analytics 统计页面访问，并用自有统计记录语言偏好、国家或地区、浏览器与系统概况、来源域名和推广来源，以及切换语言、点击下载等操作，用于改进官网。自有统计不使用 Cookie，不设置访客标识，不保存 IP、完整浏览器标识或馆藏数据；记录在 Cloudflare Analytics Engine 保留三个月。下载统计表示点击次数，不代表安装成功。</p></details>
       </div>
     </div>
   </section>
@@ -1121,7 +1122,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
 <aside class="site-notice" aria-label="临时公告">
   <div class="wrap">
-    <p data-copy-draft>开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；需求和问题请在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> 或 <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 反馈。</p>
+    <p>开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；需求和问题请在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> 或 <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 反馈。</p>
     <a href="#download">下载最新版 →</a>
   </div>
 </aside>
@@ -1455,11 +1456,17 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
   }
 
   const cards=[...document.querySelectorAll('.live[data-mock]')];
-  cards.forEach(card=>{const mock=card.querySelector('.mk'),screen=card.querySelector('.live-screen');
-    const fit=()=>mock.style.setProperty('--mk-s',screen.clientWidth/720);fit();new ResizeObserver(fit).observe(screen)});
+  // 画框由 aspect-ratio 保留尺寸；缩放使用观察器的布局结果，不交错读写离屏卡片。
+  const fit=new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{
+    target.querySelector('.mk').style.setProperty('--mk-s',contentRect.width/720);
+  }));
+  cards.forEach(card=>fit.observe(card.querySelector('.live-screen')));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const players=new Map(cards.map(card=>[card,stage(card,SCENES[card.dataset.mock])]));
-    const watch=new IntersectionObserver(entries=>entries.forEach(e=>players.get(e.target)(e.isIntersecting)),{threshold:.35});
+    const players=new Map();
+    const watch=new IntersectionObserver(entries=>entries.forEach(e=>{
+      if(e.isIntersecting&&!players.has(e.target))players.set(e.target,stage(e.target,SCENES[e.target.dataset.mock]));
+      players.get(e.target)?.(e.isIntersecting);
+    }),{threshold:.35});
     cards.forEach(card=>watch.observe(card));
   }
 }

@@ -174,7 +174,7 @@ body:has(.site-notice){padding-bottom:96px}
 .live{display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
 .live:hover{border-color:var(--hair-3)}
 .live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
-  border:1px solid var(--hair-2);background:#0B0C0F}
+  border:1px solid var(--hair-2);background:#0B0C0F;content-visibility:auto}
 /* 播放墙按真实界面缩排：无圆角作品块、方形展开块、块内标题与两行控制条。 */
 .mk-wall{overflow:hidden;background:#070707;color:#F7F4EE}
 .mk-wall-world{position:absolute;inset:0;width:900px;height:620px;transform:translate(-30px,-30px);transition:transform 950ms cubic-bezier(.77,0,.175,1)}
@@ -1088,6 +1088,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <details><summary>Where is my data?</summary><p>In the local <code>peach-data</code>  folder. The Windows build defaults to <code>%LOCALAPPDATA%\Peach\peach-data</code>, and the macOS build to <code>~/Library/Application Support/Peach/peach-data</code>.</p></details>
         <details><summary>Which languages are supported?</summary><p>The Peach app is currently Chinese only. English and more languages are in progress, and translation help is welcome; contact the developer to join. This website is available in Chinese and English.</p></details>
         <details><summary>My Mac says Peach “is damaged and can't be opened”</summary><p>Test builds are not notarized by Apple yet. Downloaded apps carry a quarantine flag, so recent macOS versions show this message and Privacy & Security offers no “Open Anyway”. Run one Terminal command to remove the flag from Peach, then open it; run it again after installing a new version.<button class="text-action" type="button" data-mac-help>How to open</button></p></details>
+        <details><summary>How does this website measure visits?</summary><p>This website uses Cloudflare Web Analytics to measure page views. Our own analytics records language preferences, country or region, browser and operating system details, referring domains and campaign sources, and actions such as changing languages or clicking download links, to improve the website. Our own analytics uses no cookies or visitor identifiers and stores no IP addresses, full user-agent strings or library data. These records are retained in Cloudflare Analytics Engine for three months. Download counts represent clicks, not successful installations.</p></details>
       </div>
     </div>
   </section>
@@ -1457,11 +1458,17 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
   }
 
   const cards=[...document.querySelectorAll('.live[data-mock]')];
-  cards.forEach(card=>{const mock=card.querySelector('.mk'),screen=card.querySelector('.live-screen');
-    const fit=()=>mock.style.setProperty('--mk-s',screen.clientWidth/720);fit();new ResizeObserver(fit).observe(screen)});
+  // 画框由 aspect-ratio 保留尺寸；缩放使用观察器的布局结果，不交错读写离屏卡片。
+  const fit=new ResizeObserver(entries=>entries.forEach(({target,contentRect})=>{
+    target.querySelector('.mk').style.setProperty('--mk-s',contentRect.width/720);
+  }));
+  cards.forEach(card=>fit.observe(card.querySelector('.live-screen')));
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const players=new Map(cards.map(card=>[card,stage(card,SCENES[card.dataset.mock])]));
-    const watch=new IntersectionObserver(entries=>entries.forEach(e=>players.get(e.target)(e.isIntersecting)),{threshold:.35});
+    const players=new Map();
+    const watch=new IntersectionObserver(entries=>entries.forEach(e=>{
+      if(e.isIntersecting&&!players.has(e.target))players.set(e.target,stage(e.target,SCENES[e.target.dataset.mock]));
+      players.get(e.target)?.(e.isIntersecting);
+    }),{threshold:.35});
     cards.forEach(card=>watch.observe(card));
   }
 }

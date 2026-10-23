@@ -9,7 +9,7 @@ try {
   server.listen(0, '127.0.0.1');
   await once(server, 'listening');
   const {port} = server.address();
-  for (const [file,args] of [['check_downloads.mjs',[`http://127.0.0.1:${port}/`]],['check_analytics.mjs',[`http://127.0.0.1:${port}/`]],['check_edit.mjs',[]]]) {
+  for (const [file,args] of [['check_downloads.mjs',[`http://127.0.0.1:${port}/`]],['check_analytics.mjs',[`http://127.0.0.1:${port}/`]],['check_interface.mjs',[`http://127.0.0.1:${port}/`]],['check_edit.mjs',[]]]) {
     const child = spawn(process.execPath, [fileURLToPath(new URL(file, import.meta.url)),...args], {stdio: 'inherit'});
     const [code] = await once(child, 'exit');
     if (code !== 0) {process.exitCode = code ?? 1;break}

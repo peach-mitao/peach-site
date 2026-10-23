@@ -27,6 +27,8 @@ try {
     page.on('request',r=>{if(r.url().includes('/screenshots/'))requests.push(r.url())});
     try {
       await page.route('https://api.github.com/**',route=>route.fulfill({json:[]}));
+      await page.route('https://downloads.peach.video/releases.json',route=>route.fulfill({json:[]}));
+      await page.route('https://img.shields.io/docker/v/longmeidao/peach.json?sort=semver',route=>route.fulfill({json:{message:'v1.2.3'}}));
       await page.goto(base,{waitUntil:'networkidle'});
       await page.evaluate(()=>document.fonts.ready);
       assert.equal(await page.locator('#screen img[src]').count(),1);

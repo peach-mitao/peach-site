@@ -32,11 +32,13 @@ npm test
 npx --no-install playwright install chromium
 ```
 
-在临时回环端口自动验证手机和桌面的下载流程，无需启动预览：
+在临时回环端口自动验证手机和桌面的下载、埋点、编辑与中英文界面，无需启动预览：
 
 ```powershell
 npm run test:browser
 ```
+
+对已有预览使用 `npm run verify:interface -- <地址>`，核对语言菜单、公开统计说明、离屏动效卡的暂停与窗口缩放，以及减少动态效果。`verify:typography` 与 `verify:mobile` 使用合成发行清单，分别验证可下载状态和未取得安装包时的跳转，不依赖公网版本或发布时间。
 
 检查 cf 配置与构建，不上传资源：
 
@@ -62,7 +64,7 @@ CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不�
 
 页面里的小尺寸 Logo 用 `assets/peach-logo-192.webp`；`peach-logo.png` 保留 1024 原图，供 `apple-touch-icon` 与外部链接使用。
 
-截图脚本以 UTC 日期命名，可用 `PEACH_CAPTURE_DATE` 指定八位日期；捕获和编码使用同一值。2026-10-20 的两套导览来自同步后的 Peach 0.46.1 演示界面，包含首页、艺人、艺人详情、播放、关注与统计；更新后同步替换首页引用，保留历史清单记录。
+截图脚本以 UTC 日期命名，可用 `PEACH_CAPTURE_DATE` 指定八位日期；捕获和编码使用同一值。首页使用 2026-10-18 的两套导览，包含首页、艺人、艺人详情、播放、关注与统计；清单另保留 2026-10-20 的 Peach 0.46.1 演示界面截图，作为可选素材，不代表页面当前引用。更新时同步替换首页引用、生成响应式候选并运行 `cache:sync`，保留历史清单记录。
 
 `npm run dev:edit` 启动 `http://127.0.0.1:8790/`，`?edit` 提供原位改字。回车或失焦写回 `site/index.html`，Esc 取消；保存接口只接受同源请求。`PEACH_PREVIEW_DOWNLOADS` 可指定本地 Mac 包清单，安装包留在原位置，预览仅开放已登记的包。
 
@@ -118,13 +120,15 @@ Dependabot 分别对普通小版本更新与安全更新分组，大版本单独
 
 ## 加载与渲染性能
 
+动效卡的画框用 `aspect-ratio` 保留尺寸，内部使用浏览器原生 `content-visibility: auto` 跳过离屏布局。`ResizeObserver` 的 `contentRect` 提供缩放宽度，避免初始化时交错读取布局与写入样式；播放脚本和光标在卡片首次进入视口时创建，离屏或页面隐藏时暂停。减少动态效果时保留静态画面。浏览器不支持内容可见性优化时仍正常布局。
+
 首屏贴纸只在宽屏且使用精确指针时加载 Sticker Forge，并且要求硬件加速的 WebGL：浏览器因性能问题拒绝创建上下文，或渲染器是 SwiftShader、llvmpipe 等软件实现时，保留静态贴纸图，不生成纹理。软件渲染下九张贴纸的距离场计算与重绘会占用主线程数秒，滚动掉到 30 帧左右。翘角提示在首屏滚出视口或页面隐藏时暂停。
 
 用 Playwright 测性能时，默认的无头 Chromium 使用 SwiftShader 软件渲染，WebGL 与合成的开销被严重放大。测 WebGL、滚动帧率和动画要加 `--use-angle=d3d11 --enable-gpu --ignore-gpu-blocklist`（Windows）并用 `WEBGL_debug_renderer_info` 确认渲染器；手机档用 4 倍 CPU 降速与慢速 4G 模拟，重点看 LCP 与图片字节。
 
 ## 访问统计
 
-Cloudflare 在页面里自动注入 Web Analytics 脚本，提供页面访问、国家、路径、来源、设备、浏览器族与系统族，没有语言、版本号和自定义事件。`site/assets/analytics.js` 只补这几项：打开页面和几个关键操作各发一条埋点到 `/api/event`，Worker 归一后写入 Analytics Engine 数据集 `peach_site_events`。数据集在第一次写入时自动创建，数据保留三个月。
+Cloudflare 在页面里自动注入 Web Analytics 脚本，提供页面访问、国家、路径、来源、设备、浏览器族与系统族，没有语言、版本号和自定义事件。`site/assets/analytics.js` 只补这几项：打开页面和几个关键操作各发一条埋点到 `/api/event`，Worker 归一后写入 Analytics Engine 数据集 `peach_site_events`。数据集在第一次写入时自动创建，按 [Cloudflare 保留期](https://developers.cloudflare.com/analytics/analytics-engine/limits/)存储三个月。
 
 | 列 | 来源 | 用途 |
 | --- | --- | --- |
@@ -139,6 +143,8 @@ Cloudflare 在页面里自动注入 Web Analytics 脚本，提供页面访问、
 | `detail` | 页面 | 事件补充：切换到的语言、下载的包、选择的平台、展开的问答序号 |
 
 统计匿名：不用 Cookie 或本地存储，不发访客标识，不存 IP 与 UA 原文，任意输入都经白名单或格式校验后才写入。爬虫、脚本与无头浏览器照常收到 204，但不记录，所以浏览器验收不会写入统计。新增维度只能追加到 `worker/events.ts` 的 `BLOBS` 末尾，查询脚本按同一顺序取列。
+
+首页常见问题中的「官网如何统计访问？」提供公开说明，中英文随页面生成。下载事件记录点击，不能作为成功下载、安装或应用使用量；Web Analytics 与自有统计分别描述，不将自有统计的字段限制泛化为 CDN 日志策略。
 
 `npm run verify:analytics -- <地址>` 在页面上逐个触发埋点并核对 204；`npm run test:browser` 已包含这一步。本地 `cf dev` 的 Analytics Engine 绑定不落盘，只能验证路由与返回码，写入与查询要在线上核对。
 

@@ -98,7 +98,7 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 | `attributes` | 按属性名精确替换的值，如 `lang`、`hreflang` 与站内链接 |
 | `runtime` | 脚本中 `t('原文')` 的译文，生成时注入为 `window.PEACH_I18N` |
 
-`translate="no"` 的子树保留原文；首页的演示界面与应用一致，保持中文。中文改字后 `npm run check` 会列出缺少或不再使用的译文，以及需要重新生成的页面。补齐 `i18n/en.json` 后运行 `npm run i18n`。英文页不提供 `?edit` 原位编辑，改译文直接改 JSON。脚本新增文案时用 `t()` 包住原文：模块从 `/assets/i18n.js` 导入，经典脚本使用同名的单行查表函数。顶栏地球仪菜单与页尾链接切换语言，菜单标 `translate="no"`，各语言名称保持原文；两种语言互相声明 `hreflang`。译文以不超框为准，按钮可只留图标加名称，例如 Mac 面板写「Apple Silicon」；改完运行 `npm run test:browser` 与浏览器截图核对 320、390、768、1280 宽度。
+`translate="no"` 的子树保留原文；首页的演示界面与应用一致，保持中文。中文改字后 `npm run check` 会列出缺少或不再使用的译文，以及需要重新生成的页面。补齐 `i18n/en.json` 后运行 `npm run i18n`。英文页不提供 `?edit` 原位编辑，改译文直接改 JSON。脚本新增文案时用 `t()` 包住原文：模块从 `/assets/i18n.js` 导入，经典脚本使用同名的单行查表函数。顶栏地球仪菜单与页尾链接切换语言，菜单标 `translate="no"`，各语言名称保持原文；两种语言互相声明 `hreflang`。译文以不超框为准，按钮可只留图标加名称，例如 Mac 面板写「Apple silicon」；改完运行 `npm run test:browser` 与浏览器截图核对 320、390、768、1280 宽度。
 
 `assets/locale.js` 在页面头部运行：首页 `/` 优先使用本机手选的 `peach.site.locale`（`zh` 或 `en`），否则按 `navigator.languages` 的偏好顺序匹配中英文，未匹配时使用英文。英文通过 `location.replace` 前往 `/en/`，保留查询参数和锚点；显式英文页、版权页、爬虫与 `?edit` 不自动跳转。`?lang=zh` 或 `?lang=en` 可显式选择；手动切换会保存偏好，本地存储受限时在链接中保留显式参数，避免中文入口反跳。服务器仍提供静态页面，不为语言识别增加 Worker 调用；禁用 JavaScript 时根路径显示中文。
 

@@ -420,6 +420,8 @@ body:has(.site-notice){padding-bottom:96px}
 .key p b{display:block;color:var(--ink);font-weight:600}
 
 /* 常见问题：原生 details 折叠，展开后加号换成减号。 */
+#faq .say{max-width:none}
+#faq .contact{white-space:nowrap}
 .say .sub a{color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
 .say .sub a:hover{color:var(--ink)}
 .contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em;fill:currentColor}
@@ -1080,7 +1082,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>FAQ</b><span class="sub">Can't find an answer?<br>Contact the developer on <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> </span></p>
+        <p class="say lg"><b>FAQ</b><span class="sub"><span>Can't find an answer?</span> Contact the developer on <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> </span></p>
       </div>
       <div class="faq reveal">
         <details><summary>Will Peach change my files?</summary><p>Scanning and filling in metadata do not modify the original files. Manual organization renames or moves files; emptying the trash deletes files, and resource-sync cleanup removes empty folders. Each requires confirmation.</p></details>
@@ -1088,7 +1090,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <details><summary>How do I use Peach on other devices?</summary><p>During initial setup, allow access from devices on the same local network. Connect your other device, such as a phone, to that network, open the address shown in Settings and set an access password.</p></details>
         <details><summary>Where does Peach store its data?</summary><p>In the local <code>peach-data</code>  folder. The Windows build defaults to <code>%LOCALAPPDATA%\Peach\peach-data</code>, and the macOS build to <code>~/Library/Application Support/Peach/peach-data</code>.</p></details>
         <details><summary>Which languages does Peach support?</summary><p>Peach currently supports only a Chinese interface. English and more languages are in progress. Contact the developer if you would like to help translate.</p></details>
-        <details><summary>My Mac says Peach “is damaged and can't be opened”</summary><p>Test builds are not notarized by Apple yet. Run a command in Terminal to remove the quarantine flag from Peach before opening it; run the command again after installing a new version.<button class="text-action" type="button" data-mac-help data-copy-interact>How to open</button></p></details>
+        <details><summary>My Mac says “Peach” is damaged and can’t be opened</summary><p>Test builds are not notarized by Apple yet. Run a command in Terminal to remove the quarantine attribute from Peach before opening it; run the command again after installing a new version.<button class="text-action" type="button" data-mac-help data-copy-interact>How to open</button></p></details>
       </div>
     </div>
   </section>
@@ -1141,7 +1143,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </li>
     <li>Double-click Peach in Applications to open it.</li>
   </ol>
-  <p class="note">Test builds are not notarized by Apple yet. Apps downloaded from the internet carry a quarantine flag, so macOS reports “Peach is damaged and can't be opened”. This command removes the quarantine flag from Peach only; run it again after installing a new version.</p>
+  <p class="note">Test builds are not notarized by Apple yet. Apps downloaded from the internet carry a quarantine attribute, so macOS reports “Peach” is damaged and can’t be opened. This command removes the quarantine attribute from Peach only; run it again after installing a new version.</p>
   <form class="sheet-actions" method="dialog">
     <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Install and run guide</a></p>
     <button class="btn btn-primary" data-copy-interact>Got it</button>

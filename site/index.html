@@ -419,6 +419,8 @@ body:has(.site-notice){padding-bottom:96px}
 .key p b{display:block;color:var(--ink);font-weight:600}
 
 /* 常见问题：原生 details 折叠，展开后加号换成减号。 */
+#faq .say{max-width:none}
+#faq .contact{white-space:nowrap}
 .say .sub a{color:var(--ink-2);text-decoration:underline;text-underline-offset:4px}
 .say .sub a:hover{color:var(--ink)}
 .contact svg{display:inline-block;width:.8em;height:.8em;margin-right:.3em;vertical-align:-.05em;fill:currentColor}
@@ -1078,7 +1080,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>常见问题</b><span class="sub">没找到答案？<br>在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a>、<a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 联系开发者</span></p>
+        <p class="say lg"><b>常见问题</b><span class="sub"><span>没找到答案？</span> 在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a>、<a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 联系开发者</span></p>
       </div>
       <div class="faq reveal">
         <details><summary>Peach 会改我的文件吗？</summary><p>扫描、补全资料不修改原文件。手动整理会改名或移动；清空回收站会删除文件，资源同步中的清理会删除空目录，均需确认。</p></details>

@@ -49,6 +49,8 @@ export function translateHtml(html, locale, report = {missing: new Set(), used: 
       if (!VOID.has(name) && !token.endsWith('/>')) stack.push({name, skip: skip || /\stranslate\s*=\s*["']?no\b/i.test(token)});
       let tag = translateTag(token, locale, report, skip);
       if (name === 'body') tag = tag.replace(/\sdata-copy-overrides=("[^"]*"|'[^']*')/, '');
+      // 改字高亮只用于中文源的编辑预览，外语页不带。
+      tag = tag.replace(/\sdata-copy-draft(?=[\s>/])/, '');
       out += tag;
       continue;
     }
@@ -56,7 +58,9 @@ export function translateHtml(html, locale, report = {missing: new Set(), used: 
     if (skip || !core || !(Object.hasOwn(locale.text, core) || CJK.test(core))) { out += token; continue }
     report.used.add(core);
     if (!Object.hasOwn(locale.text, core)) { report.missing.add(core); out += token; continue }
-    out += before + locale.text[core] + after;
+    // 中文在西文词两侧留空格；译文以标点开头时去掉前面的空格。
+    const text = locale.text[core];
+    out += (/^[.,;:!?)]/.test(text) ? '' : before) + text + after;
   }
   return out;
 }

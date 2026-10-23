@@ -57,6 +57,26 @@
       "sha256": "478b71163ce52586717cc81e0daef69858592c7aa2230d37c6b7a65557cf8498"
     },
     {
+      "path": "assets/entities/agency-capsule.webp",
+      "bytes": 2092,
+      "sha256": "f5cac1fb87c5f75e666369f563c0961d1341d7c16a499af8621e0bec1ec2df1d"
+    },
+    {
+      "path": "assets/entities/agency-so-model.webp",
+      "bytes": 880,
+      "sha256": "88a022d1023875db35c61b76b11da2e9adbab51518572a448d692e0d324fd8a4"
+    },
+    {
+      "path": "assets/entities/agency-krone.webp",
+      "bytes": 1036,
+      "sha256": "f060130466003305db56dc2368d656a5b019a5d5361723d2d5bc6ebabe98bcb7"
+    },
+    {
+      "path": "assets/entities/agency-dino.webp",
+      "bytes": 1506,
+      "sha256": "b560410e376ff175087d94ebf4e38c294e473c244ec78563a82e937fa3e00694"
+    },
+    {
       "path": "assets/entities/performer-arina.webp",
       "bytes": 2644,
       "sha256": "9d4a27e3110281b8f9f3cfc53b38d1fe0f01ee5100232617f1876fcb155d589f"
@@ -95,6 +115,51 @@
       "path": "assets/entities/performer-remu.webp",
       "bytes": 3168,
       "sha256": "e7d32c6e91e39ad03fd285c6d75c215f594890b74b25a550eda912af5b6bfe1f"
+    },
+    {
+      "path": "assets/entities/performer-yua.webp",
+      "bytes": 2498,
+      "sha256": "967ae7adf710dac3cd44bbfd6ffe161d6d9ebc00f9de0d5f0385b22319775e84"
+    },
+    {
+      "path": "assets/entities/performer-ichika.webp",
+      "bytes": 1762,
+      "sha256": "c643923b05e0be032453cd7b82a9c192456caea4dc599857b97fe50e7726d202"
+    },
+    {
+      "path": "assets/entities/performer-mio.webp",
+      "bytes": 1856,
+      "sha256": "03161f3d724986ffb33ff581b4638cf328bf75fdb9c2d65122cdd858ee830649"
+    },
+    {
+      "path": "assets/entities/performer-kojima.webp",
+      "bytes": 2818,
+      "sha256": "d30a2d794b2e5ab5a76b85ffaf437eefabfc3293410b2ecf81bca6eb64373580"
+    },
+    {
+      "path": "assets/entities/performer-suzu.webp",
+      "bytes": 2028,
+      "sha256": "fbb46500799008ab35103a590d1d1da9ff078310d74490f045fd58382bd23740"
+    },
+    {
+      "path": "assets/entities/performer-airi.webp",
+      "bytes": 2254,
+      "sha256": "4cbed00fc7e92faf11072279c770ed9553df013e0af27eeaa0276a8918cc9223"
+    },
+    {
+      "path": "assets/entities/performer-tsumugi.webp",
+      "bytes": 2110,
+      "sha256": "e5b8b4eff44328662853ed74cf9c2f7ed027d120ff34ad5a3881f9fbd29c391b"
+    },
+    {
+      "path": "assets/entities/performer-tsukasa.webp",
+      "bytes": 2362,
+      "sha256": "80d4f7fdcad13b107b409aaf2e2110678c40e7ac710dfb209518c3145e50617e"
+    },
+    {
+      "path": "assets/entities/performer-saika.webp",
+      "bytes": 1716,
+      "sha256": "fd9ee4cb072f2542d4b6e4778f227b629b12128212311412a711ba7da27dbd59"
     },
     {
       "path": "assets/fonts/inter-latin-wght-normal.woff2",

@@ -74,7 +74,11 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 原位编辑核心唯一维护源为 Peach 应用仓库的 `frontend/src/copy-editor-core.js`。官网 `edit-client.js` 只适配 HTML 原文索引、导览属性与动态文案保存；核心通过本地 `/__edit-core.js` 在页面脚本前同步加载。`edit:sync` 从指定应用提交取得精确内容，`copy-editor-source.json` 记录提交及 SHA-256，`npm run check` 验证副本一致。不要单独修改 `copy-editor-core.js`。清空文案可以删除整行文字；删除默认导览说明时服务端同时重排后续索引。保存异常始终返回 JSON，未确认的响应由共享核心提示核对。
 
-常见问题区 `#faq` 沿用主仓库 README 的常见问题，另含 Mac「已损坏」一条；README 的问答变动时同步这里与 `i18n/en.json`，英文措辞对齐 `README.en.md`。Mac 这一条不重复终端命令，按钮打开同一个 `[data-mac-help-dialog]`，命令只在弹窗里维护一处。
+资料条三行（厂商、事务所、女优）以「同一项滚出左边之前不会从右边再出现」为准：每行单份长度不短于 1920 视口宽度，条目不必更多。三行约 24px/s 同速滚动；增删条目后用浏览器量单份长度，按长度除以速度重算 `.marks-row` 的动画时长。事务所标志取自主仓库 `resources/marks/studios/` 的 `*.logo.png`，来源记录在该目录的 `manifest.json`。女优头像取宣传照顶部、与图同宽的正方形，缩成 96×96 的 WebP，只用人脸完整、无文字压脸、不露点的图。新素材同时写入 `assets-manifest.json`。
+
+`data-copy-draft` 标记本轮待用户确认的改字位置，编辑预览中显示为粉色。每轮改字先清除上一轮的全部标记，只标这一轮改过或新增的元素；外语页生成时去掉该标记。
+
+常见问题区 `#faq` 沿用主仓库 README 的常见问题，另含界面语言与 Mac「已损坏」两条；应用支持的语言变化时同步「支持哪些语言」。展开与收起用 Web Animations 过渡高度，减少动态效果时直接切换；README 的问答变动时同步这里与 `i18n/en.json`，英文措辞对齐 `README.en.md`。Mac 这一条不重复终端命令，按钮打开同一个 `[data-mac-help-dialog]`，命令只在弹窗里维护一处。
 
 首屏下载按钮按访客平台改字，版本号来自发行清单。`<head>` 的内联脚本先给页面加 `dl-label-pending` 与 `dl-meta-pending`，`downloads.js` 首次渲染后显示按钮文字，当前平台取得版本或发行清单查完后显示版本行；最多等 3 秒。按钮的最小宽度容得下各平台最长的文字，换字时位置不变。
 

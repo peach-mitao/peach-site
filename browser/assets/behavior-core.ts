@@ -3,7 +3,7 @@ const cookie='peach_visit',optout='peach_analytics_off',idle=30*60*1000;
 const random=()=>crypto.randomUUID().replaceAll('-','');
 export function startBehavior(options:StartOptions){
  const local=['127.0.0.1','localhost'].includes(location.hostname),params=new URLSearchParams(location.search),capture=local&&params.has('behavior-capture');
- if((local&&!options.preview&&!capture)||(!local&&(navigator.webdriver||/headless|bot\b|crawl|spider/i.test(navigator.userAgent)))||params.has('edit')||params.has('heatmap')||location.pathname.startsWith('/__analytics')||window.PEACH_LOCALE_REDIRECTING)return;
+ if((local&&!options.preview&&!capture)||(!local&&(navigator.webdriver||/headless|bot\b|crawl|spider/i.test(navigator.userAgent)))||params.has('edit')||params.has('heatmap')||location.pathname.startsWith('/analytics')||window.PEACH_LOCALE_REDIRECTING)return;
  const read=(key:string)=>document.cookie.split(';').map(v=>v.trim()).find(v=>v.startsWith(key+'='))?.slice(key.length+1)||'';
  const write=(value:string)=>{document.cookie=`${cookie}=${value}; Path=/; Max-Age=1800; SameSite=Lax${local?'':'; Secure; Domain=peach.video'}`};
  if(!capture&&read(optout)==='1')return;

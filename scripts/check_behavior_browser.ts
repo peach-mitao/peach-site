@@ -14,7 +14,7 @@ const server=await createPreviewServer({async dynamic(req,res){
  if(url.pathname==='/record'){
   const chunks:Buffer[]=[];for await(const chunk of req)chunks.push(chunk);batches.push(JSON.parse(Buffer.concat(chunks).toString('utf8')));res.writeHead(204).end();return true;
  }
- if(url.pathname==='/api/behavior'||url.pathname.startsWith('/__analytics')||url.pathname==='/privacy/analytics'){
+ if(url.pathname==='/api/behavior'||url.pathname.startsWith('/analytics')||url.pathname==='/privacy/analytics'){
   const chunks:Buffer[]=[];for await(const chunk of req)chunks.push(chunk);
   const request=new Request(`http://127.0.0.1:${port}${req.url}`,{method:req.method,headers:new Headers(Object.entries(req.headers).filter((row):row is [string,string]=>typeof row[1]==='string')),body:chunks.length?Buffer.concat(chunks):undefined});
   const response=await behaviorRequest(request,{BEHAVIOR:database,BEHAVIOR_PREVIEW:'1'});
@@ -55,7 +55,7 @@ try{
  const chain=await browser.newContext(),chainPage=await chain.newPage();await chainPage.goto(base+'/behavior-chain');await chainPage.waitForFunction(()=>window.PeachBehavior!==undefined);await chainPage.locator('#action').click();await chainPage.evaluate(()=>window.PeachBehavior!.flush());
  assert.ok(Number(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n)>0);
  for(const width of [1440,390]){
-  await chainPage.setViewportSize({width,height:width===390?844:1000});await chainPage.goto(base+'/__analytics/');await chainPage.waitForFunction(()=>document.querySelector('#status')?.textContent?.startsWith('更新于'));
+  await chainPage.setViewportSize({width,height:width===390?844:1000});await chainPage.goto(base+'/analytics/');await chainPage.waitForFunction(()=>document.querySelector('#status')?.textContent?.startsWith('更新于'));
   assert.equal(await chainPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.ok(await chainPage.locator('#targets tbody tr').count());
   await chainPage.getByRole('combobox',{name:'设备',exact:true}).click();await chainPage.getByRole('option',{name:'手机',exact:true}).click();await chainPage.waitForLoadState('networkidle');
   for(const name of ['访问动线','会话明细','点击热力图']){await chainPage.getByRole('tab',{name,exact:true}).click();await chainPage.waitForLoadState('networkidle');assert.equal(await chainPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false)}

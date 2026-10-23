@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
 		assets: {
 			notFoundHandling: "404-page",
 			// 分析接口与受保护后台进入 Worker，公开页面和资源仍由静态资源直接返回。
-			runWorkerFirst: ["/api/event", "/api/behavior", "/privacy/analytics", "/__analytics", "/__analytics/*"],
+			runWorkerFirst: ["/api/event", "/api/behavior", "/privacy/analytics", "/analytics", "/analytics/*"],
 		},
 		env: {
 			ASSETS: bindings.assets(),
@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => ({
 			BEHAVIOR_LAYOUTS: bindings.r2({name:"peach-behavior-layouts"}),
 			BEHAVIOR_LIMIT: bindings.rateLimit({namespace:"10423",simple:{limit:60,period:60}}),
 			ACCESS_TEAM: bindings.text("longmeidao"),
+			CF_DASHBOARD_URL: bindings.text(process.env.PEACH_CF_DASHBOARD_URL || "https://dash.cloudflare.com/"),
 			ACCESS_AUD: bindings.text("30d4a3629a0b136ff9392268614f3e0c41a37e241dadfea685e5f5a5b9f05f4a"),
 			BEHAVIOR_PREVIEW: bindings.text(mode==="preview"?"1":"0"),
 		},

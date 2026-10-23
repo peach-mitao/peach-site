@@ -5,7 +5,7 @@ import {dashboardHTML,privacyHTML} from './behavior-ui.ts';
 export interface Statement {bind(...values:unknown[]):Statement;all<T=Record<string,unknown>>():Promise<{results:T[]}>;first<T=Record<string,unknown>>():Promise<T|null>;run():Promise<unknown>}
 export interface Database {prepare(sql:string):Statement;batch(statements:Statement[]):Promise<unknown[]>}
 interface Bucket {get(key:string):Promise<{body:ReadableStream;httpMetadata?:{contentType?:string}}|null>;delete(keys:string[]):Promise<unknown>}
-export interface BehaviorEnv {BEHAVIOR?:Database;BEHAVIOR_LAYOUTS?:Bucket;BEHAVIOR_LIMIT?:{limit(options:{key:string}):Promise<{success:boolean}>};ACCESS_TEAM?:string;ACCESS_AUD?:string;ACCESS_EMAIL?:string;BEHAVIOR_PREVIEW?:string}
+export interface BehaviorEnv {BEHAVIOR?:Database;BEHAVIOR_LAYOUTS?:Bucket;BEHAVIOR_LIMIT?:{limit(options:{key:string}):Promise<{success:boolean}>};ACCESS_TEAM?:string;ACCESS_AUD?:string;ACCESS_EMAIL?:string;CF_DASHBOARD_URL?:string;BEHAVIOR_PREVIEW?:string}
 const fields=['id','view','tab','at','seq','site','page','layout','viewport','width','height','lang','state','kind','target','slot','x','y','px','py','destination','referrer','utm','duration'] as const;
 const kinds=new Set(['page','exposure','click','navigate','scroll','leave','unmapped']);
 const origins=new Map<string,Site>([['https://peach.video','site'],['https://demo.peach.video','demo']]);
@@ -103,25 +103,29 @@ export async function behaviorRequest(request:Request,env:BehaviorEnv):Promise<R
  const url=new URL(request.url);
  if(url.pathname==='/api/behavior')return collect(request,env);
  if(url.pathname==='/privacy/analytics')return new Response(privacyHTML,{headers:{'content-type':'text/html; charset=utf-8',...noStore}});
- if(!url.pathname.startsWith('/__analytics'))return null;
+ if(!url.pathname.startsWith('/analytics'))return null;
  if(!await authorized(request,env))return json({error:'unauthorized'},401);
+ if(url.pathname==='/analytics/native'){
+  let destination='https://dash.cloudflare.com/';try{const configured=new URL(env.CF_DASHBOARD_URL||destination);if(configured.origin==='https://dash.cloudflare.com')destination=configured.href}catch{}
+  return new Response(null,{status:302,headers:{...noStore,location:destination}});
+ }
  if(!env.BEHAVIOR)return json({error:'unavailable'},503);
  if(request.method!=='GET')return json({error:'method'},405);
- if(url.pathname==='/__analytics/api/report'){
+ if(url.pathname==='/analytics/api/report'){
   if(!['heatmap','journey','visits'].includes(url.searchParams.get('section')||'heatmap')||!['site','demo'].includes(url.searchParams.get('site')||'site'))return json({error:'filter'},400);
   return json(await report(env.BEHAVIOR,url));
  }
- if(url.pathname==='/__analytics/api/session'){
+ if(url.pathname==='/analytics/api/session'){
   const id=url.searchParams.get('id')||'';if(!ID.test(id))return json({error:'session'},400);
   return json((await env.BEHAVIOR.prepare('SELECT at,seq,site,page,view,tab,state,kind,target,slot,destination,duration FROM behavior_events WHERE session=? AND at>=? ORDER BY at,seq,id LIMIT 1000').bind(id,Date.now()-30*86400e3).all()).results);
  }
- if(url.pathname==='/__analytics/image'){
+ if(url.pathname==='/analytics/image'){
   const f=filters(url),row=await env.BEHAVIOR.prepare('SELECT image FROM behavior_layouts WHERE site=? AND version=? AND page=? AND viewport=? AND state=? AND lang=?').bind(f.site,f.layout,f.page,f.viewport,f.state||'default',f.lang||'zh-CN').first<{image:string}>();
   if(!row||!env.BEHAVIOR_LAYOUTS)return json({error:'not_found'},404);
   const image=await env.BEHAVIOR_LAYOUTS.get(row.image);if(!image)return json({error:'not_found'},404);
   return new Response(image.body,{headers:{...noStore,'content-type':'image/webp'}});
  }
- if(url.pathname==='/__analytics'||url.pathname==='/__analytics/')return new Response(dashboardHTML,{headers:{...noStore,'content-type':'text/html; charset=utf-8','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors 'none'"}});
+ if(url.pathname==='/analytics'||url.pathname==='/analytics/')return new Response(dashboardHTML,{headers:{...noStore,'content-type':'text/html; charset=utf-8','content-security-policy':"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; frame-ancestors 'none'"}});
  return json({error:'not_found'},404);
 }
 export async function expireBehavior(env:BehaviorEnv,now=Date.now()){

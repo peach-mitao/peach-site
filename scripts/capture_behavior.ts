@@ -19,7 +19,7 @@ export async function captureBehavior(base:string,routes:(string|CaptureScene)[]
   try{for(const scene of routes){
    const route=typeof scene==='string'?scene:scene.route;
    const url=new URL(route,base);if(url.origin!==origin.origin)throw Error('参考路由必须属于当前预览');url.searchParams.set('behavior-capture','1');
-   await page.goto(url.href,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.PeachBehavior!==undefined);
+   await page.goto(url.href,{waitUntil:'networkidle'});await page.waitForFunction(()=>window.PeachBehavior!==undefined);
    await page.waitForFunction(options.ready||(()=>![...document.querySelectorAll<HTMLElement>('[data-skeleton]')].some(el=>el.checkVisibility()&&el.getBoundingClientRect().height>0)));
    if(typeof scene!=='string')for(const selector of scene.click||[])await page.locator(selector).first().click();
    await page.waitForFunction(()=>{const scope=document.querySelector('dialog[open],[aria-modal="true"],[data-immerse]:not([hidden])')||document;return ![...scope.querySelectorAll<HTMLElement>('[data-skeleton],[aria-busy="true"]')].some(el=>{const box=el.getBoundingClientRect();return el.checkVisibility()&&box.top<16000&&box.bottom>0})});

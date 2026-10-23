@@ -1,4 +1,4 @@
-import { bindings, defineConfig } from "cf/config";
+import { bindings, defineConfig, triggers } from "cf/config";
 
 export default defineConfig(({ mode }) => ({
 	worker: {
@@ -12,13 +12,20 @@ export default defineConfig(({ mode }) => ({
 		},
 		assets: {
 			notFoundHandling: "404-page",
-			// 只有埋点进入 Worker；页面、资源与未匹配的路径仍由静态资源直接返回，不计 Worker 调用。
-			runWorkerFirst: ["/api/event"],
+			// 分析接口与受保护后台进入 Worker，公开页面和资源仍由静态资源直接返回。
+			runWorkerFirst: ["/api/event", "/api/behavior", "/privacy/analytics", "/__analytics", "/__analytics/*"],
 		},
 		env: {
 			ASSETS: bindings.assets(),
 			SITE_EVENTS: bindings.analyticsEngineDataset({ name: "peach_site_events" }),
+			BEHAVIOR: bindings.d1({id:"d81eb012-a8c9-4893-999c-33c31467ac75",name:"peach-behavior"}),
+			BEHAVIOR_LAYOUTS: bindings.r2({name:"peach-behavior-layouts"}),
+			BEHAVIOR_LIMIT: bindings.rateLimit({namespace:"10423",simple:{limit:60,period:60}}),
+			ACCESS_TEAM: bindings.text("longmeidao"),
+			ACCESS_AUD: bindings.text("30d4a3629a0b136ff9392268614f3e0c41a37e241dadfea685e5f5a5b9f05f4a"),
+			BEHAVIOR_PREVIEW: bindings.text(mode==="preview"?"1":"0"),
 		},
+		triggers: mode === "preview" ? [] : [triggers.scheduled({schedule:"17 3 * * *"})],
 		domains: mode === "preview" ? [] : ["peach.video"],
 	},
 }));

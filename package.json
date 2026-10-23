@@ -16,6 +16,9 @@
     "predev:edit": "npm run browser:build",
     "browser:build": "node scripts/build_browser.ts",
     "dev:edit": "node scripts/serve.ts",
+    "dev:behavior": "node scripts/preview_behavior.ts",
+    "behavior:check": "node scripts/check_behavior.ts",
+    "behavior:capture": "node scripts/capture_site_behavior.ts",
     "edit:sync": "node scripts/sync_copy_editor.ts",
     "i18n": "node scripts/build_i18n.ts",
     "prebuild": "npm run browser:build",
@@ -36,20 +39,31 @@
     "verify:cache": "node scripts/check_cache.ts",
     "analytics": "node scripts/analytics_report.ts",
     "capture:desktop": "node scripts/capture_compact_desktop.ts && node scripts/optimize_compact_desktop.ts",
-    "predeploy": "npm run browser:build",
+    "predeploy": "npm run browser:build && npm run behavior:check",
     "deploy": "cf deploy",
     "pretest": "npm run browser:build",
     "test": "node --test tests/*.test.ts",
     "pretest:browser": "npm run browser:build",
-    "test:browser": "node scripts/test_browser.ts"
+    "test:browser": "node scripts/test_browser.ts",
+    "pretest:behavior": "npm run browser:build",
+    "test:behavior": "node scripts/check_behavior_browser.ts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "cf": "1.0.0-beta.18",
     "esbuild": "0.28.2",
     "playwright": "1.64.1",
     "sharp": "0.35.5",
     "typescript": "7.0.2",
     "wrangler": "4.151.2"
+  },
+  "dependencies": {
+    "@cloudflare/kumo": "2.15.0",
+    "@phosphor-icons/react": "2.1.10",
+    "jose": "6.2.13",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
   }
 }

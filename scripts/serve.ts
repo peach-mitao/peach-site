@@ -26,6 +26,8 @@ interface PreviewOptions {
   root?: string;
   downloadsManifest?: string;
   publicReleases?: boolean;
+  dynamic?:(req:http.IncomingMessage,res:http.ServerResponse)=>Promise<boolean>;
+  editIndex?:(req:http.IncomingMessage)=>string;
 }
 
 export async function createPreviewServer(options: PreviewOptions = {}) {
@@ -48,6 +50,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
 
   const server = http.createServer(async (req, res) => {
     try {
+      if(await options.dynamic?.(req,res))return;
       const url = new URL(req.url ?? '/', 'http://localhost');
       let name: string;
       try {name = decodeURIComponent(url.pathname)} catch {res.writeHead(400).end(); return}
@@ -67,7 +70,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         }
         let input: unknown;
         try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {rejectEdit(400, '编辑请求无效，请刷新后重试'); return}
-        const result = await edit.post(index, name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
+        const result = await edit.post(options.editIndex?.(req)??index, name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }

@@ -16,6 +16,7 @@ function referrerHost() {
 }
 // 同步发出：点击链接随即跳页时，埋点已经交给浏览器。
 export function track(event: string, detail = '') {
+    if (/(?:^|;\s*)peach_analytics_off=1(?:;|$)/.test(document.cookie)) return;
     const pageview = event === 'pageview';
     const body = JSON.stringify({
         event, detail,

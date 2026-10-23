@@ -2,6 +2,10 @@
 
 本项目自有代码按 AGPL-3.0-only 发布，见 `LICENSE`。Sticker Forge 的 MIT 声明位于 `site/assets/vendor/sticker-forge/LICENSE`，Inter 的 SIL Open Font License 位于 `site/assets/fonts/LICENSE`，手写品牌声明位于 `site/assets/peach-hello-LICENSE.txt`。
 
+Cloudflare Access 签名校验使用 [jose](https://github.com/panva/jose) 6.2.13，按 MIT 许可使用；许可证随 npm 包分发。分析补充页使用自有布局，Cloudflare 名称仅表示集成的平台。
+
+分析后台使用 [Cloudflare Kumo](https://github.com/cloudflare/kumo) 2.15.0、React / React DOM 19.3.1 及 Phosphor React 2.1.10，均按 MIT 许可使用。构建入口将这四项的许可证写入 `/assets/vendor/behavior/`，与浏览器资源一同分发。Kumo standalone CSS 中含 Tailwind CSS 的 MIT 声明。
+
 Apple 图标采用 [Simple Icons](https://github.com/simple-icons/simple-icons/blob/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/apple.svg) 的 SVG 路径，固定于 `4d29a35c954699b389a834aacc97dd6e7e74143c`，按 [CC0 1.0](https://github.com/simple-icons/simple-icons/blob/4d29a35c954699b389a834aacc97dd6e7e74143c/LICENSE.md) 使用。商标权不随图标许可授予。
 
 Docker 鲸鱼图标取自 [Docker 官方图标包](https://www.docker.com/company/newsroom/media-resources/)，仅表示部署兼容性；Docker 名称与图标的商标权归 Docker, Inc. 所有。

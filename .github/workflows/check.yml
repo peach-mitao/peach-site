@@ -26,3 +26,5 @@ jobs:
         if: runner.os == 'Linux'
       - run: npm run test:browser
         if: runner.os == 'Linux'
+      - run: npm run test:behavior
+        if: runner.os == 'Linux'

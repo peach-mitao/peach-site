@@ -51,3 +51,7 @@
 !/site/assets/vendor/sticker-forge/LICENSE
 !/site/assets/vendor/sticker-forge/sticker-forge.es.js
 /site/copyright/notice.js
+/worker/behavior-ui.ts
+/browser/assets/behavior-version.ts
+*.edit-history.json
+*.edit-history.json.tmp

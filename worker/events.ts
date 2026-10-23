@@ -129,6 +129,6 @@ export async function handleEvent(request: EdgeRequest, env: Env) {
   const point = eventPoint(request, input);
   if (!point) return new Response(null, {status: 400});
   // 爬虫与无头浏览器照常返回成功，只是不记录。
-  if (!BOT.test(request.headers.get('User-Agent') ?? '')) env.SITE_EVENTS.writeDataPoint(point);
+  if (!BOT.test(request.headers.get('User-Agent') ?? '')&&!/(?:^|;\s*)peach_analytics_off=1(?:;|$)/.test(request.headers.get('Cookie')||'')) env.SITE_EVENTS.writeDataPoint(point);
   return new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});
 }

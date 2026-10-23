@@ -40,7 +40,7 @@ async function files(dir, prefix='') {
   return result;
 }
 function excluded(path) {
-  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','_redirects','404.html','assets/sleeve.jpg',video.path].includes(path)
+  return path.startsWith('_proto/') || ['index-v1.html','hello-preview.html','.assetsignore','_redirects','_headers','404.html','assets/sleeve.jpg',video.path].includes(path)
     || /^assets\/dark\/.*\.jpg$/.test(path)
     || (/^assets\/shots\/.*\.jpg$/.test(path) && path!=='assets/shots/h-dark.jpg')
     || /^assets\/vendor\/sticker-forge\/.*\.d\.ts$/.test(path);

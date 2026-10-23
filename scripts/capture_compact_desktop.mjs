@@ -3,6 +3,7 @@ import {mkdir, readFile, writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
+import {writeImmutableImage} from './immutable_image.mjs';
 
 const base = process.argv[2] ?? 'https://demo.peach.video/';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0,10).replaceAll('-','');
@@ -45,10 +46,10 @@ try {
       assert.deepEqual(errors,[],name);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,name);
       const path=fileURLToPath(new URL(`${name}-${variant.name}-${captureDate}.png`,out));
-      await page.screenshot({path});
-      const png=await readFile(path);
+      const png=await page.screenshot({type:'png'});
       const pixels=[png.readUInt32BE(16),png.readUInt32BE(20)];
       assert.deepEqual(pixels,variant.pixels,name+' 4K '+variant.name);
+      await writeImmutableImage(path,png);
       report.push({name,variant:variant.name,route,viewport:[variant.width,variant.height],renderScale:variant.scale,layoutDpr:2,pixels,path,images,errors});
       console.log(name,path);
     } finally {await context.close()}

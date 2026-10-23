@@ -27,6 +27,7 @@
 !/site/404.html
 !/site/.assetsignore
 !/site/_redirects
+!/site/_headers
 !/site/favicon.ico
 !/site/copyright/
 !/site/en/

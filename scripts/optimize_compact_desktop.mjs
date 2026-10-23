@@ -3,6 +3,7 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import sharp from 'sharp';
+import {writeImmutableImage} from './immutable_image.mjs';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0,10).replaceAll('-','');
 assert.match(captureDate,/^\d{8}$/);
 // 4K 原图之外按显示尺寸缩小的候选宽度：桌面图最宽显示 1134 CSS 像素；
@@ -15,7 +16,7 @@ const raw=input=>input.ensureAlpha().raw().toBuffer();
 // 已有文件与期望像素一致时保留原字节，不因编码器版本变化改动已发布的哈希。
 async function writeLossless(path,pixels,build) {
   try{if((await raw(sharp(file(path)))).equals(pixels))return false}catch(error){if(!['ENOENT','Input file is missing'].some(text=>String(error.code??error.message).includes(text)))throw error}
-  await build().webp({lossless:true,effort:5}).toFile(file(path));
+  await writeImmutableImage(file(path),await build().webp({lossless:true,effort:5}).toBuffer());
   assert.ok((await raw(sharp(file(path)))).equals(pixels),path+' 无损像素核对');
   return true;
 }

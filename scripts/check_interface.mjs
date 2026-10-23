@@ -5,7 +5,7 @@ const base=process.argv[2]??'http://127.0.0.1:8795/';
 const browser=await chromium.launch();
 try {
   for(const width of [390,1440])for(const language of ['zh-CN','en']) {
-    const page=await browser.newPage({viewport:{width,height:844},locale:'ja-JP'}),errors=[];
+    const page=await browser.newPage({viewport:{width,height:844},locale:language}),errors=[];
     page.on('pageerror',e=>errors.push(e.message));
     await page.route('https://api.github.com/**',r=>r.fulfill({json:[]}));
     await page.route('https://downloads.peach.video/releases.json',r=>r.fulfill({json:[]}));
@@ -47,7 +47,7 @@ try {
       console.log(`PASS 界面 ${language} ${width}: 语言菜单、统计说明、离屏暂停与缩放`);
     } finally {await page.close()}
   }
-  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+  const page=await browser.newPage({viewport:{width:390,height:844},locale:'zh-CN',reducedMotion:'reduce'});
   try {
     await page.goto(base,{waitUntil:'networkidle'});
     await page.locator('.live[data-mock="feed"]').scrollIntoViewIfNeeded();

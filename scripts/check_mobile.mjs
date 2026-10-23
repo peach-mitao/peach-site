@@ -22,7 +22,7 @@ for(const file of published){
 const browser=await chromium.launch({channel:'chrome'}),report=[];
 try {
   for(const width of [320,390,560,561,1440]) {
-    const page=await browser.newPage({viewport:{width,height:844},deviceScaleFactor:width===390?3:1,reducedMotion:'reduce'}),errors=[],requests=[];
+    const page=await browser.newPage({viewport:{width,height:844},locale:'zh-CN',deviceScaleFactor:width===390?3:1,reducedMotion:'reduce'}),errors=[],requests=[];
     page.on('pageerror',e=>errors.push(e.message));
     page.on('request',r=>{if(r.url().includes('/screenshots/'))requests.push(r.url())});
     try {

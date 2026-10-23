@@ -53,7 +53,7 @@ const browser = await chromium.launch(process.env.PLAYWRIGHT_CHANNEL ? {channel:
 try {
   for (const width of [390, 1440]) {
     for (const scenario of live ? [{name: '公开 Release 实际文件', live: true}] : cases) {
-      const page = await browser.newPage({viewport: {width, height: 900}, reducedMotion: 'reduce', javaScriptEnabled: !scenario.noJS});
+      const page = await browser.newPage({viewport: {width, height: 900}, locale:'zh-CN', reducedMotion: 'reduce', javaScriptEnabled: !scenario.noJS});
       try {
         const errors = [];
         const failedRequests = [];
@@ -119,7 +119,7 @@ try {
       {name: 'iPad 桌面模式', platform: 'MacIntel', ua: macUA, touch: 5, system: 'other', icon: '#i-download', file: '#download'},
       {name: 'Linux', platform: 'Linux x86_64', ua: 'X11; Linux x86_64', system: 'docker', icon: '#i-docker', file: '#download'},
     ]) {
-      const page = await browser.newPage({viewport: {width, height: 900}, reducedMotion: 'reduce'});
+      const page = await browser.newPage({viewport: {width, height: 900}, locale:'zh-CN', reducedMotion: 'reduce'});
       try {
         const errors = [];
         page.on('pageerror', error => errors.push(error.message));

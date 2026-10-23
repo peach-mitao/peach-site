@@ -14,5 +14,6 @@
 | 静态资源缓存 | Cloudflare Workers Assets 原生 `_headers`、ETag 与既有 Sharp，无新增依赖 | 日期截图一年不可变，捕获与编码入口按解码像素拒绝覆盖冲突；可更新页面和自有脚本保持校验。真实响应验收覆盖缓存头与 304，不使用 Worker 包装静态资源 |
 | 访问统计 | Cloudflare Web Analytics（平台自动注入）与 Workers Analytics Engine，无新增依赖 | Web Analytics 已有国家、路径、来源、设备、浏览器族与系统族，缺语言、版本号与自定义事件；只补这几项，由 `worker/` 的单一埋点入口写入。D1 要自建聚合，KV 免费档每天只能写 1,000 次，Observability 日志免费档只留 3 天，都不适合看趋势 |
 | 多语言页面 | 自有 `scripts/build_i18n.mjs` 与 `i18n/<语言>.json`，无新增依赖 | 静态双页面，标题、描述与 `hreflang` 可被搜索引擎读取；运行时换字做不到这一点，i18next 等框架又要求把中文源改写成键名，与原位编辑冲突。生成结果随源码提交，`npm run check` 拒绝缺译、多余译文与过期页面 |
+| 语言识别与选择 | 浏览器原生 [navigator.languages](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages)、localStorage 与现有静态中英文页，无新增依赖 | 首页按偏好匹配，手选优先；禁止存储时使用显式参数。既有页面生成器保留静态 SEO；两个语言不引入额外检测库，不让首页进入 Worker。一次性会话来源交接不包含完整网址或访客标识 |
 
 未引入网站框架。生产页面由 Cloudflare 静态资源层提供，Worker 只接收 `/api/event` 埋点；外语页由提交的生成文件直接发布，部署时不运行额外构建；本地预览只是编辑和测试入口。素材、真实账本与生产入口不由本次代码维护迁移。操作入口见[维护说明](MAINTAINING.md)。

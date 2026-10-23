@@ -1,11 +1,12 @@
 // 匿名访问统计：每次打开页面和几个关键操作各发一条埋点到同源的 /api/event。
-// 不用 Cookie 或本地存储，不发访客标识；来源只发域名，系统版本只取 Chromium 的客户端提示。
+// 不用 Cookie、不发访客标识；自动切换语言的来源由一次性会话交接，来源只发域名。
 const endpoint = '/api/event';
 let hints = {};
 const hintsReady = (navigator.userAgentData?.getHighEntropyValues?.(['platformVersion', 'architecture', 'bitness']) ?? Promise.resolve({}))
   .then(values => {hints = values}, () => {});
 
 function referrerHost() {
+  if (window.PEACH_ENTRY_REFERRER !== undefined) return window.PEACH_ENTRY_REFERRER;
   try {return document.referrer ? new URL(document.referrer).hostname : ''} catch {return ''}
 }
 
@@ -26,7 +27,7 @@ export function track(event, detail = '') {
   } catch { /* 统计失败不影响页面。 */ }
 }
 
-void hintsReady.then(() => track('pageview'));
+if (!window.PEACH_LOCALE_REDIRECTING) void hintsReady.then(() => track('pageview'));
 // 捕获阶段监听，按钮自身的处理器（弹窗、切换面板）照常执行。
 document.addEventListener('click', event => {
   const target = event.target instanceof Element ? event.target : null;

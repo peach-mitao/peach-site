@@ -95,7 +95,7 @@ try {
   }
   // 桌面加载过贴纸后缩窄窗口，阅读区仍保持完整。
   if(!captureOnly) {
-    const page = await browser.newPage({viewport:{width:1280,height:900}, reducedMotion:'reduce'});
+    const page = await browser.newPage({viewport:{width:1280,height:900}, locale:'zh-CN', reducedMotion:'reduce'});
     try {
       await page.goto(base, {waitUntil:'networkidle'});
       await page.locator('.stk').first().waitFor({state:'visible'});

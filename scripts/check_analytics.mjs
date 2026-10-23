@@ -6,7 +6,7 @@ import {chromium} from 'playwright';
 const base = process.argv[2] ?? 'http://127.0.0.1:8794/';
 const browser = await chromium.launch(process.env.PLAYWRIGHT_CHANNEL ? {channel: process.env.PLAYWRIGHT_CHANNEL} : {});
 try {
-  const context = await browser.newContext({viewport: {width: 1440, height: 900}, reducedMotion: 'reduce'});
+  const context = await browser.newContext({viewport: {width: 1440, height: 900}, locale:'zh-CN', reducedMotion: 'reduce'});
   const events = [];
   // 在浏览器上下文层转发并记录：点击链接跳页后，旧页面发出的埋点照样记得到。
   await context.route(url => url.pathname === '/api/event', async route => {

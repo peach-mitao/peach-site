@@ -38,7 +38,7 @@ npx --no-install playwright install chromium
 npm run test:browser
 ```
 
-对已有预览使用 `npm run verify:interface -- <地址>`，核对语言菜单、公开统计说明、离屏动效卡的暂停与窗口缩放，以及减少动态效果。`verify:typography` 与 `verify:mobile` 使用合成发行清单，分别验证可下载状态和未取得安装包时的跳转，不依赖公网版本或发布时间。
+对已有预览使用 `npm run verify:interface -- <地址>`，核对语言菜单、问答开合、离屏动效卡的暂停与窗口缩放，以及减少动态效果。`verify:typography` 与 `verify:mobile` 使用合成发行清单，分别验证可下载状态和未取得安装包时的跳转，不依赖公网版本或发布时间。
 
 检查 cf 配置与构建，不上传资源：
 
@@ -148,7 +148,7 @@ Cloudflare 在页面里自动注入 Web Analytics 脚本，提供页面访问、
 
 统计匿名：不用 Cookie，不发访客标识，不存 IP 与 UA 原文，任意输入都经白名单或格式校验后才写入。浏览器存储只涉及上文说明的功能语言偏好和一次性来源交接，不作为识别或关联访客的依据。爬虫、脚本与无头浏览器照常收到 204，但不记录，所以浏览器验收不会写入统计。新增维度只能追加到 `worker/events.ts` 的 `BLOBS` 末尾，查询脚本按同一顺序取列。
 
-首页常见问题中的「官网如何统计访问？」提供公开说明，中英文随页面生成。下载事件记录点击，不能作为成功下载、安装或应用使用量；Web Analytics 与自有统计分别描述，不将自有统计的字段限制泛化为 CDN 日志策略。
+下载事件记录点击，不能作为成功下载、安装或应用使用量；Web Analytics 与自有统计分别描述，不将自有统计的字段限制泛化为 CDN 日志策略。
 
 `npm run verify:analytics -- <地址>` 在页面上逐个触发埋点并核对 204；`npm run test:browser` 已包含这一步。本地 `cf dev` 的 Analytics Engine 绑定不落盘，只能验证路由与返回码，写入与查询要在线上核对。
 

@@ -17,8 +17,6 @@
     }
   },
   "text": {
-    "官网如何统计访问？": "How does this website measure visits?",
-    "官网使用 Cloudflare Web Analytics 统计页面访问，并用自有统计记录语言偏好、国家或地区、浏览器与系统概况、来源域名和推广来源，以及切换语言、点击下载等操作，用于改进官网。自有统计不使用 Cookie，不设置访客标识，不保存 IP、完整浏览器标识或馆藏数据；记录在 Cloudflare Analytics Engine 保留三个月。下载统计表示点击次数，不代表安装成功。": "This website uses Cloudflare Web Analytics to measure page views. Our own analytics records language preferences, country or region, browser and operating system details, referring domains and campaign sources, and actions such as changing languages or clicking download links, to improve the website. Our own analytics uses no cookies or visitor identifiers and stores no IP addresses, full user-agent strings or library data. These records are retained in Cloudflare Analytics Engine for three months. Download counts represent clicks, not successful installations.",
     "English": "中文",
     "Peach · 蜜桃：私人影片馆藏": "Peach · Your private video library",
     "硬盘、网盘和关注的创作者，一处看完。开源、自托管。": "Local drives, cloud drives and the creators you follow, all in one place. Open source and self-hosted.",

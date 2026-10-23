@@ -15,12 +15,14 @@ export async function captureBehavior(base:string,routes:(string|CaptureScene)[]
  await mkdir(path.resolve(out,'layouts'),{recursive:true});
  try{for(const viewport of [{width:1440,height:1000},{width:390,height:844}]){
   const context=await browser.newContext({viewport,locale:'zh-CN',reducedMotion:'reduce'}),page=await context.newPage();
+  const screenshotSession=await context.newCDPSession(page);
   try{for(const scene of routes){
    const route=typeof scene==='string'?scene:scene.route;
    const url=new URL(route,base);if(url.origin!==origin.origin)throw Error('参考路由必须属于当前预览');url.searchParams.set('behavior-capture','1');
    await page.goto(url.href,{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.PeachBehavior!==undefined);
    await page.waitForFunction(options.ready||(()=>![...document.querySelectorAll<HTMLElement>('[data-skeleton]')].some(el=>el.checkVisibility()&&el.getBoundingClientRect().height>0)));
    if(typeof scene!=='string')for(const selector of scene.click||[])await page.locator(selector).first().click();
+   await page.waitForFunction(()=>{const scope=document.querySelector('dialog[open],[aria-modal="true"],[data-immerse]:not([hidden])')||document;return ![...scope.querySelectorAll<HTMLElement>('[data-skeleton],[aria-busy="true"]')].some(el=>{const box=el.getBoundingClientRect();return el.checkVisibility()&&box.top<16000&&box.bottom>0})});
    await page.evaluate(async()=>{await document.fonts.ready;if(window.PeachBehavior!.context().site==='site'){const height=document.documentElement.scrollHeight;for(let y=0;y<Math.min(height,16000);y+=innerHeight){scrollTo(0,y);await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()))}}scrollTo(0,0);await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));window.PeachBehavior!.mark()});
    const snapshot=await page.evaluate(selector=>{
     window.PeachBehavior!.mark();
@@ -29,7 +31,8 @@ export async function captureBehavior(base:string,routes:(string|CaptureScene)[]
      boxes:[...document.querySelectorAll<HTMLElement>('[data-behavior-target]')].filter(el=>el.checkVisibility()).flatMap(el=>{const box=el.getBoundingClientRect();return box.width>0&&box.height>0&&box.left>=0&&box.left<innerWidth?[{target:el.dataset.behaviorTarget!,slot:Number(el.dataset.behaviorSlot)||0,x:box.left+scrollX,y:box.top+scrollY,width:box.width,height:box.height}]:[]})};
    },interactiveSelector);
    const capturedHeight=Math.min(snapshot.height,snapshot.context.page==='/immerse'?viewport.height:16000);
-   const png=await page.screenshot({fullPage:true,clip:{x:0,y:0,width:snapshot.width,height:capturedHeight}}),metadata=await sharp(png).metadata();
+   const capture=await screenshotSession.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true,fromSurface:true,clip:{x:0,y:0,width:snapshot.width,height:capturedHeight,scale:1}});
+   const png=Buffer.from(capture.data,'base64'),metadata=await sharp(png).metadata();
    if(metadata.width!==snapshot.width||metadata.height!==capturedHeight)throw Error('参考图实际尺寸与页面坐标不一致：'+route);
    const body=await sharp(png).webp({quality:80}).toBuffer(),hash=createHash('sha256').update(body).digest('hex');
    const image=`layouts/${snapshot.context.version}/${hash}.webp`;await mkdir(path.dirname(path.join(out,image)),{recursive:true});await writeFile(path.join(out,image),body);

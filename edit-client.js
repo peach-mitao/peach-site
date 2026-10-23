@@ -19,15 +19,41 @@
   .__eb{position:fixed;left:16px;bottom:16px;z-index:2147483002;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px;border-radius:10px;max-width:calc(100vw - 32px);box-sizing:border-box;font:13px/1.4 system-ui,"Microsoft YaHei",sans-serif;color:#C9CDD3;background:rgba(17,18,20,.94);border:1px solid #ffffff1f;box-shadow:0 8px 30px #0006}
   .__eb b{color:#fff}.__eb .ok{color:#7BD88F}.__eb .err{color:#FF8A80}.__eb .st{overflow-wrap:anywhere}
   .__eb button{font:inherit;color:inherit;border:0;background:transparent;cursor:pointer;text-decoration:underline}
+  .__eb button:disabled{opacity:.4;cursor:default;text-decoration:none}
   `;document.head.append(css);
   const highlight=document.createElement('div');highlight.className='__eh';
   const bar=document.createElement('div');bar.className='__eb';bar.dataset.copyEditor='';
   bar.innerHTML='<b>改字模式</b><span>点文字编辑，切换照常；Alt+点击改控件文字；回车保存，Esc 取消</span><span class="st" role="status"></span>';
   const status=bar.querySelector('.st'),say=(message,tone='')=>{status.textContent=message;status.className='st '+tone};
-  let active=true,editor;
+  let active=true,editor,history=window.__EDIT.history,historyBusy=false;
+  const undo=document.createElement('button'),redo=document.createElement('button');
+  undo.type=redo.type='button';undo.textContent='撤销';redo.textContent='重做';
+  undo.title='撤销上次保存（Ctrl+Z / ⌘Z）';redo.title='重做（Ctrl+Shift+Z / ⌘⇧Z）';
+  const controls=()=>{undo.disabled=historyBusy||!!editor?.busy||!history?.undoCount;redo.disabled=historyBusy||!!editor?.busy||!history?.redoCount};
+  async function travel(direction){
+    if(historyBusy||editor.busy)return;
+    await editor.commit();
+    if(!(direction==='undo'?history?.undoCount:history?.redoCount))return;
+    historyBusy=true;controls();say(direction==='undo'?'撤销中…':'重做中…');
+    try{
+      const result=await Core.readJson(await fetch('/__edit/'+direction,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({revision:history.revision})}));
+      history=result.history;
+      try{sessionStorage.setItem('peach.edit.view',JSON.stringify({scrollY,dialog:!!document.querySelector('[data-mac-help-dialog][open]'),open:[...document.querySelectorAll('#faq details')].map((el,i)=>el.open?i:-1).filter(i=>i>=0),message:direction==='undo'?'已撤销上次保存':'已重做上次保存'}))}catch{}
+      location.reload();
+    }catch(error){say(error.message,'err');historyBusy=false;controls()}
+  }
+  undo.onclick=()=>travel('undo');redo.onclick=()=>travel('redo');
   const toggle=document.createElement('button');toggle.type='button';toggle.textContent='暂停编辑';
   toggle.onclick=()=>{if(editor.busy)return;editor.commit();active=!active;editor.hideHighlight();toggle.textContent=active?'暂停编辑':'继续编辑'};
-  bar.append(toggle);document.body.append(highlight,bar);
+  bar.append(undo,redo,toggle);document.body.append(highlight,bar);controls();
+  // 原生弹窗的顶层隔离外部控件，工具条随弹窗进入同一层。
+  const placeToolbar=()=>{const host=document.querySelector('dialog[open]')||document.body;host.append(highlight,bar)};
+  document.querySelectorAll('dialog').forEach(dialog=>new MutationObserver(placeToolbar).observe(dialog,{attributes:true,attributeFilter:['open']}));
+  document.addEventListener('keydown',event=>{
+    if(!(event.ctrlKey||event.metaKey)||event.altKey||event.target.closest?.('input,textarea,[contenteditable="true"]')||editor?.editing)return;
+    const key=event.key.toLowerCase(),direction=key==='z'?(event.shiftKey?'redo':'undo'):key==='y'?'redo':null;
+    if(direction){event.preventDefault();void travel(direction)}
+  },true);
   function patchText(patch){
     if(!patch)return;
     const {start,deleteCount,raw:inserted}=patch;raw.splice(start,deleteCount,...inserted);
@@ -51,7 +77,7 @@
     return nodes.length?{kind:'block',element,nodes,index:index.get(nodes[0]),multiline:false}:null;
   }
   editor=Core.create({highlight,inlineClass:'__ee',inputClass:'__ei',skip:'#live .mk,.media-01',
-    isActive:()=>active,onStatus:say,onBusy:value=>bar.setAttribute('aria-busy',String(value)),
+    isActive:()=>active&&!historyBusy,onStatus:say,onBusy:value=>{bar.setAttribute('aria-busy',String(value));controls()},
     resolve(node){
       const element=node.parentElement,field=element.closest('[data-copy-key]');
       const multiline=!!element.closest('pre,code');
@@ -81,10 +107,12 @@
           body={k:tab.dataset.k,oldTitle,oldSub,title:edit.sub?oldTitle:text,sub:edit.sub?text:oldSub};
         }
       }
+      body.revision=history.revision;
       const result=await Core.readJson(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}));
       return {...result,payload:body,text,remove:edit.kind==='text'&&result.raw==='',message:text?'已保存修改':'已删除文字'};
     },
     onSaved(edit,result){
+      history=result.history;controls();
       if(edit.kind==='copy'){
         document.body.dataset.copyOverrides=JSON.stringify(result.overrides);dispatchEvent(new Event('peach:copy-saved'));
       }else if(edit.kind==='block'){
@@ -107,4 +135,12 @@
     },
   });
   if(bad>=0)say(`第 ${bad} 段起和源文件不一致，请刷新后编辑`,'err');
+  try{
+    const view=JSON.parse(sessionStorage.getItem('peach.edit.view'));sessionStorage.removeItem('peach.edit.view');
+    if(view&&bad<0)addEventListener('load',()=>{
+      document.querySelectorAll('#faq details').forEach((el,i)=>{el.open=view.open?.includes(i)??false});
+      if(view.dialog)document.querySelector('[data-mac-help-dialog]')?.showModal();
+      requestAnimationFrame(()=>scrollTo({top:view.scrollY,behavior:'instant'}));say(view.message,'ok');
+    },{once:true});
+  }catch{}
 })();

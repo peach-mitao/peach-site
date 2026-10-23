@@ -1049,7 +1049,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           </div>
           </div>
           <p class="note" style="margin-top:22px">Open the DMG and drag Peach.app into the Applications folder. <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Install and run guide</a></p>
-          <p class="note" style="margin-top:10px"><span data-macos-status>Mac test builds are not public yet.</span> <button class="text-action" type="button" data-mac-help>How to open</button></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac test builds are not public yet.</span> <button class="text-action" type="button" data-mac-help data-copy-interact>How to open</button></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
@@ -1084,11 +1084,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       </div>
       <div class="faq reveal">
         <details><summary>Will it change my files?</summary><p>Scanning and filling in details leave originals untouched. Manual organization renames or moves files; emptying the trash deletes files, and resource-sync cleanup removes empty folders. Each requires confirmation.</p></details>
-        <details><summary>Which cloud drives work?</summary><p>Drives mounted as local folders through tools such as CloudDrive2; see <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">cloud drive mounts</a>. Cloud download follows the connected provider's reported capabilities, with direct PikPak connections also supported and sign-in tokens stored locally.</p></details>
+        <details><summary>Which cloud drives work?</summary><p>Drives mounted as local folders through tools such as CloudDrive2; see <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">cloud drive mounts</a>. Cloud download availability depends on the provider's current support; sign-in tokens are stored locally.</p></details>
         <details><summary>How do I watch on my phone?</summary><p>Allow devices on the same network during setup, connect your phone to that network, open the address shown and set an access password.</p></details>
         <details><summary>Where is my data?</summary><p>In the local <code>peach-data</code>  folder. The Windows build defaults to <code>%LOCALAPPDATA%\Peach\peach-data</code>, and the macOS build to <code>~/Library/Application Support/Peach/peach-data</code>.</p></details>
-        <details><summary>Which languages are supported?</summary><p>The Peach app is currently Chinese only. English and more languages are in progress, and translation help is welcome; contact the developer to join. This website chooses Chinese or English from your browser preferences. You can switch in the top-right menu, and your choice is saved in this browser.</p></details>
-        <details><summary>My Mac says Peach “is damaged and can't be opened”</summary><p>Test builds are not notarized by Apple yet. Downloaded apps carry a quarantine flag, so recent macOS versions show this message and Privacy & Security offers no “Open Anyway”. Run one Terminal command to remove the flag from Peach, then open it; run it again after installing a new version.<button class="text-action" type="button" data-mac-help>How to open</button></p></details>
+        <details><summary>Which languages are supported?</summary><p>Peach currently has a Chinese-only interface. English and more languages are in progress, and translation help is welcome; contact the developer to join.</p></details>
+        <details><summary>My Mac says Peach “is damaged and can't be opened”</summary><p>Test builds are not notarized by Apple yet. Run a command in Terminal to remove the quarantine flag from Peach before opening it; run the command again after installing a new version.<button class="text-action" type="button" data-mac-help data-copy-interact>How to open</button></p></details>
       </div>
     </div>
   </section>
@@ -1144,7 +1144,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <p class="note">Test builds are not notarized by Apple yet. Apps downloaded from the internet carry a quarantine flag, so macOS reports “Peach is damaged and can't be opened”. This command removes the quarantine flag from Peach only; run it again after installing a new version.</p>
   <form class="sheet-actions" method="dialog">
     <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Install and run guide</a></p>
-    <button class="btn btn-primary">Got it</button>
+    <button class="btn btn-primary" data-copy-interact>Got it</button>
   </form>
 </dialog>
 

@@ -2,8 +2,9 @@
 // 打开 /?edit 时，在 body 里第一个 <script> 之前插入 edit-client.js，并附上这之前每一段文字在源文件里的原文；
 // 客户端按文档顺序把页面上的文字节点和这份原文一一对上，改完把「第几段、原文、新文字」发回来，
 // 这里重读 index.html、核对那一段原文没变，再只替换那一段写回。导览区的轮换说明另走 data-say 属性。
-import { readFile, writeFile, rename } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import {serialize,saveWithHistory,travel,currentHistory,sameRevision,EditConflict} from './edit-history.ts';
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 // 放进单引号属性的 HTML：先按文字转义，再按属性转义
@@ -53,20 +54,19 @@ function bounds(html: string) {
 }
 
 export async function page(file: string, port: number) {
+  return serialize(file,()=>editablePage(file,port));
+}
+async function editablePage(file:string,port:number){
   const html = await readFile(file, "utf8");
   const { from, to } = bounds(html);
   const raw = textSlices(html, from, to).map(([a, b]) => html.slice(a, b));
-  const data = JSON.stringify({ raw, port }).replace(/</g, "\\u003c");
+  const data = JSON.stringify({ raw, port,history:await currentHistory(file) }).replace(/</g, "\\u003c");
   // 两个 script 之间不能留空白：客户端取文字时那段空白已经在 DOM 里，会多出一段
   const inject = `<script>window.__EDIT=${data}</script><script src="/__edit-core.js"></script><script src="/__edit.js"></script>\n`;
   return html.slice(0, to) + inject + html.slice(to);
 }
 
-async function save(file: string, html: string) {
-  const tmp = file + ".tmp";
-  await writeFile(tmp, html, "utf8");
-  await rename(tmp, file);
-}
+const save=saveWithHistory;
 
 const say = (title: string, sub: string) => `<b>${esc(title)}</b>` + (sub ? `<span class="sub">${esc(sub)}</span>` : "");
 
@@ -136,7 +136,19 @@ function cleanInline(html: string) {
   return html;
 }
 
-export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown) {
+export async function post(file:string,kind:'tab'|'text'|'copy'|'block'|'undo'|'redo',input:unknown){
+  return serialize(file,async()=>{
+    try{
+      if(!input||typeof input!=='object')return {status:400,json:{error:'编辑请求格式无效'}};
+      const body=input as Record<string,unknown>;
+      if(kind==='undo'||kind==='redo')return await travel(file,kind,body.revision);
+      if(!sameRevision(await readFile(file,'utf8'),body.revision))return {status:409,json:{error:'源文件已被其他操作修改，请刷新后重试'}};
+      const result=await applyPost(file,kind,input);
+      return result.status===200?{...result,json:{...result.json,history:await currentHistory(file)}}:result;
+    }catch(error){if(error instanceof EditConflict)return {status:409,json:{error:error.message}};throw error}
+  });
+}
+async function applyPost(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown) {
   if (!input || typeof input !== 'object') return {status: 400, json: {error: '编辑请求格式无效'}};
   const body = input as Record<string, unknown>;
   if (kind === 'block') {
@@ -162,7 +174,7 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block'
     }
     inner = cleanInline(inner);
     const nextRaw = textSlices(inner, 0, inner.length).map(([a,b]) => inner.slice(a,b));
-    await save(file, html.slice(0, range[0]) + inner + html.slice(range[1]));
+    await save(file, html, html.slice(0, range[0]) + inner + html.slice(range[1]));
     return {status: 200, json: {ok: true, textPatch: {start: i, deleteCount: raw.length, raw: nextRaw}}};
   }
   const strings = kind === 'copy' ? ['key', 'before', 'text'] : kind === 'tab' ? (typeof body.title === 'string'
@@ -185,7 +197,7 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block'
     }
     overrides[key] = body.text as string;
     const next = ` data-copy-overrides="${attrDq(JSON.stringify(overrides))}"`;
-    await save(file, attribute ? html.replace(attribute[0], next) : html.replace(/<body\b/, '<body' + next));
+    await save(file, html, attribute ? html.replace(attribute[0], next) : html.replace(/<body\b/, '<body' + next));
     return {status: 200, json: {ok: true, overrides}};
   }
   if (kind === "tab") {
@@ -198,7 +210,7 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block'
     while(start<before.length&&start<after.length&&before[start]===after[start])start++;
     while(end<before.length-start&&end<after.length-start&&before.at(-end-1)===after.at(-end-1))end++;
     const textPatch={start,deleteCount:before.length-start-end,raw:after.slice(start,after.length-end)};
-    await save(file, r.html);
+    await save(file, html, r.html);
     return { status: 200, json: { ok: true, textPatch } };
   }
   const { from, to } = bounds(html);
@@ -206,7 +218,7 @@ export async function post(file: string, kind: 'tab' | 'text' | 'copy' | 'block'
   if (!slice || html.slice(...slice) !== body.raw) return { status: 409, json: { error: "源文件里这一段已经变了，刷新再改" } };
   const [lead] = /^\s*/.exec(body.raw as string)!, [trail] = /\s*$/.exec(body.raw as string)!;
   const next = lead + esc(body.text as string) + trail;
-  await save(file, html.slice(0, slice[0]) + next + html.slice(slice[1]));
+  await save(file, html, html.slice(0, slice[0]) + next + html.slice(slice[1]));
   return { status: 200, json: { ok: true, raw: next } };
 }
 

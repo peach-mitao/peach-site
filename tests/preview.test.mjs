@@ -89,7 +89,15 @@ test('预览提供 HEAD、Range、错误隔离和同源文字编辑', async () =
     assert.equal(failure.status,500);assert.match((await failure.json()).error,/保存失败/);
     await rmdir(path.join(root,'index.html.tmp'));
     const deleted=await edit({i:0,raw:'静态文本仍能改',text:''});
-    assert.equal(deleted.status,200);assert.equal((await deleted.json()).raw,'');
+    const deletedResult=await deleted.json();assert.equal(deleted.status,200);assert.equal(deletedResult.raw,'');
+    const undo=(revision,origin=base)=>request('/__edit/undo',{method:'POST',headers:{origin},body:JSON.stringify({revision})});
+    assert.equal((await undo(deletedResult.history.revision,'https://outside.example')).status,403);
+    assert.equal((await undo(undefined)).status,400);
+    const undone=await undo(deletedResult.history.revision);assert.equal(undone.status,200);
+    assert.match(await readFile(path.join(root,'index.html'),'utf8'),/静态文本仍能改/);
+    const redone=await request('/__edit/redo',{method:'POST',headers:{origin:base},body:JSON.stringify({revision:(await undone.json()).history.revision})});
+    assert.equal(redone.status,200);
+    assert.equal((await request('/index.html.edit-history.json')).status,404);
     assert.match(await (await request('/?edit')).text(), /window\.__EDIT=/);
     assert.equal((await request('/__edit.js')).status, 200);
     assert.equal((await request('/video.mp4', {method: 'DELETE'})).status, 405);

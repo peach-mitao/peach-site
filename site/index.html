@@ -1047,7 +1047,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           </div>
           </div>
           <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
-          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <button class="text-action" type="button" data-mac-help>查看打开步骤</button></p>
+          <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <button class="text-action" type="button" data-mac-help data-copy-interact>查看打开步骤</button></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
@@ -1082,11 +1082,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
       </div>
       <div class="faq reveal">
         <details><summary>会改我的文件吗？</summary><p>扫描、补资料不碰原文件。手动整理会改名或移动；清空回收站会删除文件，资源同步中的清理会删除空目录，均需确认。</p></details>
-        <details><summary>支持哪些网盘？</summary><p>通过 CloudDrive2 等工具挂载为本地目录的网盘，详见<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">网盘挂载</a>。云下载按当前连接器返回的能力开放，PikPak 也可直连，登录令牌保存在本机。</p></details>
+        <details><summary>支持哪些网盘？</summary><p>通过 CloudDrive2 等工具挂载为本地目录的网盘，详见<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">网盘挂载</a>。云下载按对应网盘当前支持情况开放；登录令牌保存在本机。</p></details>
         <details><summary>手机上怎么看？</summary><p>首次设置时允许同一局域网的设备访问，手机连同一网络，打开设置页给出的地址，并设置访问密码。</p></details>
         <details><summary>数据存在哪？</summary><p>本机的 <code>peach-data</code> 文件夹。Windows 版默认位于 <code>%LOCALAPPDATA%\Peach\peach-data</code>，macOS 版默认位于 <code>~/Library/Application Support/Peach/peach-data</code>。</p></details>
-        <details data-copy-draft><summary>支持哪些语言？</summary><p>Peach 应用目前只有中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。官网会按浏览器偏好选择中文或英文，也可在右上角切换；手动选择会保存在当前浏览器。</p></details>
-        <details><summary>Mac 提示「已损坏，无法打开」怎么办？</summary><p>测试包尚未经过 Apple 公证，从网上下载后带有隔离标记，较新的 macOS 会这样提示，「隐私与安全性」里也不出现「仍要打开」。在终端运行一条命令移除 Peach 的隔离标记即可打开，安装新版本后需要再运行一次。<button class="text-action" type="button" data-mac-help>查看打开步骤</button></p></details>
+        <details data-copy-draft><summary>支持哪些语言？</summary><p>Peach 目前只有中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。</p></details>
+        <details><summary>Mac 提示「已损坏，无法打开」怎么办？</summary><p>测试包尚未经过 Apple 公证，需要在终端运行命令移除 Peach 的隔离标记才可打开；安装新版本后需要再运行一次。<button class="text-action" type="button" data-mac-help data-copy-interact>查看打开步骤</button></p></details>
       </div>
     </div>
   </section>
@@ -1142,7 +1142,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <p class="note">测试包尚未经过 Apple 公证。从网上下载的 App 带有隔离标记，macOS 会提示「Peach 已损坏，无法打开」。这条命令只移除 Peach 的隔离标记；安装新版本后需要再运行一次。</p>
   <form class="sheet-actions" method="dialog">
     <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
-    <button class="btn btn-primary">知道了</button>
+    <button class="btn btn-primary" data-copy-interact>知道了</button>
   </form>
 </dialog>
 

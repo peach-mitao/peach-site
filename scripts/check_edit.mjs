@@ -27,7 +27,7 @@ try {
     const pixel=await sharp({create:{width:1,height:1,channels:4,background:'#18191a'}}).webp().toBuffer();
     await page.route('**/assets/screenshots/**',route=>route.fulfill({contentType:'image/webp',body:pixel}));
     await page.goto(base,{waitUntil:'networkidle'});
-    async function edit(locator,text){
+    async function beginEdit(locator){
       await locator.evaluate(element=>element.scrollIntoView({block:'center'}));
       await locator.click({trial:true});
       const point=await locator.evaluate(element=>{
@@ -46,6 +46,10 @@ try {
           status:document.querySelector('.__eb')?.innerText,caret:document.caretRangeFromPoint(point.x,point.y)?.startContainer?.textContent}),point));
         throw error;
       }
+      return box;
+    }
+    async function edit(locator,text){
+      const box=await beginEdit(locator);
       await box.fill(text);await box.press('Enter');
       await page.waitForFunction(()=>/已保存|已删除/.test(document.querySelector('.__eb .st')?.textContent||''));
     }
@@ -101,7 +105,32 @@ try {
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
     const html=await readFile(path.join(root,'index.html'),'utf8');
     assert.match(html,/data-copy-overrides=/);assert.ok(html.includes(`Docker · v1.2.${width}`));
-    console.log(`PASS ${width}: 编辑模式平台切换、静态与动态文案、刷新持久化、导览切换与窄屏`);
+    const faq=page.locator('#faq details').last(),macParagraph=faq.locator('p');
+    await faq.locator('summary').click();
+    const originalMac=await macParagraph.innerText();
+    await edit(macParagraph,'');assert.equal(await macParagraph.innerText(),'查看打开步骤');
+    await page.reload({waitUntil:'networkidle'});
+    const command=async action=>{const loaded=page.waitForEvent('load');await action();await loaded;await page.waitForLoadState('networkidle')};
+    await command(()=>page.getByRole('button',{name:'撤销',exact:true}).click());
+    await faq.locator('summary').click();assert.equal(await macParagraph.innerText(),originalMac);
+    await command(()=>page.keyboard.press('Control+Shift+Z'));
+    assert.equal(await macParagraph.innerText(),'查看打开步骤');
+    await command(()=>page.keyboard.press('Control+Z'));
+    assert.equal(await macParagraph.innerText(),originalMac);
+    // 未保存输入用原生撤销；弹窗按钮仍保持普通点击可用。
+    const input=await beginEdit(macParagraph);const beforeInput=await input.innerText();
+    await input.press('End');await page.keyboard.type('临时输入');const typed=await input.innerText();
+    await input.press('Control+Z');const inputUndone=await input.innerText();
+    assert.ok(inputUndone.startsWith(beforeInput)&&inputUndone.length<typed.length,'未保存输入按浏览器原生粒度撤销');await input.press('Escape');
+    await faq.locator('[data-mac-help]').click();
+    const dialog=page.locator('[data-mac-help-dialog]');await dialog.waitFor({state:'visible'});
+    const note=dialog.locator('p.note').first(),originalNote=await note.innerText();
+    await edit(note,`弹窗说明 ${width}`);assert.equal(await note.innerText(),`弹窗说明 ${width}`);
+    await command(()=>dialog.getByRole('button',{name:'撤销',exact:true}).click());
+    await dialog.waitFor({state:'visible'});assert.equal(await note.innerText(),originalNote);
+    await dialog.getByRole('button',{name:'知道了',exact:true}).click();await dialog.waitFor({state:'hidden'});
+    assert.equal(await page.locator('.__eb').isVisible(),true);
+    console.log(`PASS ${width}: 编辑保存、整段误删撤销、重做、原生输入撤销、弹窗打开编辑与撤销`);
     await page.close();
   }
 } finally {

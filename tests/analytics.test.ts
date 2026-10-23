@@ -19,6 +19,13 @@ function post(body: unknown, headers: Record<string,string> = {}) {
     return Object.assign(request, { cf: { country: 'JP' } });
 }
 const named = (point: {blobs:string[]}) => Object.fromEntries(BLOBS.map((name, index) => [name, point.blobs[index]]));
+
+test('事件接口的独立限流拒绝写入且不保存 IP',async()=>{
+    const {env,points}=setup();const keys:string[]=[];
+    const limited={...env,EVENT_LIMIT:{limit:async({key}:{key:string})=>{keys.push(key);return {success:false}}}};
+    const response=await worker.fetch(post({event:'pageview',lang:'en',path:'/en/'},{'CF-Connecting-IP':'192.0.2.1'}),limited);
+    assert.equal(response.status,429);assert.equal(response.headers.get('retry-after'),'60');assert.deepEqual(points,[]);assert.deepEqual(keys,['192.0.2.1']);
+});
 test('Accept-Language 按权重取首选语言与前三种主语言', () => {
     assert.deepEqual(preferredLanguages('zh-CN,zh;q=0.9,en;q=0.8'), { preferred: 'zh-CN', languages: 'zh,en' });
     assert.deepEqual(preferredLanguages('ja;q=0.5, fr-ca, en;q=0.7, de;q=0.1'), { preferred: 'fr-CA', languages: 'fr,en,ja' });

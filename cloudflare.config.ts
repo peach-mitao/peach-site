@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => ({
 		observability: {
 			enabled: true,
 			headSamplingRate: 1,
+			issues: {enabled: true},
 		},
 		assets: {
 			notFoundHandling: "404-page",
@@ -18,6 +19,7 @@ export default defineConfig(({ mode }) => ({
 		env: {
 			ASSETS: bindings.assets(),
 			SITE_EVENTS: bindings.analyticsEngineDataset({ name: "peach_site_events" }),
+			EVENT_LIMIT: bindings.rateLimit({namespace:"10424",simple:{limit:120,period:60}}),
 			BEHAVIOR: bindings.d1({id:"d81eb012-a8c9-4893-999c-33c31467ac75",name:"peach-behavior"}),
 			BEHAVIOR_LAYOUTS: bindings.r2({name:"peach-behavior-layouts"}),
 			BEHAVIOR_LIMIT: bindings.rateLimit({namespace:"10423",simple:{limit:60,period:60}}),

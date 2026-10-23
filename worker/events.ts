@@ -1,7 +1,7 @@
 // 埋点解析与写入：页面发来的匿名事件归一后写入 Workers Analytics Engine，不存 IP 与 UA 原文。
 
 interface DataPoint {indexes: string[]; blobs: string[]; doubles: number[]}
-export interface Env {ASSETS:{fetch(request:Request):Promise<Response>|Response};SITE_EVENTS:{writeDataPoint(point:DataPoint):void}}
+export interface Env {ASSETS:{fetch(request:Request):Promise<Response>|Response};SITE_EVENTS:{writeDataPoint(point:DataPoint):void};EVENT_LIMIT?:{limit(options:{key:string}):Promise<{success:boolean}>}}
 export type EdgeRequest = Request & {cf?: {country?: string}};
 
 export const EVENT_PATH = '/api/event';
@@ -128,6 +128,7 @@ export async function handleEvent(request: EdgeRequest, env: Env) {
   if (typeof input === 'number') return new Response(null, {status: input});
   const point = eventPoint(request, input);
   if (!point) return new Response(null, {status: 400});
+  if(env.EVENT_LIMIT&&!(await env.EVENT_LIMIT.limit({key:request.headers.get('CF-Connecting-IP')||'unknown'})).success)return new Response(null,{status:429,headers:{'cache-control':'no-store','retry-after':'60'}});
   // 爬虫与无头浏览器照常返回成功，只是不记录。
   if (!BOT.test(request.headers.get('User-Agent') ?? '')&&!/(?:^|;\s*)peach_analytics_off=1(?:;|$)/.test(request.headers.get('Cookie')||'')) env.SITE_EVENTS.writeDataPoint(point);
   return new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});

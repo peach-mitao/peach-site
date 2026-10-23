@@ -1,6 +1,6 @@
 # 官网维护
 
-页面正文位于 `site/index.html`，部署到 Cloudflare Workers Assets；视频通过 R2 的 `media.peach.video` 分发。中文排版约定见[官网中文排版](../TYPOGRAPHY.md)。脚本集中在 `scripts/`，本地预览与文字编辑使用 TypeScript，浏览器资源保留可直接加载的 JS。
+页面正文位于 `site/index.html`，部署到 Cloudflare Workers Assets；视频通过 R2 的 `media.peach.video` 分发。中文排版约定见[官网中文排版](../TYPOGRAPHY.md)。站点维护的 JavaScript 源码统一使用 TypeScript：浏览器交互在 `browser/`，维护入口在 `scripts/`，回归在 `tests/`，动态接口在 `worker/`。首页交互与启动脚本也由 TS 编译。
 
 工具选型与复用边界见[复用说明](REUSE.md)。
 
@@ -14,7 +14,7 @@
 npm ci
 ```
 
-生成 Cloudflare 运行时类型，检查 TS 配置、预览服务与自有 JS 脚本：
+生成浏览器脚本与 Cloudflare 运行时类型，严格检查源码、预览服务和构建产物：
 
 ```powershell
 npm run check
@@ -46,19 +46,21 @@ npm run test:browser
 npm run check:deploy
 ```
 
-CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不访问真实 GitHub API，也不要求下载媒体。截图、播放器与素材完整性由下述发布验收覆盖。Node 直接运行可擦除类型的 TS，`tsc --noEmit` 独立检查类型；没有额外的 TS 运行器或需要提交的编译副本。
+CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不访问真实 GitHub API，也不要求下载媒体。截图、播放器与素材完整性由下述发布验收覆盖。Node 直接运行可擦除类型的 TS；`tsconfig.json` 与 `tsconfig.browser.json` 分别严格检查 Node／Worker 和浏览器代码。检查入口拒绝在维护源码目录新增 `.js` 或 `.mjs`。
+
+`npm run browser:build` 通过 esbuild 将 `browser/assets/`、`browser/copyright/` 和编辑适配器编译到对应的浏览器 JS 路径。构建、预览、检查、测试与 npm 部署入口自动准备这些文件；直接调用 cf 前须先生成浏览器产物。编译副本不进 Git。第三方库与按来源锁定的共享编辑核心保持 JS 产物，不在本站维护副本实现。
 
 ## 素材与预览
 
 通过 `npm run assets:fetch` 按 `assets-manifest.json` 获取公开素材，逐个核对长度和 SHA-256。媒体、截图、原型、验收证据和缓存不进 Git。六页导览按视口选择 16:9 或 4:3 桌面截图；使用 `npm run capture:desktop` 更新截图和清单时，应先验收演示站，生成无损 WebP 并核对像素一致。
 
-每张 4K 截图另有无损的缩小版：16:9 桌面图 1280、1920、2560 宽，4:3 手机图 1440、1920 宽，文件名在日期后加宽度。首页用 `srcset` 与 `sizes` 让浏览器按显示宽度和设备像素比挑选，4K 原图保留为最高一档。截图最宽显示 1134 CSS 像素，手机约 340；改版面宽度时同步调整 `sizes`。手机最小一档约为常见手机设备像素的 1.4 倍，给双指放大留了余量，放大到更大倍数时比 4K 原图模糊。已发布截图的字节不随编码器版本改变，像素变化时使用新日期文件名。新增的候选图部署前在线上不存在，`assets:fetch` 对这些条目会失败，需要设置 `PEACH_CAPTURE_DATE` 后运行 `node scripts/optimize_compact_desktop.mjs`，从 PNG 原图在本地生成。
+每张 4K 截图另有无损的缩小版：16:9 桌面图 1280、1920、2560 宽，4:3 手机图 1440、1920 宽，文件名在日期后加宽度。首页用 `srcset` 与 `sizes` 让浏览器按显示宽度和设备像素比挑选，4K 原图保留为最高一档。截图最宽显示 1134 CSS 像素，手机约 340；改版面宽度时同步调整 `sizes`。手机最小一档约为常见手机设备像素的 1.4 倍，给双指放大留了余量，放大到更大倍数时比 4K 原图模糊。已发布截图的字节不随编码器版本改变，像素变化时使用新日期文件名。新增的候选图部署前在线上不存在，`assets:fetch` 对这些条目会失败，需要设置 `PEACH_CAPTURE_DATE` 后运行 `node scripts/optimize_compact_desktop.ts`，从 PNG 原图在本地生成。
 
 `site/_headers` 为页面引用的截图与 README 公开截图提供一年不可变缓存，字体缓存七天，头像、厂牌、小图、海报、Logo 与第三方脚本缓存一天。截图规则使用清单中的精确路径，不为不存在的截图缓存 404；捕获用的其他 PNG 原图保留默认校验。页面和自有 JS／CSS 使用静态资源层的 ETag 与逐次校验，确保页面与逻辑同步更新；埋点响应仍为 `no-store`。同一响应只匹配一条自定义缓存规则，避免多个 `max-age` 被拼接。
 
 更新截图清单或页面引用后运行 `npm run cache:sync`，按素材清单与中英文页面生成缓存规则；`npm run check` 拒绝过期规则。规则不得超过 Cloudflare 的 100 条上限。
 
-截图文件名包含日期，公开后不能用相同 URL 发布不同像素。捕获与编码入口复用 `scripts/immutable_image.mjs`：相同像素保留原字节，不同像素拒绝覆盖，须使用新的 `PEACH_CAPTURE_DATE`。更换字体或其他带缓存的同名素材时，也应使用新文件名或在引用中加入新内容版本。旧素材保留，以便仍持有旧页面的客户端正常加载。
+截图文件名包含日期，公开后不能用相同 URL 发布不同像素。捕获与编码入口复用 `scripts/immutable_image.ts`：相同像素保留原字节，不同像素拒绝覆盖，须使用新的 `PEACH_CAPTURE_DATE`。更换字体或其他带缓存的同名素材时，也应使用新文件名或在引用中加入新内容版本。旧素材保留，以便仍持有旧页面的客户端正常加载。
 
 使用 `cf dev` 后运行 `npm run verify:cache -- <地址>`，核对实际缓存头、ETag 条件请求的 304、页面与自有脚本的校验策略，以及 `_headers` 不公开。编辑预览服务器不应用 Cloudflare 的 `_headers`，不能代替这项验收。发布后对公开地址运行同一入口。
 

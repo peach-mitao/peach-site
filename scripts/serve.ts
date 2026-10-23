@@ -120,7 +120,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       console.error('Preview request failed', error);
       if ((req.url ?? '').startsWith('/__edit/')) {
         if (!res.headersSent) res.writeHead(500, {'Content-Type':'application/json; charset=utf-8'});
-        res.end(JSON.stringify({error: error instanceof Error ? `保存失败：${error.message}` : '保存失败，请重试'}));
+        res.end(JSON.stringify({error: error instanceof Error ? `保存失败：${(error instanceof Error ? error.message : String(error))}` : '保存失败，请重试'}));
       } else {
         if (!res.headersSent) res.writeHead(500);
         res.end('Preview request failed');

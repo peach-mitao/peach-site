@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "NodeNext",
     "strict": true,
     "noEmit": true,
@@ -10,5 +11,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["scripts/**/*.ts", "worker/**/*.ts","cloudflare.config.ts", "wrangler.config.ts", ".cloudflare/types/**/*.d.ts"]
+  "include": ["scripts/**/*.ts", "worker/**/*.ts", "tests/**/*.ts", "browser/**/*.d.ts", "cloudflare.config.ts", "wrangler.config.ts"]
 }

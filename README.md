@@ -2,6 +2,8 @@
 
 Peach 的产品官网，提供中英文产品介绍、功能导览、介绍视频和下载入口。本仓库维护官网页面、译文、素材清单与部署配置。
 
+站点交互、维护脚本、测试与 Worker 使用 TypeScript；浏览器 JS 由构建入口生成。维护方式见[维护说明](docs/MAINTAINING.md)。
+
 [访问官网](https://peach.video/) · [English](https://peach.video/en/) · [打开演示站](https://demo.peach.video/) · [下载 Peach](https://peach.video/#download)
 
 下载入口核对 R2 与 GitHub 的公开发行清单，按发布时间选择完整版本，同版本优先 R2。任一来源不可用时仍检查另一来源。Windows 安装包与免安装包、macOS 双架构 DMG 均以完整上传记录为准。

@@ -145,7 +145,7 @@ export async function post(file:string,kind:'tab'|'text'|'copy'|'block'|'undo'|'
       if(!sameRevision(await readFile(file,'utf8'),body.revision))return {status:409,json:{error:'源文件已被其他操作修改，请刷新后重试'}};
       const result=await applyPost(file,kind,input);
       return result.status===200?{...result,json:{...result.json,history:await currentHistory(file)}}:result;
-    }catch(error){if(error instanceof EditConflict)return {status:409,json:{error:error.message}};throw error}
+    }catch(error){if(error instanceof EditConflict)return {status:409,json:{error:(error instanceof Error ? error.message : String(error))}};throw error}
   });
 }
 async function applyPost(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown) {

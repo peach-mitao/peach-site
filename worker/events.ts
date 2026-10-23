@@ -1,7 +1,7 @@
 // 埋点解析与写入：页面发来的匿名事件归一后写入 Workers Analytics Engine，不存 IP 与 UA 原文。
 
-// Env 由 `cf workers types` 按 cloudflare.config.ts 生成。
 interface DataPoint {indexes: string[]; blobs: string[]; doubles: number[]}
+export interface Env {ASSETS:{fetch(request:Request):Promise<Response>|Response};SITE_EVENTS:{writeDataPoint(point:DataPoint):void}}
 export type EdgeRequest = Request & {cf?: {country?: string}};
 
 export const EVENT_PATH = '/api/event';

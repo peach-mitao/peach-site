@@ -13,12 +13,13 @@
 !/cloudflare.config.ts
 !/wrangler.config.ts
 !/tsconfig.json
+!/tsconfig.browser.json
+!/browser/
 !/docs/
 !/scripts/
 !/worker/
 !/tests/
 !/i18n/
-!/edit-client.js
 !/TYPOGRAPHY.md
 !/assets-manifest.json
 !/site/
@@ -33,14 +34,7 @@
 !/site/en/
 !/site/assets/
 /site/assets/*
-!/site/assets/i18n.js
-!/site/assets/locale.js
-!/site/assets/analytics.js
 !/site/assets/media-01.css
-!/site/assets/media-01.js
-!/site/assets/downloads.js
-!/site/assets/copy.js
-!/site/assets/stickers.js
 !/site/assets/peach-logo.png
 !/site/assets/peach-logo-192.webp
 !/site/assets/peach-mark.svg
@@ -56,3 +50,4 @@
 /site/assets/vendor/sticker-forge/*
 !/site/assets/vendor/sticker-forge/LICENSE
 !/site/assets/vendor/sticker-forge/sticker-forge.es.js
+/site/copyright/notice.js

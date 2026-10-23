@@ -29,8 +29,8 @@ export async function captureBehavior(base:string,routes:(string|CaptureScene)[]
      boxes:[...document.querySelectorAll<HTMLElement>('[data-behavior-target]')].filter(el=>el.checkVisibility()).flatMap(el=>{const box=el.getBoundingClientRect();return box.width>0&&box.height>0&&box.left>=0&&box.left<innerWidth?[{target:el.dataset.behaviorTarget!,slot:Number(el.dataset.behaviorSlot)||0,x:box.left+scrollX,y:box.top+scrollY,width:box.width,height:box.height}]:[]})};
    },interactiveSelector);
    const capturedHeight=Math.min(snapshot.height,snapshot.context.page==='/immerse'?viewport.height:16000);
-   const png=await page.screenshot({clip:{x:0,y:0,width:snapshot.width,height:capturedHeight}}),metadata=await sharp(png).metadata();
-   if(metadata.width!==snapshot.width)throw Error('参考页面存在横向溢出：'+route);
+   const png=await page.screenshot({fullPage:true,clip:{x:0,y:0,width:snapshot.width,height:capturedHeight}}),metadata=await sharp(png).metadata();
+   if(metadata.width!==snapshot.width||metadata.height!==capturedHeight)throw Error('参考图实际尺寸与页面坐标不一致：'+route);
    const body=await sharp(png).webp({quality:80}).toBuffer(),hash=createHash('sha256').update(body).digest('hex');
    const image=`layouts/${snapshot.context.version}/${hash}.webp`;await mkdir(path.dirname(path.join(out,image)),{recursive:true});await writeFile(path.join(out,image),body);
    const layout={...snapshot.context,image,width:snapshot.width,height:capturedHeight,boxes:snapshot.boxes.filter(box=>box.y<capturedHeight) as Box[],created:Date.now()} as Layout;

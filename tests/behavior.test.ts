@@ -4,6 +4,7 @@ import {randomBytes,createHash} from 'node:crypto';
 import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import sharp from 'sharp';
 import {createLocalJWKSet,generateKeyPair,exportJWK,SignJWT} from 'jose';
 import {behaviorStorage} from '../scripts/behavior_storage.ts';
 import {validateBatch,collect,report,authorized,verifyAssertion,expireBehavior,type BehaviorEnv} from '../worker/behavior.ts';
@@ -101,7 +102,7 @@ test('保留期清理保留仍被新布局引用的同一张参考图',async()=>
 });
 
 test('发布产物门槛拒绝遗漏路由、草稿截图、未映射控件和内容漂移',async()=>{
- const directory=await mkdtemp(path.join(tmpdir(),'peach-behavior-')),version='a'.repeat(64),body=Buffer.from('isolated-reference-fixture'),hash=createHash('sha256').update(body).digest('hex'),image=`layouts/${version}/${hash}.webp`;
+ const directory=await mkdtemp(path.join(tmpdir(),'peach-behavior-')),version='a'.repeat(64),body=await sharp({create:{width:1440,height:1000,channels:3,background:'#fff'}}).webp().toBuffer(),hash=createHash('sha256').update(body).digest('hex'),image=`layouts/${version}/${hash}.webp`;
  const rows:Layout[]=(['desktop','mobile'] as const).map(viewport=>({site:'site',version,page:'/',viewport,state:'default',lang:'zh-CN',image,width:1440,height:1000,created:now,boxes:[{target:'action.run',slot:0,x:0,y:0,width:100,height:40}]}));
  const original:Artifacts={version:1,complete:true,layouts:rows,coverage:['desktop','mobile'].map(viewport=>({route:'/',viewport,unmapped:[]}))};
  const save=(manifest:Artifacts)=>writeFile(path.join(directory,'behavior-layouts-site.json'),JSON.stringify(manifest));
@@ -110,6 +111,7 @@ test('发布产物门槛拒绝遗漏路由、草稿截图、未映射控件和�
   await assert.rejects(checkBehaviorArtifacts(directory,'site',version,['/','/missing/']),/缺少页面覆盖/);
   await save({...original,complete:false});await assert.rejects(checkBehaviorArtifacts(directory,'site',version,['/']),/未完整生成/);
   await save({...original,coverage:[{route:'/',viewport:'desktop',unmapped:[{tag:'BUTTON'}]}]});await assert.rejects(checkBehaviorArtifacts(directory,'site',version,['/']),/未映射控件/);
+  await save({...original,layouts:rows.map(row=>({...row,height:900}))});await assert.rejects(checkBehaviorArtifacts(directory,'site',version,['/']),/实际尺寸/);
   await save(original);await assert.rejects(checkBehaviorArtifacts(directory,'site','b'.repeat(64),['/']),/当前构建不一致/);
   await writeFile(path.join(directory,image),'tampered');await assert.rejects(checkBehaviorArtifacts(directory,'site',version,['/']),/内容指纹不一致/);
  }finally{await rm(directory,{recursive:true,force:true})}

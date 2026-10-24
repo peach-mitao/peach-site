@@ -19,6 +19,9 @@ export async function buildBrowser(){
         await build({entryPoints:[file],outfile:out,bundle:true,format:'esm',platform:'browser',target:'es2022',charset:'utf8',minify:true,define:{'process.env.NODE_ENV':'"production"'}});
         continue;
       }
+      if(['locale.ts','page-support.ts'].includes(entry.name)){
+        await build({entryPoints:[file],outfile:out,bundle:true,format:'iife',platform:'browser',target:'es2022',charset:'utf8'});continue;
+      }
       const result=await transform(await readFile(file,'utf8'),{loader:'ts',target:'es2022',charset:'utf8',sourcefile:file});
       const code=result.code.replace(/(from\s+["'][^"']+)\.ts(["'])/g,'$1.js$2').replace(/(import\(\s*["'][^"']+)\.ts(["']\s*\))/g,'$1.js$2');
       await mkdir(path.dirname(out),{recursive:true});await writeFile(out,code);

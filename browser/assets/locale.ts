@@ -1,4 +1,4 @@
-"use strict";
+import {resolveSiteLanguage} from './site-language.ts';
 // 首页按偏好选择静态语言页；手动选择只在本浏览器保存，不发送访客标识。
 (() => {
     const preferenceKey = 'peach.site.locale', entryKey = 'peach.site.entry-referrer';
@@ -28,11 +28,11 @@
         saved = explicit;
         remember(explicit);
     }
-    if (url.pathname === '/' && !url.searchParams.has('edit') && !/bot|crawler|spider/i.test(navigator.userAgent)) {
-        const preferred = (navigator.languages?.length ? navigator.languages : [navigator.language])
-            .map(value => String(value).toLowerCase().split('-')[0]).find(valid) ?? 'en';
-        if ((valid(saved) ? saved : preferred) === 'en') {
-            const target = new URL('/en/', url);
+    const alternate = new Map([['/','/en/'],['/copyright/','/en/copyright/']]).get(url.pathname);
+    if (alternate && !url.searchParams.has('edit') && !/bot|crawler|spider/i.test(navigator.userAgent)) {
+        const preferred = resolveSiteLanguage({path:url.pathname,saved,languages:navigator.languages?.length?navigator.languages:[navigator.language]});
+        if (preferred === 'en') {
+            const target = new URL(alternate, url);
             target.search = url.search;
             target.hash = url.hash;
             try {

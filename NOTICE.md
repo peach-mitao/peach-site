@@ -2,6 +2,8 @@
 
 本项目自有代码按 AGPL-3.0-only 发布，见 `LICENSE`。Sticker Forge 的 MIT 声明位于 `site/assets/vendor/sticker-forge/LICENSE`，Inter 的 SIL Open Font License 位于 `site/assets/fonts/LICENSE`，手写品牌声明位于 `site/assets/peach-hello-LICENSE.txt`。
 
+支持页使用 Peach 应用的独立页面样式（AGPL-3.0-only），来源提交及摘要见 `support-ui-source.json`。其中 BoardUI 与 Tailwind CSS 按 MIT 许可使用，编译样式保留 Tailwind 的许可声明。支持页 Inter 5.3.0 的 SIL Open Font License 与来源说明位于 `site/assets/support-ui/inter/`。
+
 Cloudflare Access 签名校验使用 [jose](https://github.com/panva/jose) 6.2.13，按 MIT 许可使用；许可证随 npm 包分发。分析补充页使用自有布局，Cloudflare 名称仅表示集成的平台。
 
 分析后台使用 [Cloudflare Kumo](https://github.com/cloudflare/kumo) 2.15.0、React / React DOM 19.3.1 及 Phosphor React 2.1.10，均按 MIT 许可使用。构建入口将这四项的许可证写入 `/assets/vendor/behavior/`，与浏览器资源一同分发。Kumo standalone CSS 中含 Tailwind CSS 的 MIT 声明。

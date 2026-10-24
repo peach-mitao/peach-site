@@ -1,0 +1,25 @@
+/* 独立支持页的内容布局；控件与颜色来自固定的 Peach 生产页面样式。 */
+[hidden]{display:none!important}
+.support-document{max-width:760px}
+.support-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.support-top a,.support-document p a{color:var(--color-text-primary);text-decoration:underline;text-underline-offset:4px}
+.support-document h1{font-size:20px;font-weight:500;line-height:26px}
+.support-document h2{font-size:16px;font-weight:600;line-height:24px;margin:0}
+.support-document p,.support-document li{font-size:14px;line-height:22px;color:var(--color-text-secondary);overflow-wrap:anywhere;margin:0}
+.support-document form{display:grid;gap:24px}
+.support-document label{display:grid;gap:8px;font-size:14px;font-weight:500;line-height:20px;color:var(--color-text-primary)}
+.support-document input:not([type=checkbox]),.support-document textarea{width:100%;min-width:0;font:400 14px/20px var(--font-sans);padding:8px 12px;border:0;border-radius:10px;background:var(--color-background-tertiary-default);color:var(--color-text-primary)}
+.support-document input:not([type=checkbox]){height:36px}
+.support-document textarea{min-height:100px;resize:vertical}
+.support-document input::placeholder,.support-document textarea::placeholder{color:var(--color-text-tertiary)}
+.support-document :is(input,textarea,button,a):focus-visible{outline:2px solid var(--color-border-focus-ring);outline-offset:3px}
+.support-document .check{grid-template-columns:18px 1fr;align-items:start;font-weight:400;line-height:22px}
+.support-document .check input{width:16px;height:16px;margin-top:3px;accent-color:var(--color-text-primary)}
+.support-document button,.support-document .action{display:inline-flex;align-items:center;justify-content:center;justify-self:start;min-height:36px;max-width:100%;padding:8px 12px;border:0;border-radius:10px;background:var(--gradient-button-primary-default);color:var(--color-text-white);font:500 14px/20px var(--font-sans);cursor:pointer;text-decoration:none;text-align:center}
+.support-document button:disabled{background:var(--color-background-tertiary-default);color:var(--color-text-disabled);cursor:not-allowed}
+.support-document .actions{display:flex;gap:8px;flex-wrap:wrap}
+.support-document .subtle{font-size:12px;line-height:18px}
+.support-document .result{display:grid;gap:16px;border-top:1px solid var(--color-separator-border);padding-top:24px}
+.support-document #notice{min-height:280px}
+body.peach-react{--ground:var(--color-background-secondary-default);--ink:var(--color-text-primary);--muted:var(--color-text-secondary);--hover:var(--color-background-primary-hover);--tungsten:var(--color-border-focus-ring);--badge-radius:4px;--floating-radius:16px}
+@media(max-width:639px){.support-document input:not([type=checkbox]),.support-document textarea{font-size:16px}}

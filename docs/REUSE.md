@@ -17,6 +17,7 @@
 | 点击与动线 | 两站共用 TS 协议与浏览器观察器，D1、私有 R2、Cloudflare Access；`jose` 6.2.13，MIT | D1 保存可排序的匿名会话事件，R2 保存维护者构建截图，Access JWT 校验签发者、应用 AUD 与有效期。复用现有 Worker、Sharp、Playwright 和原位编辑器；不用 Analytics Engine 的抽样事件重建精确动线。来源与维护见[访问分析](ANALYTICS.md) |
 | 分析面板外观 | Cloudflare Kumo 2.15.0、React / React DOM 19.3.1、Phosphor React 2.1.10，均为 MIT | 下拉与按钮复用官方组件及独立 CSS，使用小型 React 控件适配原生表单；公开官网不加载这些后台依赖。布局与尺寸见[面板样式记录](reference-snapshots/cloudflare-dashboard.md)，未复制 Cloudflare 标志或控制台脚本 |
 | 多语言页面 | 自有 `scripts/build_i18n.ts` 与 `i18n/<语言>.json`，无新增依赖 | 静态双页面，标题、描述与 `hreflang` 可被搜索引擎读取；运行时换字做不到这一点，i18next 等框架又要求把中文源改写成键名，与原位编辑冲突。生成结果随源码提交，`npm run check` 拒绝缺译、多余译文与过期页面 |
+| 独立支持页 | Peach 应用的 `web/dist/peach-pages.css`、Inter 5.3.0 与品牌标志；既有 Sharp、esbuild | 404 与版权页复用应用的页面卡片、字体和控件 token，不加载应用数据。`support-ui-source.json` 记录来源提交及资源摘要；演示站从官网同步 404 与语言解析器。版权页使用静态中英文版本，404 根据语言偏好只显示一种语言 |
 | 语言识别与选择 | 浏览器原生 [navigator.languages](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages)、localStorage 与现有静态中英文页，无新增依赖 | 首页按偏好匹配，手选优先；禁止存储时使用显式参数。既有页面生成器保留静态 SEO；两个语言不引入额外检测库，不让首页进入 Worker。一次性会话来源交接不包含完整网址或访客标识 |
 
 公开产品页面由 Cloudflare 静态资源层提供，不加载分析后台的 React / Kumo 控件。Worker 处理事件、受保护的分析页与统计偏好。外语页由提交的生成文件发布，浏览器脚本在部署前编译。本地预览用于编辑和测试；素材、真实账本与生产入口由各自维护入口管理。操作入口见[维护说明](MAINTAINING.md)。

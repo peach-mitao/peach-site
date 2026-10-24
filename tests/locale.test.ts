@@ -30,9 +30,11 @@ test('手动偏好与显式语言参数优先，跳转保留推广参数和锚�
     assert.equal(run({ path: '/?lang=zh', saved: 'en' }).redirects.length, 0);
     assert.equal(run({ saved: 'unknown' }).redirects.length, 1);
 });
-test('英文直链、版权页与编辑模式保持显式地址', () => {
-    for (const path of ['/en/', '/copyright/', '/en/copyright/', '/?edit'] as const)
+test('英文直链与编辑模式保持显式地址，版权页按偏好选择语言', () => {
+    for (const path of ['/en/', '/en/copyright/', '/?edit', '/copyright/?edit'] as const)
         assert.equal(run({ path }).redirects.length, 0, path);
+    assert.equal(run({path:'/copyright/'}).redirects[0],'https://peach.video/en/copyright/');
+    assert.equal(run({path:'/copyright/?lang=zh',saved:'en'}).redirects.length,0);
 });
 test('手动切换只记录同源语言选择，存储被禁时保留显式参数', () => {
     const chosen = run({ path: '/en/' });

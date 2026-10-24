@@ -10,7 +10,7 @@ if(!Number.isInteger(port)||port<1024||port>65535)throw Error('预览端口无�
 await buildBrowser();
 const {database}=behaviorStorage(fileURLToPath(new URL('evidence/behavior-preview.sqlite',root)));
 const editable=(path:string)=>fileURLToPath(new URL(path.startsWith('/analytics')?'worker/ui/dashboard.html':path.startsWith('/privacy/analytics')?'worker/ui/privacy.html':'site/index.html',root));
-const server=await createPreviewServer({publicReleases:true,editIndex:req=>{try{return editable(new URL(req.headers.referer||'http://127.0.0.1').pathname)}catch{return editable('/')}},async dynamic(req,res){
+const server=await createPreviewServer({publicReleases:true,editIndex:req=>{try{const path=new URL(req.headers.referer||'http://127.0.0.1').pathname;return path.startsWith('/analytics')||path.startsWith('/privacy/analytics')?editable(path):undefined}catch{return undefined}},async dynamic(req,res){
  const url=new URL(req.url||'/',`http://127.0.0.1:${port}`);
  if(!['/api/behavior','/privacy/analytics'].includes(url.pathname)&&!url.pathname.startsWith('/analytics'))return false;
  if(req.method==='GET'&&(url.pathname==='/privacy/analytics'||/^\/analytics\/?$/.test(url.pathname))){

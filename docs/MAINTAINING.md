@@ -4,6 +4,14 @@
 
 工具选型与复用边界见[复用说明](REUSE.md)。
 
+## 独立支持页
+
+404 位于 `site/404.html`，版权投诉中文源位于 `site/copyright/index.html`，英文页由 `npm run i18n` 生成。版权页按保存偏好或浏览器语言跳转到静态版本；404 由 `browser/assets/page-support.ts` 显示单一语言，显式 `lang` 参数优先。
+
+维护应用样式时，将应用检出目录作为参数运行 `scripts/sync_support_ui.ts`，再构建浏览器资源、查看桌面和手机预览。来源提交、资源摘要与许可随样式一起保存；实测尺寸见[支持页样式来源](reference-snapshots/peach-support-pages.md)。版权表单只在浏览器整理邮件，不自动发送或存储投诉。
+
+本地官网预览支持 404 与版权页的 `?edit`。中文正文保存到对应源文件，英文版权页应通过中文源和翻译表生成，避免生成结果被覆盖。独立 404 的英文显示由 TypeScript 维护。
+
 ## 环境与检查
 
 使用 Node.js 24.12 或更新的受支持 LTS。以下命令均在本仓库根目录执行。

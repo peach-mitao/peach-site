@@ -22,6 +22,7 @@
 !/i18n/
 !/TYPOGRAPHY.md
 !/assets-manifest.json
+!/support-ui-source.json
 !/site/
 /site/*
 !/site/index.html
@@ -35,6 +36,8 @@
 !/site/assets/
 /site/assets/*
 !/site/assets/media-01.css
+!/site/assets/support.css
+!/site/assets/support-ui/
 !/site/assets/peach-logo.png
 !/site/assets/peach-logo-192.webp
 !/site/assets/peach-mark.svg

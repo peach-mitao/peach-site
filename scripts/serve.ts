@@ -27,12 +27,18 @@ interface PreviewOptions {
   downloadsManifest?: string;
   publicReleases?: boolean;
   dynamic?:(req:http.IncomingMessage,res:http.ServerResponse)=>Promise<boolean>;
-  editIndex?:(req:http.IncomingMessage)=>string;
+  editIndex?:(req:http.IncomingMessage)=>string|undefined;
 }
 
 export async function createPreviewServer(options: PreviewOptions = {}) {
   const root = path.resolve(options.root ?? fileURLToPath(new URL('../site/', import.meta.url)));
   const index = path.join(root, 'index.html');
+  const editableSource=(req:http.IncomingMessage)=>{
+    let pathname='/';try{pathname=new URL(req.headers.referer||'http://localhost/').pathname}catch{}
+    if(['/copyright/','/copyright/index.html'].includes(pathname))return path.join(root,'copyright/index.html');
+    if(['/en/copyright/','/en/copyright/index.html'].includes(pathname))return path.join(root,'en/copyright/index.html');
+    return ['/','/index.html','/en/','/en/index.html'].includes(pathname)?index:path.join(root,'404.html');
+  };
   const previewFiles = new Map<string, string>();
   let previewDownloads: {version: string; local: true; files: Record<string, {name: string; href: string}>} | undefined;
   if (options.downloadsManifest) {
@@ -70,7 +76,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         }
         let input: unknown;
         try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {rejectEdit(400, '编辑请求无效，请刷新后重试'); return}
-        const result = await edit.post(options.editIndex?.(req)??index, name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
+        const result = await edit.post(options.editIndex?.(req)??editableSource(req), name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }
@@ -107,8 +113,19 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       const relative = path.relative(root, file);
       if (!previewFiles.has(name) && (relative.startsWith('..') || path.isAbsolute(relative))) {res.writeHead(403).end(); return}
       let info;
-      try {info = await stat(file)} catch {res.writeHead(404).end('Not found'); return}
+      try {info = await stat(file)} catch {
+        if(!path.extname(name)||name.endsWith('.html')){
+          const missing=path.join(root,'404.html'),address=server.address();
+          try{await stat(missing)}catch{res.writeHead(404,{'Cache-Control':'no-store'}).end(req.method==='HEAD'?undefined:'Not found');return}
+          const body=url.searchParams.has('edit')?await edit.page(missing,address&&typeof address!=='string'?address.port:0):await readFile(missing,'utf8');
+          res.writeHead(404,{'Content-Type':types['.html'],'Content-Length':Buffer.byteLength(body),'Cache-Control':'no-store'}).end(req.method==='HEAD'?undefined:body);return;
+        }
+        res.writeHead(404,{'Cache-Control':'no-store'}).end('Not found'); return;
+      }
       if (!info.isFile()) {res.writeHead(404).end('Not found'); return}
+      if(path.extname(file)==='.html'&&url.searchParams.has('edit')){
+        const address=server.address();reply(await edit.page(file,address&&typeof address!=='string'?address.port:0),types['.html']);return;
+      }
       const headers = {'Content-Type': types[path.extname(file)] ?? 'application/octet-stream', 'Accept-Ranges': 'bytes', 'Cache-Control': 'no-store'};
       let range: {start: number; end: number} | undefined;
       if (req.headers.range) {

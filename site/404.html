@@ -3,18 +3,21 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>页面不存在 · Peach</title>
-<meta name="robots" content="noindex">
-<style>
-:root{color-scheme:dark;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#080a0f;color:#eee}body{margin:0}main{max-width:760px;margin:auto;padding:72px 24px}a{color:#f4c0bd;text-underline-offset:4px}a:focus-visible{outline:2px solid #f4c0bd;outline-offset:4px}h1{font-size:clamp(26px,5vw,36px);line-height:1.2;margin:0 0 16px}h2{font-size:20px;margin:48px 0 12px}p{line-height:1.75;color:#bfc1c8}
-</style>
+<meta name="robots" content="noindex, nofollow"><meta name="color-scheme" content="light dark">
+<script src="/assets/page-support.js"></script>
+<link rel="stylesheet" href="/assets/support-ui/inter/index.css">
+<link rel="stylesheet" href="/assets/support-ui/peach-pages.css">
+<link rel="stylesheet" href="/assets/support.css">
 </head>
-<body><main>
-<h1>页面不存在</h1>
-<p>这个地址没有对应的页面，可能已经移动，或者链接有误。</p>
-<p><a href="/">返回 Peach 官网</a></p>
-<div lang="en">
-<h2>Page not found</h2>
-<p>There is no page at this address. It may have moved, or the link may be wrong.</p>
-<p><a href="/en/">Back to the Peach website</a></p>
-</div>
-</main></body></html>
+<body class="peach-react" data-support-page="404" data-support-home-en="/en/">
+<main class="flex justify-center px-6 py-12 max-sm:px-4 max-sm:py-6">
+<section aria-labelledby="not-found-title" class="flex w-full max-w-140 flex-col gap-6 rounded-3xl border border-separator-border bg-background-secondary-default p-8 max-sm:p-5">
+<header class="flex flex-col gap-1">
+<img src="/assets/support-ui/logo.png" alt="" width="40" height="40" decoding="async" class="mb-4 size-10">
+<h1 id="not-found-title" data-not-found-title class="text-title-2-medium text-text-primary">四〇四</h1>
+<p data-not-found-detail class="text-body-2-regular text-text-secondary">这个地址没有对应的页面，可能已经移动，或者链接有误。</p>
+</header>
+<a data-not-found-home href="/" lang="zh-CN" class="inline-flex items-center justify-center gap-0.5 whitespace-nowrap overflow-hidden font-sans select-none cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-border-focus-ring h-9 rounded-2lg p-2 text-body-medium bg-button-primary text-text-white shadow-xs self-start"><span class="inline-flex items-center justify-center px-1 shrink-0">返回首页</span></a>
+</section></main>
+<script src="/assets/locale.js"></script>
+</body></html>

@@ -1,1 +1,10 @@
 **/copy-editor-core.js text eol=lf
+browser/assets/page-support.ts text eol=lf
+browser/assets/site-language.ts text eol=lf
+site/404.html text eol=lf
+site/assets/support.css text eol=lf
+site/assets/support-ui/*.css text eol=lf
+site/assets/support-ui/*-LICENSE.txt text eol=lf
+site/assets/support-ui/inter/*.css text eol=lf
+site/assets/support-ui/inter/*.md text eol=lf
+site/assets/support-ui/inter/LICENSE text eol=lf

@@ -35,6 +35,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
   const index = path.join(root, 'index.html');
   const editableSource=(req:http.IncomingMessage)=>{
     let pathname='/';try{pathname=new URL(req.headers.referer||'http://localhost/').pathname}catch{}
+    if(['/unavailable','/unavailable/','/unavailable.html'].includes(pathname))return path.join(root,'unavailable.html');
     if(['/copyright/','/copyright/index.html'].includes(pathname))return path.join(root,'copyright/index.html');
     if(['/en/copyright/','/en/copyright/index.html'].includes(pathname))return path.join(root,'en/copyright/index.html');
     return ['/','/index.html','/en/','/en/index.html'].includes(pathname)?index:path.join(root,'404.html');
@@ -60,6 +61,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       const url = new URL(req.url ?? '/', 'http://localhost');
       let name: string;
       try {name = decodeURIComponent(url.pathname)} catch {res.writeHead(400).end(); return}
+      if(['/unavailable','/unavailable/'].includes(name))name='/unavailable.html';
       if (name.includes('\0') || name.includes('\\')) {res.writeHead(400).end(); return}
       if(name.endsWith('.edit-history.json')||name.endsWith('.edit-history.json.tmp')){res.writeHead(404).end();return}
       if (req.method === 'POST' && ['/__edit/tab', '/__edit/text', '/__edit/copy', '/__edit/block','/__edit/undo','/__edit/redo'].includes(name)) {

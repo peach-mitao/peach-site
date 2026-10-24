@@ -48,7 +48,8 @@ function textSlices(html: string, from: number, to: number) {
 function bounds(html: string) {
   const body = html.indexOf("<body");
   const from = html.indexOf(">", body) + 1;
-  const to = html.indexOf("<script", from);
+  const script = html.indexOf("<script", from);
+  const to = script < 0 ? html.indexOf('</body>', from) : script;
   if (body < 0 || from <= body || to < from) throw Error('页面编辑区域未取得');
   return { from, to };
 }

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/index.ts';
 import {regionResponse} from '../worker/region.ts';
+import {mainlandIP} from '../worker/region-ip.ts';
 
 function request(path: string, country?: string, method = 'GET', headers: Record<string,string> = {}) {
   return Object.assign(new Request('https://peach.video' + path, {method, headers}), {cf: {country}});
@@ -62,4 +63,19 @@ test('CN 可读取提示页样式、字体和标识，其他支持页脚本仍�
 test('Worker 在接口处理与资源读取前执行 CN 限制', async () => {
   const response = await worker.fetch(request('/api/items', 'CN'), {ASSETS: deniedAssets, SITE_EVENTS: {writeDataPoint() {throw Error('受限请求不得写入事件');}}});
   assert.equal(response.status, 302);
+});
+
+test('辅助库识别大陆 IPv4、IPv6 与 IPv4 映射 IPv6', () => {
+  for (const value of ['1.0.1.1', '2001:250::1', '240e::1', '::ffff:1.0.1.1']) assert.equal(mainlandIP(value), true, value);
+  for (const value of ['1.1.1.1', '8.8.8.8', '127.0.0.1', '::1', '2001:4860:4860::8888', '1.32.192.1', '1.34.0.1']) assert.equal(mainlandIP(value), false, value);
+  for (const value of [null, '', 'not-an-ip', '1.0.1.1:443', '999.1.1.1']) assert.equal(mainlandIP(value), false);
+});
+
+test('任一辅助库命中大陆时覆盖 Cloudflare 的其他地区结果', async () => {
+  for (const country of ['HK', 'MO', 'TW', 'US', 'XX', undefined]) for (const value of ['1.0.1.1', '2001:250::1', '::ffff:1.0.1.1']) {
+    const response = await regionResponse(request('/', country, 'GET', {'cf-connecting-ip': value}), deniedAssets);
+    assert.equal(response?.status, 302);
+  }
+  assert.equal(await regionResponse(request('/', 'HK', 'GET', {'cf-connecting-ip':'1.32.192.1','x-forwarded-for':'1.0.1.1'}), deniedAssets), null);
+  assert.equal(await regionResponse(request('/assets/support-ui/logo.png', 'HK', 'GET', {'cf-connecting-ip':'1.0.1.1'}), deniedAssets), null);
 });

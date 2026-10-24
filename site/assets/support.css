@@ -21,5 +21,7 @@
 .support-document .subtle{font-size:12px;line-height:18px}
 .support-document .result{display:grid;gap:16px;border-top:1px solid var(--color-separator-border);padding-top:24px}
 .support-document #notice{min-height:280px}
+.support-preference{display:grid;gap:16px;padding:24px 0;border-top:1px solid var(--color-separator-border);border-bottom:1px solid var(--color-separator-border)}
+.support-preference #preference{color:var(--color-text-primary);font-weight:500}
 body.peach-react{--ground:var(--color-background-secondary-default);--ink:var(--color-text-primary);--muted:var(--color-text-secondary);--hover:var(--color-background-primary-hover);--tungsten:var(--color-border-focus-ring);--badge-radius:4px;--floating-radius:16px}
 @media(max-width:639px){.support-document input:not([type=checkbox]),.support-document textarea{font-size:16px}}

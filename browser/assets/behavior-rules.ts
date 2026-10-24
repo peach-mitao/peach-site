@@ -15,7 +15,7 @@ export const siteRules:Rule[]=[
  ...['setup','portable','macos-arm64','macos-x86_64'].map(id=>rule('download.'+id,id,`[data-download="${id}"]`)),
  ...['home','people','profile','play','follow','stats'].map(id=>rule('tour.'+id,id,`.dock button[data-k="${id}"]`)),
  rule('faq.expand','常见问题','#faq summary'),rule('mac.help.open','打开 Mac 帮助','[data-mac-help]'),rule('mac.help.close','关闭 Mac 帮助','[data-mac-help-dialog] button:not([data-copy])'),
- rule('copy.command','复制命令','button[data-copy]'),rule('privacy.open','统计偏好','a[href="/privacy/analytics"]'),rule('copyright.open','版权','a[href*="copyright"]'),
+ rule('copy.command','复制命令','button[data-copy]'),rule('privacy.open','统计偏好','a[href^="/privacy/analytics"]'),rule('copyright.open','版权','a[href*="copyright"]'),
  rule('copyright.prepare','准备投诉邮件','#prepare'),rule('copyright.compose','打开邮件客户端','#compose'),rule('copyright.copy','复制投诉正文','#copy'),rule('copyright.mail','投诉邮箱','a[href^="mailto:"]'),
  rule('copyright.field','填写投诉信息','#copyright-form input,#copyright-form select,#copyright-form textarea'),
  ...['01-open','close','center-toggle','play','mute','speed-toggle','speed-option','pip','fullscreen'].map(id=>rule('video.'+id,'视频 '+id,`[data-media-${id}]`)),

@@ -71,6 +71,7 @@ function start() {
     const chosenArchitecture = ['arm64', 'x86_64'].includes(params.get('arch')||'') ? params.get('arch') : null;
     const state: {platform:string;architecture:string|null;manual:boolean;downloads:DownloadMap;localMac:DownloadEntry|null;dockerVersion:string|null;releasesSettled:boolean;dockerSettled:boolean} = { platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
         manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null, releasesSettled: false, dockerSettled: false };
+    let releaseRequest:Promise<void>|null=null,lastReleaseCheck=0;
     function render() {
         const mac = state.downloads.macos || state.localMac;
         const ready = state.platform === 'macos' ? mac : state.downloads.windows;
@@ -162,7 +163,7 @@ function start() {
         });
     void (async () => {
         try {
-            const response = await fetch(dockerVersionApi, { signal: AbortSignal.timeout(8000) });
+            const response = await fetch(dockerVersionApi, { cache:'no-store', signal: AbortSignal.timeout(8000) });
             if (response.ok)
                 state.dockerVersion = (await response.json()).message;
         }
@@ -170,11 +171,14 @@ function start() {
         state.dockerSettled = true;
         render();
     })();
-    void (async () => {
+    function refreshDownloads(force=false):Promise<void>{
+        if(releaseRequest)return releaseRequest;
+        if(!force&&Date.now()-lastReleaseCheck<60000)return Promise.resolve();
+        releaseRequest=(async () => {
         const preview = (document.querySelector('meta[name="peach-local-downloads"]') as HTMLMetaElement)?.content;
         if (preview) {
             try {
-                const response = await fetch(preview);
+                const response = await fetch(preview,{cache:'no-store'});
                 if (response.ok) {
                     state.localMac = await response.json();
                     render();
@@ -185,7 +189,7 @@ function start() {
         const publicIndex = (document.querySelector('meta[name="peach-public-downloads"]') as HTMLMetaElement)?.content || downloadsApi;
         for (const [endpoint, source] of [[publicIndex, 'r2'], [releasesApi, 'github']] as const) {
             try {
-                const response = await fetch(endpoint, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
+                const response = await fetch(endpoint, { cache:'no-store', headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
                 if (!response.ok)
                     continue;
                 const downloads = downloadsFor(await response.json(), source);
@@ -193,7 +197,7 @@ function start() {
                     continue;
                 for (const [platform, entry] of Object.entries(downloads)) {
                     const current = state.downloads[platform];
-                    if (entry&&(!current || (entry.version !== current.version && Date.parse(entry.publishedAt||'') > Date.parse(current.publishedAt||'')))) {
+                    if (entry&&(!current || (source==='r2'&&entry.version===current.version) || (entry.version !== current.version && Date.parse(entry.publishedAt||'') > Date.parse(current.publishedAt||'')))) {
                         state.downloads[platform] = entry;
                     }
                 }
@@ -203,7 +207,13 @@ function start() {
         }
         state.releasesSettled = true;
         render();
-    })();
+        })().finally(()=>{lastReleaseCheck=Date.now();releaseRequest=null});
+        return releaseRequest;
+    }
+    void refreshDownloads(true);
+    addEventListener('pageshow',event=>{if(event.persisted)void refreshDownloads(true)});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')void refreshDownloads()});
+    for(const name of ['pointerover','focusin'])document.addEventListener(name,event=>{if(event.target instanceof Element&&event.target.closest('[data-primary-download],[data-download],[data-platform-option]'))void refreshDownloads()});
 }
 if (typeof document !== 'undefined')
     start();

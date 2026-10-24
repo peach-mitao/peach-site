@@ -37,6 +37,8 @@
     "verify:interface": "node scripts/check_interface.ts",
     "verify:locale": "node scripts/check_locale.ts",
     "verify:support": "node scripts/check_support.ts",
+    "verify:download-cache": "node scripts/check_download_cache.ts",
+    "verify:preferences": "node scripts/check_preferences.ts",
     "verify:cache": "node scripts/check_cache.ts",
     "analytics": "node scripts/analytics_report.ts",
     "capture:desktop": "node scripts/capture_compact_desktop.ts && node scripts/optimize_compact_desktop.ts",

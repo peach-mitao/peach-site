@@ -87,7 +87,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         res.writeHead(200, {'Content-Type': type, 'Content-Length': Buffer.byteLength(body), 'Cache-Control': 'no-store'}).end(req.method === 'HEAD' ? undefined : body);
       };
       if (options.publicReleases && name === '/__preview/releases.json') {
-        const response = await fetch('https://downloads.peach.video/releases.json', {signal: AbortSignal.timeout(8000)});
+        const response = await fetch('https://downloads.peach.video/releases.json', {cache:'no-store',signal: AbortSignal.timeout(8000)});
         if (!response.ok) {res.writeHead(502).end('Public release index unavailable'); return}
         reply(JSON.stringify(await response.json()), 'application/json; charset=utf-8'); return;
       }

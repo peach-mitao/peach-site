@@ -13,10 +13,15 @@
       "/en/": "/",
       "/copyright/": "/en/copyright/",
       "/en/copyright/": "/copyright/",
+      "/privacy/analytics?lang=zh": "/privacy/analytics?lang=en",
       "https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app": "https://support.microsoft.com/en-us/windows/security/windows-security/app-browser-control-in-the-windows-security-app"
     }
   },
   "text": {
+    "站点信息": "Site information",
+    "页面语言": "Page language",
+    "版权投诉": "Copyright",
+    "简体中文": "English",
     "统计偏好": "Analytics preferences",
     "English": "中文",
     "Peach · 蜜桃：私人影片馆藏": "Peach · Your private video library",

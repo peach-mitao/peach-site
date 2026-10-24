@@ -6,6 +6,8 @@
 
 ## 独立支持页
 
+所有请求先由 Worker 使用 Cloudflare 提供的 `request.cf.country` 判断连接 IP。地区为 `CN` 时跳转到 `/unavailable`，该页面返回 403 并复用 404 的样式；`HK`、`MO`、`TW` 和其他地区正常访问。跳转和提示页均禁止缓存，只有提示页所需的样式、字体和标识可以直接读取。不使用浏览器语言、时区或客户端请求头判断地区，不调用外部 IP 查询服务。静态资源也经过 Worker，因此所有地区的资源请求均会产生 Worker 调用。
+
 404 位于 `site/404.html`，版权投诉中文源位于 `site/copyright/index.html`，英文页由 `npm run i18n` 生成。版权页按保存偏好或浏览器语言跳转到静态版本；404 由 `browser/assets/page-support.ts` 显示单一语言，显式 `lang` 参数优先。
 
 维护应用样式时，将应用检出目录作为参数运行 `scripts/sync_support_ui.ts`，再构建浏览器资源、查看桌面和手机预览。来源提交、资源摘要与许可随样式一起保存；实测尺寸见[支持页样式来源](reference-snapshots/peach-support-pages.md)。版权表单只在浏览器整理邮件，不自动发送或存储投诉。

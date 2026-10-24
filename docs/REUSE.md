@@ -4,6 +4,7 @@
 
 | 能力 | 实现与许可 | 验证与边界 |
 | --- | --- | --- |
+| IP 服务地区 | Cloudflare 原生 `request.cf.country` 与 Workers Assets，无新增依赖 | Cloudflare 地区数据每周多次更新，不能保证零误判；仅 `CN` 跳转，港澳台及其他地区放行。复用现有 404 样式，跳转与提示页不缓存；单元回归覆盖国家码、伪造请求头、接口与资源入口。未引入额外数据库或第三方逐请求查询 |
 | TS 类型检查与浏览器编译 | TypeScript 7.0.2，Apache-2.0；esbuild 0.28.2，MIT | 严格检查浏览器、维护脚本、回归、预览与 Worker；Node 24.12 起直接运行可擦除类型。esbuild 生成浏览器 JS，复用 cf 已使用的构建工具，不增加运行时加载器 |
 | Cloudflare 配置与发布 | cf 1.0.0-beta.18，MIT OR Apache-2.0；Wrangler 4.151.2，MIT OR Apache-2.0 | 官方 `cf migrate` 转换；Build Output 对照名称、域名、404 行为与可观测性；固定 beta 版本，由 Dependabot 跟踪更新 |
 | 本地预览与媒体范围 | Node HTTP、文件流与现有文字编辑模块 | 保留同源编辑和本地下载清单；验证 HEAD、Range、畸形路径、编辑冲突与输入错误；本地服务不进入部署目录 |
@@ -20,4 +21,4 @@
 | 独立支持页 | Peach 应用的 `web/dist/peach-pages.css`、Inter 5.3.0 与品牌标志；既有 Sharp、esbuild | 404、版权页与统计偏好复用应用的页面卡片、字体和控件 token，不加载应用数据。`support-ui-source.json` 记录来源提交及资源摘要；演示站从官网同步 404 与语言解析器。版权页使用静态中英文版本，404 与统计偏好根据语言偏好只显示一种语言 |
 | 语言识别与选择 | 浏览器原生 [navigator.languages](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/languages)、localStorage 与现有静态中英文页，无新增依赖 | 首页按偏好匹配，手选优先；禁止存储时使用显式参数。既有页面生成器保留静态 SEO；两个语言不引入额外检测库，不让首页进入 Worker。一次性会话来源交接不包含完整网址或访客标识 |
 
-公开产品页面由 Cloudflare 静态资源层提供，不加载分析后台的 React / Kumo 控件。Worker 处理事件、受保护的分析页与统计偏好。外语页由提交的生成文件发布，浏览器脚本在部署前编译。本地预览用于编辑和测试；素材、真实账本与生产入口由各自维护入口管理。操作入口见[维护说明](MAINTAINING.md)。
+公开产品页面由 Worker 执行地区判断后读取 Cloudflare 静态资源，不加载分析后台的 React / Kumo 控件。Worker 同时处理事件、受保护的分析页与统计偏好。外语页由提交的生成文件发布，浏览器脚本在部署前编译。本地预览用于编辑和测试；素材、真实账本与生产入口由各自维护入口管理。操作入口见[维护说明](MAINTAINING.md)。

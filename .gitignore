@@ -27,6 +27,7 @@
 /site/*
 !/site/index.html
 !/site/404.html
+!/site/unavailable.html
 !/site/.assetsignore
 !/site/_redirects
 !/site/_headers

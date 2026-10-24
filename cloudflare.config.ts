@@ -13,8 +13,8 @@ export default defineConfig(({ mode }) => ({
 		},
 		assets: {
 			notFoundHandling: "404-page",
-			// 分析接口与受保护后台进入 Worker，公开页面和资源仍由静态资源直接返回。
-			runWorkerFirst: ["/api/event", "/api/behavior", "/privacy/analytics", "/analytics", "/analytics/*"],
+			// 所有请求先按连接 IP 的地区判断服务范围，再读取静态资源或处理接口。
+			runWorkerFirst: true,
 		},
 		env: {
 			ASSETS: bindings.assets(),

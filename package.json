@@ -37,6 +37,7 @@
     "verify:interface": "node scripts/check_interface.ts",
     "verify:locale": "node scripts/check_locale.ts",
     "verify:support": "node scripts/check_support.ts",
+    "verify:region": "node scripts/check_region.ts",
     "verify:download-cache": "node scripts/check_download_cache.ts",
     "verify:preferences": "node scripts/check_preferences.ts",
     "verify:cache": "node scripts/check_cache.ts",

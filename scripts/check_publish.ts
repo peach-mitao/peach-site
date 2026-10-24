@@ -45,7 +45,7 @@ async function files(dir: URL, prefix = ''): Promise<string[]> {
     return result;
 }
 function excluded(path: string) {
-    return path.startsWith('_proto/') || ['index-v1.html', 'hello-preview.html', '.assetsignore', '_redirects', '_headers', '404.html', 'assets/sleeve.jpg', video.path].includes(path)
+    return path.startsWith('_proto/') || ['index-v1.html', 'hello-preview.html', '.assetsignore', '_redirects', '_headers', '404.html', 'unavailable.html', 'assets/sleeve.jpg', video.path].includes(path)
         || /^assets\/dark\/.*\.jpg$/.test(path)
         || (/^assets\/shots\/.*\.jpg$/.test(path) && path !== 'assets/shots/h-dark.jpg')
         || /^assets\/vendor\/sticker-forge\/.*\.d\.ts$/.test(path);
@@ -70,7 +70,7 @@ try {
         for (const path of ['/index-v1.html', '/hello-preview.html', '/_proto/stickers/', '/assets/dark/detail.jpg', '/assets/sleeve.jpg', '/__edit.js', '/__edit/save'] as const) {
             assert.equal((await request(path)).status, 404, path);
         }
-        // 未匹配的路径由静态资源返回 404 页，不进入 Worker，也不计调用次数。
+        // 未匹配的路径通过地区检查后由静态资源返回 404 页。
         const missing = await request('/__missing__/');
         assert.equal(missing.status, 404, '未匹配路径');
         assert.equal(hash(withoutBeacon(missing.body)), hash(await readFile(new URL('../site/404.html', import.meta.url))), '未匹配路径返回 404 页');

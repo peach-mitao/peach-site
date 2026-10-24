@@ -6,6 +6,7 @@ export default defineConfig(({ mode }) => ({
 		workersDev: mode === "preview" ? true : undefined,
 		entrypoint: "./worker/index.ts",
 		compatibilityDate: "2026-09-20",
+		compatibilityFlags: ["nodejs_compat"],
 		observability: {
 			enabled: true,
 			headSamplingRate: 1,
@@ -18,6 +19,7 @@ export default defineConfig(({ mode }) => ({
 		},
 		env: {
 			ASSETS: bindings.assets(),
+			REGION_DATA: bindings.r2({name: "peach-region-data"}),
 			SITE_EVENTS: bindings.analyticsEngineDataset({ name: "peach_site_events" }),
 			EVENT_LIMIT: bindings.rateLimit({namespace:"10424",simple:{limit:120,period:60}}),
 			BEHAVIOR: bindings.d1({id:"d81eb012-a8c9-4893-999c-33c31467ac75",name:"peach-behavior"}),
@@ -28,7 +30,7 @@ export default defineConfig(({ mode }) => ({
 			ACCESS_AUD: bindings.text("30d4a3629a0b136ff9392268614f3e0c41a37e241dadfea685e5f5a5b9f05f4a"),
 			BEHAVIOR_PREVIEW: bindings.text(mode==="preview"?"1":"0"),
 		},
-		triggers: mode === "preview" ? [] : [triggers.scheduled({schedule:"17 3 * * *"})],
+		triggers: mode === "preview" ? [] : [triggers.scheduled({schedule:"17 3 * * *"}), triggers.scheduled({schedule:"30 6 * * *"})],
 		domains: mode === "preview" ? [] : ["peach.video"],
 	},
 }));

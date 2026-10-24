@@ -8,7 +8,7 @@
 
 | 能力 | 实现与许可 | 验证与边界 |
 | --- | --- | --- |
-| IP 服务地区 | Cloudflare 原生 `request.cf.country` 与 Workers Assets，无新增依赖 | Cloudflare 地区数据每周多次更新，不能保证零误判；仅 `CN` 跳转，港澳台及其他地区放行。复用现有 404 样式，跳转与提示页不缓存；单元回归覆盖国家码、伪造请求头、接口与资源入口。未引入额外数据库或第三方逐请求查询 |
+| IP 服务地区 | Cloudflare 原生地区、ipaddr.js 2.5.0（MIT）、DB-IP Country Lite（CC BY 4.0）与 IPLocate Country（CC BY-SA 4.0） | 任一来源命中大陆即拦截。官网 Cron 每日更新共用 R2，两站五分钟刷新并保留有效表及内置兜底。云端 CSV 流解析复用 csv-parse 7.0.3（MIT），ZIP 流解压复用 fflate 0.8.3（MIT），GZIP、摘要与定时触发复用平台 API；手工快照生成复用 Python 标准库。来源版本、哈希与署名保留，不外发访问者 IP。未选需要账号凭据的 GeoLite／IPinfo；没有零误判保证 |
 | TS 类型检查与浏览器编译 | TypeScript 7.0.2，Apache-2.0；esbuild 0.28.2，MIT | 严格检查浏览器、维护脚本、回归、预览与 Worker；Node 24.12 起直接运行可擦除类型。esbuild 生成浏览器 JS，复用 cf 已使用的构建工具，不增加运行时加载器 |
 | Cloudflare 配置与发布 | cf 1.0.0-beta.18，MIT OR Apache-2.0；Wrangler 4.151.2，MIT OR Apache-2.0 | 官方 `cf migrate` 转换；Build Output 对照名称、域名、404 行为与可观测性；固定 beta 版本，由 Dependabot 跟踪更新 |
 | 本地预览与媒体范围 | Node HTTP、文件流与现有文字编辑模块 | 保留同源编辑和本地下载清单；验证 HEAD、Range、畸形路径、编辑冲突与输入错误；本地服务不进入部署目录 |

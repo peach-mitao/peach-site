@@ -1,5 +1,9 @@
 # 许可与素材
 
+地区访问判断使用 [ipaddr.js](https://github.com/whitequark/ipaddr.js) 2.5.0（MIT）。`worker/region-data.ts` 是 [DB-IP Country Lite](https://db-ip.com/db/lite.php) 与 [IPLocate Country](https://github.com/iplocate/ip-address-databases) 的 `CN` 网段并集，派生数据按 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) 分发；DB-IP 原始数据按 CC BY 4.0 分发。版本、来源地址及原始归档 SHA-256 保留在生成文件的 `sources` 中，页面保留两家数据提供者链接。此数据许可不改变项目自有代码许可。
+
+云端国家库定时更新使用 [csv-parse](https://github.com/adaltas/node-csv) 7.0.3 与 [fflate](https://github.com/101arrowz/fflate) 0.8.3，均按 MIT 许可使用，许可随 npm 包分发。
+
 本项目自有代码按 AGPL-3.0-only 发布，见 `LICENSE`。Sticker Forge 的 MIT 声明位于 `site/assets/vendor/sticker-forge/LICENSE`，Inter 的 SIL Open Font License 位于 `site/assets/fonts/LICENSE`，手写品牌声明位于 `site/assets/peach-hello-LICENSE.txt`。
 
 支持页使用 Peach 应用的独立页面样式（AGPL-3.0-only），来源提交及摘要见 `support-ui-source.json`。其中 BoardUI 与 Tailwind CSS 按 MIT 许可使用，编译样式保留 Tailwind 的许可声明。支持页 Inter 5.3.0 的 SIL Open Font License 与来源说明位于 `site/assets/support-ui/inter/`。

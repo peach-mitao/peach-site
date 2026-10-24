@@ -6,7 +6,15 @@
 
 ## 独立支持页
 
-所有请求先由 Worker 使用 Cloudflare 提供的 `request.cf.country` 判断连接 IP。地区为 `CN` 时跳转到 `/unavailable`，该页面返回 403 并复用 404 的样式；`HK`、`MO`、`TW` 和其他地区正常访问。跳转和提示页均禁止缓存，只有提示页所需的样式、字体和标识可以直接读取。不使用浏览器语言、时区或客户端请求头判断地区，不调用外部 IP 查询服务。静态资源也经过 Worker，因此所有地区的资源请求均会产生 Worker 调用。
+所有请求先由 Worker 使用 Cloudflare 的 `request.cf.country` 与边缘设置的 `CF-Connecting-IP` 判断服务地区。Cloudflare 为 `CN`，或 DB-IP Country Lite、IPLocate Country 任一库命中大陆网段时，跳转到 `/unavailable`，提示页返回 403 并复用 404 样式。`HK`、`MO`、`TW` 不按国家码拦截；库间冲突时仍按任一来源命中即拦截，允许增加误封以减少漏放。两份库只提取 `CN`，IPv4、IPv6 及 IPv4 映射 IPv6 都在 Worker 内离线查询，不把访问者 IP 发给外部查询服务，也不使用语言、时区、`X-Forwarded-For` 或客户端地区声明。
+
+跳转和提示页均为 `private, no-store`，只有提示页所需的样式、字体和标识直接放行。`runWorkerFirst: true` 保证每次服务器请求先判断地区，再读取静态缓存，因此资源请求均产生 Worker 调用。已在浏览器中显示或保存且没有发起请求的内容无法远程撤回。
+
+官网的 Cloudflare Cron 在每天 06:30 UTC（Asia/Taipei 14:30）检查官方数据，保留原有统计清理定时器。DB-IP 使用当月版本，IPLocate 先查询官方最新提交，再按固定提交下载。归档按流解压与解析，不将整个 CSV 保存在内存中；每个来源缓存版本、SHA-256 与 CN 网段。两库成功且 IPv4／IPv6 完整、规模合理时，才原子替换 R2 `peach-region-data` 中的 `regions/cn/current.json`。大陆网段相同则不替换生效表，来源缓存可更新。失败保留当前表并记录定时器错误；定时日志包含版本、哈希和计数，不包含访问者 IP。
+
+两站通过 `REGION_DATA` 绑定共读 R2 生效表，每个 Worker 实例最多约五分钟重新读取一次，并合并并发读取；读取失败时继续用上一份有效表，冷启动兜底使用 `worker/region-data.ts` 的内置快照。定时更新不需要本机、Codex、GitHub Actions 或重新部署网站。R2 请求和存储按现有账户计量；数据版本、哈希与网段摘要可在 R2 对象及 Worker 定时日志中查看。
+
+内置快照记录官方归档版本、下载地址、SHA-256 与来源计数。手工更新内置快照时使用 Python 标准库脚本 `scripts/build_region_data.py`，传入 `--dbip`、`--dbip-month`、`--iplocate` 和 `--iplocate-revision`。预览、网站构建与云端定时器不需要 Python。修改地区判断后验证命中、未命中、冲突、地址族、更新失败保留及热更新缓存。
 
 404 位于 `site/404.html`，版权投诉中文源位于 `site/copyright/index.html`，英文页由 `npm run i18n` 生成。版权页按保存偏好或浏览器语言跳转到静态版本；404 由 `browser/assets/page-support.ts` 显示单一语言，显式 `lang` 参数优先。
 

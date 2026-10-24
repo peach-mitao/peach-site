@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { verifyCopyEditor } from './sync_copy_editor.ts';
 import { cacheHeaders } from './cache_headers.ts';
+import { buildCredits } from './build_credits.ts';
 async function check(directory: URL,sourceOnly=false) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
         if (entry.name === 'vendor')
@@ -29,6 +30,7 @@ if (result.error)
 if (result.status !== 0)
     process.exit(result.status ?? 1);
 await verifyCopyEditor();
+await buildCredits({check:true});
 await cacheHeaders({ check: true });
 // 外语页面须与中文源和译文表一致：缺译、多余译文或未重新生成都会失败。
 const i18n = spawnSync(process.execPath, [fileURLToPath(new URL('./build_i18n.ts', import.meta.url)), '--check'], { stdio: 'inherit' });

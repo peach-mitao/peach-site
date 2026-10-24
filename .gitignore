@@ -1,4 +1,6 @@
 /*
+!/AGENTS.md
+!/editor-ui-build.json
 !/.gitignore
 !/.gitattributes
 !/copy-editor-core.js
@@ -33,6 +35,7 @@
 !/site/_headers
 !/site/favicon.ico
 !/site/copyright/
+!/site/credits/
 !/site/en/
 !/site/assets/
 /site/assets/*

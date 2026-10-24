@@ -6,7 +6,7 @@ const label=document.getElementById('dock-label'),say=document.getElementById('s
 const loadShot=(tab: HTMLElement)=>{
   const picture=shots.find(shot=>shot.dataset.k===tab.dataset.k);
   const source=(picture!.querySelector('source') as HTMLSourceElement),img=(picture!.querySelector('img') as HTMLImageElement);
-  if(source.dataset.srcset&&!source.hasAttribute('srcset'))source.srcset=source.dataset.srcset;
+  if(source?.dataset.srcset&&!source.hasAttribute('srcset'))source.srcset=source.dataset.srcset;
   // srcset 先于 src 写入，浏览器直接按视口挑候选，不会先去取 4K 原图。
   if(img.dataset.srcset&&!img.hasAttribute('srcset'))img.srcset=img.dataset.srcset;
   if(img.dataset.src&&!img.hasAttribute('src'))img.src=img.dataset.src;
@@ -27,6 +27,56 @@ tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));
 (document.querySelector('.dock') as HTMLElement).addEventListener('mouseleave',()=>{label!.textContent=tabs.find(t=>t.getAttribute('aria-selected')==='true')!.dataset.label!});
 // 导览截图在指向、聚焦或切换对应标签时加载。
 const pageLoaded=document.readyState==='complete' ? Promise.resolve() : new Promise(resolve=>addEventListener('load',resolve,{once:true}));
+
+// 手写使用原有 CSS 笔画时序；可见性事件控制暂停，完成的笔画不保留填充动画。
+{
+  const hello=document.querySelector<SVGSVGElement>('.hero .hello');
+  if(hello){
+    const paths=new Set(hello.querySelectorAll<SVGPathElement>('.pen'));
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+    let visible=false,pageActive=true,complete=false,watch:IntersectionObserver|undefined;
+    const sync=()=>{if(!complete)hello.classList.toggle('is-paused',!visible||!pageActive||document.hidden)};
+    const onHide=()=>{pageActive=false;sync()};
+    const onShow=()=>{pageActive=true;sync()};
+    const cleanup=()=>{
+      complete=true;
+      watch?.disconnect();
+      hello.classList.remove('is-paused','is-writing');hello.dataset.helloComplete='true';
+      hello.removeEventListener('animationend',onStrokeEnd);
+      document.removeEventListener('visibilitychange',sync);
+      window.removeEventListener('pagehide',onHide);window.removeEventListener('pageshow',onShow);
+      reduced.removeEventListener('change',onMotion);
+    };
+    const finish=(path:SVGPathElement)=>{
+      if(!paths.delete(path))return;
+      path.classList.add('is-drawn');
+      if(!paths.size)cleanup();
+    };
+    const onStrokeEnd=(event:AnimationEvent)=>{
+      if(event.animationName==='hello-write'&&event.target instanceof SVGPathElement)finish(event.target);
+    };
+    const onMotion=()=>{
+      if(reduced.matches){paths.forEach(path=>path.classList.add('is-drawn'));paths.clear();cleanup()}
+    };
+    if(reduced.matches)onMotion();
+    else{
+      hello.classList.add('is-paused');
+      hello.addEventListener('animationend',onStrokeEnd);
+      document.addEventListener('visibilitychange',sync);
+      window.addEventListener('pagehide',onHide);window.addEventListener('pageshow',onShow);
+      reduced.addEventListener('change',onMotion);
+      watch=new IntersectionObserver(entries=>{
+        visible=entries.some(entry=>entry.isIntersecting);sync();
+      });
+      watch.observe(hello);
+      // 脚本晚于 CSS 加载时，已经写完的笔画同样进入静态状态。
+      hello.getAnimations({subtree:true}).forEach(animation=>{
+        const target=(animation.effect as KeyframeEffect|null)?.target;
+        if((animation.playState==='finished'||animation.effect?.getComputedTiming().progress===1)&&target instanceof SVGPathElement)finish(target);
+      });
+    }
+  }
+}
 
 (document.querySelectorAll('.copybtn') as NodeListOf<HTMLElement>).forEach(btn=>btn.addEventListener('click',async()=>{
   const text=document.getElementById(btn.dataset.copy!)!.textContent;
@@ -65,7 +115,7 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)(document.querySelect
   const copy=el.cloneNode(true) as Element;copy.setAttribute('aria-hidden','true');row.append(copy);
 }));
 
-// 贴纸按显示尺寸生成纹理，逐张启用 WebGL 交互。
+// 电影贴纸在宽屏与精确指针下加载。
 if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
   pageLoaded.then(()=>import('./stickers.ts')).then(module=>module.enhanceStickers()).catch(err=>console.warn('贴纸没有加载',err));
 
@@ -85,10 +135,8 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
       const folded=`translate(${(a.left-b.left)/scale}px,${(a.top-b.top)/scale}px) scale(${a.width/b.width},${a.height/b.height})`;
       focus.style.transform=folded;focus.style.opacity='1';focus.getBoundingClientRect();focus.style.transition='';
       s.classList.add('open');focus.style.transform='none';await k.sleep(1800);
-      await k.click(k.$('.mk-wall-play'));s.classList.add('playing');k.$('.mk-wall-number').textContent='正在播放 · 07';
-      const bar=k.$('.mk-wall-seek i');
-      for(let i=1;i<=5;i++){bar.style.transform=`scaleX(${i/7440})`;k.$('.mk-wall-seek').style.setProperty('--seek-dot',`${bar.offsetWidth*i/7440}px`);k.$('.mk-wall-time').textContent=`00:0${i} / 2:04:00`;await k.sleep(600)}
-      await k.click(k.$('.mk-wall-play'));s.classList.add('paused');await k.sleep(1000);
+      await k.click(k.$('.mk-wall-play'));k.$('.mk-wall-number').textContent='仅提供演示';
+      await k.sleep(1800);
       await k.click(k.$('.mk-wall-close'));focus.style.transform=folded;focus.style.opacity='0';s.classList.remove('open');await k.sleep(1300);
     },
     async feed(k: MockContext){
@@ -106,7 +154,7 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
       const s=k.$('.mk-s'),field=k.$('.mk-field'),find=k.$('.find'),add=k.$('.add');
       await k.sleep(700);
       await k.click(field,.3,.5);field.classList.add('focus');await k.sleep(250);
-      field.classList.add('typing');await k.type(k.$('.mk-field .typed'),'billyhhyb');
+      field.classList.add('typing');await k.type(k.$('.mk-field .typed'),'Blender Studio');
       find.classList.remove('off');await k.sleep(350);
       await k.click(find);field.classList.remove('focus');s.classList.add('busy');
       await k.sleep(1500);s.classList.remove('busy');s.classList.add('found');
@@ -218,3 +266,11 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
     cards.forEach(card=>watch.observe(card));
   }
 }
+
+document.querySelector('.dock')?.addEventListener('keydown',event=>{
+  const key=(event as KeyboardEvent).key,index=tabs.indexOf(document.activeElement as HTMLElement);
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(key)||index<0)return;
+  event.preventDefault();
+  const next=key==='Home'?0:key==='End'?tabs.length-1:(index+(key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+  tabs[next].focus();tabs[next].click();
+});

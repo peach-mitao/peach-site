@@ -23,24 +23,14 @@
   .__eh{pointer-events:none;z-index:2147483000;outline:1.5px dashed #F08A8C;outline-offset:3px;border-radius:4px;display:none}
   .__ee{outline:2px solid #F08A8C;outline-offset:3px;border-radius:3px;background:rgba(240,138,140,.14);user-select:text;cursor:text}
   .__ei{z-index:2147483001;padding:2px 6px;border:0;border-radius:4px;outline:2px solid #F08A8C;background:#141518;color:#fff}
-  .__eb{position:fixed;left:16px;bottom:16px;z-index:2147483002;display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 14px;border-radius:10px;max-width:calc(100vw - 32px);box-sizing:border-box;font:13px/1.4 system-ui,"Microsoft YaHei",sans-serif;color:#C9CDD3;background:rgba(17,18,20,.94);border:1px solid #ffffff1f;box-shadow:0 8px 30px #0006}
-  .__eb b{color:#fff}.__eb .ok{color:#7BD88F}.__eb .err{color:#FF8A80}.__eb .st{overflow-wrap:anywhere}
-  .__eb button{font:inherit;color:inherit;border:0;background:transparent;cursor:pointer;text-decoration:underline}
-  .__eb button:disabled{opacity:.4;cursor:default;text-decoration:none}
+  dialog[data-copy-toolbar-modal]{bottom:var(--copy-toolbar-modal-reserve);max-height:calc(100dvh - var(--copy-toolbar-modal-reserve) - 28px)}
   `;
     document.head.append(css);
     const highlight = document.createElement('div');
     highlight.className = '__eh';
-    const bar = document.createElement('div');
-    bar.className = '__eb';
-    bar.dataset.copyEditor = '';
-    bar.innerHTML = '<b>改字模式</b><span>点文字编辑，切换照常；Alt+点击改控件文字；回车保存，Esc 取消</span><span class="st" role="status"></span>';
-    const status = (bar.querySelector('.st') as HTMLElement), say = (message: string|null, tone = '') => { status.textContent = message; status.className = 'st ' + tone; };
+    const toolbar = globalThis.PeachCopyToolbar.create(), {bar, say} = toolbar;
     let active = true, editor: CopyEditor, history = window.__EDIT.history, historyBusy = false;
-    const undo = document.createElement('button'), redo = document.createElement('button');
-    undo.type = redo.type = 'button';
-    undo.textContent = '撤销';
-    redo.textContent = '重做';
+    const undo = toolbar.button('撤销', () => travel('undo')), redo = toolbar.button('重做', () => travel('redo'));
     undo.title = '撤销上次保存（Ctrl+Z / ⌘Z）';
     redo.title = '重做（Ctrl+Shift+Z / ⌘⇧Z）';
     const controls = () => { undo.disabled = historyBusy || !!editor?.busy || !history?.undoCount; redo.disabled = historyBusy || !!editor?.busy || !history?.redoCount; };
@@ -68,18 +58,23 @@
             controls();
         }
     }
-    undo.onclick = () => travel('undo');
-    redo.onclick = () => travel('redo');
-    const toggle = document.createElement('button');
-    toggle.type = 'button';
-    toggle.textContent = '暂停编辑';
-    toggle.onclick = () => { if (editor.busy)
-        return; editor.commit(); active = !active; editor.hideHighlight(); toggle.textContent = active ? '暂停编辑' : '继续编辑'; };
-    bar.append(undo, redo, toggle);
-    document.body.append(highlight, bar);
+    const toggle = toolbar.button('暂停编辑', () => { if (editor.busy)
+        return; editor.commit(); active = !active; editor.hideHighlight(); toggle.textContent = active ? '暂停编辑' : '继续编辑'; toolbar.setActive(active); });
+    toolbar.button('退出', () => {if(editor.busy)return;editor.commit(true);const url=new URL(location.href);url.searchParams.delete('edit');location.href=url.href}).setAttribute('aria-label','退出编辑');
+    document.body.append(highlight, toolbar.host);
     controls();
     // 原生弹窗的顶层隔离外部控件，工具条随弹窗进入同一层。
-    const placeToolbar = () => { const host = (document.querySelector('dialog[open]') as HTMLDialogElement) || document.body; host.append(highlight, bar); };
+    const placeToolbar = () => {
+        const dialog=document.querySelector<HTMLDialogElement>('dialog[open]');
+        document.querySelectorAll<HTMLElement>('[data-copy-toolbar-modal]').forEach(element=>{if(element!==dialog){delete element.dataset.copyToolbarModal;element.style.removeProperty('--copy-toolbar-modal-reserve')}});
+        (dialog||document.body).append(highlight,toolbar.host);
+        if(dialog){
+            dialog.dataset.copyToolbarModal='';
+            toolbar.host.style.setProperty('--copy-toolbar-bottom','max(22px,env(safe-area-inset-bottom))');
+            dialog.style.setProperty('--copy-toolbar-modal-reserve',Math.ceil(bar.getBoundingClientRect().height+44)+'px');
+        }else toolbar.host.style.removeProperty('--copy-toolbar-bottom');
+    };
+    new ResizeObserver(()=>{if(document.querySelector('dialog[open]'))placeToolbar()}).observe(bar);
     (document.querySelectorAll('dialog') as NodeListOf<HTMLDialogElement>).forEach(dialog => new MutationObserver(placeToolbar).observe(dialog, { attributes: true, attributeFilter: ['open'] }));
     document.addEventListener('keydown', event => {
         if (!(event.ctrlKey || event.metaKey) || event.altKey || ((event.target as Element).closest?.('input,textarea,[contenteditable="true"]') as HTMLElement) || editor?.editing)
@@ -130,9 +125,9 @@
             if (kind)
                 return { kind, tab: (document.querySelector('.dock [aria-selected="true"]') as HTMLElement), sub: !!(element!.closest('.sub') as HTMLElement) };
             const group = textGroup(node);
-            if (group)
+            if (group&&(!window.__EDIT.locale||group.nodes.every(part=>!part.data.trim()||window.__EDIT.translationKeys?.[index.get(part)!])))
                 return group;
-            return index.has(node) ? { kind: 'text', index: index.get(node), multiline } : null;
+            return index.has(node)&&(!window.__EDIT.locale||window.__EDIT.translationKeys?.[index.get(node)!]) ? { kind: 'text', index: index.get(node), multiline } : null;
         },
         async save(edit, text) {
             let url, body: Record<string,unknown>;
@@ -170,6 +165,10 @@
         onSaved(edit: CopyEdit, result: {history:EditHistory;overrides:Record<string,string>;textPatch:{raw:string[];start:number;deleteCount:number};raw:string;payload:Record<string,string>;text:string}) {
             history = result.history;
             controls();
+            if(window.__EDIT.locale){
+                try{sessionStorage.setItem('peach.edit.view',JSON.stringify({scrollY,dialog:!!document.querySelector('dialog[open]'),open:[...document.querySelectorAll('#faq details')].map((element,i)=>(element as HTMLDetailsElement).open?i:-1).filter(i=>i>=0),activeTab:document.querySelector('.dock [aria-selected="true"]')?.getAttribute('data-k'),message:'已保存英文译文'}))}catch{}
+                location.reload();return;
+            }
             if (edit.kind === 'copy') {
                 document.body.dataset.copyOverrides = JSON.stringify(result.overrides);
                 dispatchEvent(new Event('peach:copy-saved'));
@@ -213,6 +212,7 @@
         sessionStorage.removeItem('peach.edit.view');
         if (view && bad < 0)
             addEventListener('load', () => {
+                if(view.activeTab)(document.querySelector(`.dock button[data-k="${CSS.escape(view.activeTab)}"]`) as HTMLButtonElement)?.click();
                 (document.querySelectorAll('#faq details') as NodeListOf<HTMLElement>).forEach((el, i) => { (el as HTMLDetailsElement).open = view.open?.includes(i) ?? false; });
                 if (view.dialog)
                     (document.querySelector('[data-mac-help-dialog]') as HTMLDialogElement)?.showModal();

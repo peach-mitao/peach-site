@@ -1,6 +1,6 @@
 # Peach 官网
 
-Peach 的产品官网，提供中英文产品介绍、功能导览、介绍视频和下载入口。本仓库维护官网页面、译文、素材清单与部署配置。
+Peach 的产品官网，提供中英文产品介绍、应用界面导览、功能交互示意和下载入口。本仓库维护官网页面、译文、素材清单与部署配置。
 
 站点交互、维护脚本、测试与 Worker 使用 TypeScript；浏览器 JS 由构建入口生成。维护方式见[维护说明](docs/MAINTAINING.md)。
 
@@ -15,7 +15,7 @@ Peach 的产品官网，提供中英文产品介绍、功能导览、介绍视�
 | 仓库 | 用途 |
 | --- | --- |
 | [peach](https://github.com/peach-mitao/peach) | 主仓库：自托管应用、安装包与使用文档 |
-| [peach-demo](https://github.com/peach-mitao/peach-demo) | 演示站：使用录制数据体验应用界面 |
+| [peach-demo](https://github.com/peach-mitao/peach-demo) | 演示站：使用预置普通电影资料体验应用界面，播放操作提示「仅提供演示」 |
 | [peach-site](https://github.com/peach-mitao/peach-site) | 本仓库：产品官网与下载入口 |
 
 使用 Peach 请前往[主仓库](https://github.com/peach-mitao/peach)；维护官网请参阅[维护说明](docs/MAINTAINING.md)。展示素材独立管理，不随源码分发。

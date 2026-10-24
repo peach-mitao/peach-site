@@ -28,7 +28,7 @@ import {resolveSiteLanguage} from './site-language.ts';
         saved = explicit;
         remember(explicit);
     }
-    const alternate = new Map([['/','/en/'],['/copyright/','/en/copyright/']]).get(url.pathname);
+    const alternate = new Map([['/','/en/'],['/copyright/','/en/copyright/'],['/credits/','/en/credits/']]).get(url.pathname);
     if (alternate && !url.searchParams.has('edit') && !/bot|crawler|spider/i.test(navigator.userAgent)) {
         const preferred = resolveSiteLanguage({path:url.pathname,saved,languages:navigator.languages?.length?navigator.languages:[navigator.language]});
         if (preferred === 'en') {

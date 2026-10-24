@@ -187,14 +187,13 @@ try {
                             const all = (selector: string) => [...(document.querySelectorAll(selector) as NodeListOf<SVGGraphicsElement>)].filter(svg => svg.getBoundingClientRect().width > 0).map(measure);
                             return { apple: all('.btn svg:has(use[href="#i-apple"])'),
                                 github: all('.btn svg:has(use[href="#i-github"])'),
-                                demo: all('.cta svg:has(use[href="#i-demo"])'),
-                                video: measure((document.querySelector('.cta [data-media-01-open] svg') as SVGGraphicsElement)) };
+                                demo: all('.cta svg:has(use[href="#i-demo"])') };
                         });
                         for (const kind of ['apple', 'github', 'demo'] as const) {
                             assert.ok(ink[kind].every((glyph: { height: number; }) => glyph.height >= 14 && glyph.height <= 18), `${kind} 的实际轮廓应与同级文字协调`);
                             assert.ok(Math.max(...ink[kind].map((glyph: { height: any; }) => glyph.height)) - Math.min(...ink[kind].map((glyph: { height: any; }) => glyph.height)) < 0.5, `${kind} 在同类入口保持相同视觉尺寸`);
                         }
-                        assert.ok(ink.video.height >= 12 && ink.video.width >= 20, '横向视频轮廓应保留比例且清晰可辨');
+                        assert.equal(await page.locator('.hero a[href="#tour"]').count(), 1, '电影示例入口可访问');
                     }
                     await page.locator('[data-platform-option="windows"]').click();
                     assert.equal(await page.locator('[data-download-panel="windows"]').isVisible(), true);

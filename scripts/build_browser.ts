@@ -2,11 +2,14 @@ import {readdir,readFile,writeFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import path from 'node:path';
 import {transform,build} from 'esbuild';
+import {createHash} from 'node:crypto';
 import {buildBehaviorUI} from './build_behavior_ui.ts';
 import {behaviorVersion} from './behavior_version.ts';
+import {buildBoardUIStyles} from './build_boardui_styles.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 export async function buildBrowser(){
+  await buildBoardUIStyles();
   await buildBehaviorUI();
   await behaviorVersion();
   async function walk(relative=''){
@@ -15,6 +18,18 @@ export async function buildBrowser(){
       if(entry.isDirectory()){await walk(name);continue}
       if(!name.endsWith('.ts')||name.endsWith('.d.ts')||entry.name==='behavior-controls.ts')continue;
       const file=path.join(root,'browser',name),out=path.join(root,name==='edit-client.ts'?'edit-client.js':path.join('site',name.replace(/\.ts$/,'.js')));
+      if(entry.name==='behavior-privacy.ts'){
+        await build({entryPoints:[file],outfile:out,bundle:true,format:'esm',platform:'browser',target:'es2022',charset:'utf8',minify:true,external:['./boardui.js','./site-language.js','./copy.js'],define:{'process.env.NODE_ENV':'"production"'}});continue;
+      }
+      if(['boardui.ts','edit-toolbar.ts'].includes(entry.name)){
+        const result=await build({entryPoints:[file],outfile:out,bundle:true,format:entry.name==='edit-toolbar.ts'?'iife':'esm',platform:'browser',target:'es2022',charset:'utf8',minify:true,jsx:'automatic',alias:{'@/utils/cx':path.join(root,'browser/vendor/boardui/utils/cx.ts')},loader:{'.css':'text'},define:{'process.env.NODE_ENV':'"production"'},metafile:true});
+        if(entry.name==='edit-toolbar.ts'){
+          const digest=(body:Uint8Array)=>createHash('sha256').update(body).digest('hex'),sources:Record<string,string>={};
+          for(const input of Object.keys(result.metafile.inputs).sort())sources[input]=digest(await readFile(path.resolve(root,input)));
+          await writeFile(path.join(root,'editor-ui-build.json'),JSON.stringify({sha256:digest(await readFile(out)),sources},null,2)+'\n');
+        }
+        continue;
+      }
       if(entry.name==='behavior-dashboard.ts'){
         await build({entryPoints:[file],outfile:out,bundle:true,format:'esm',platform:'browser',target:'es2022',charset:'utf8',minify:true,define:{'process.env.NODE_ENV':'"production"'}});
         continue;
@@ -30,6 +45,6 @@ export async function buildBrowser(){
   await walk();
   await writeFile(path.join(root,'site/assets/behavior-kumo.css'),await readFile(path.join(root,'node_modules/@cloudflare/kumo/dist/styles/kumo-standalone.css')));
   const licenses=path.join(root,'site/assets/vendor/behavior');await mkdir(licenses,{recursive:true});
-  for(const [name,pkg] of [['kumo','@cloudflare/kumo'],['react','react'],['react-dom','react-dom'],['phosphor','@phosphor-icons/react']])await writeFile(path.join(licenses,name+'-LICENSE'),await readFile(path.join(root,'node_modules',pkg,'LICENSE')));
+  for(const [name,pkg] of [['kumo','@cloudflare/kumo'],['react','react'],['react-dom','react-dom'],['phosphor','@phosphor-icons/react'],['canvas-confetti','canvas-confetti']])await writeFile(path.join(licenses,name+'-LICENSE'),await readFile(path.join(root,'node_modules',pkg,'LICENSE')));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href)await buildBrowser();

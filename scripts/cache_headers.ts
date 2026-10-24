@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
-const daily = ['/assets/entities/*', '/assets/marks/*', '/assets/mock/*', '/assets/stickers/*',
-    '/assets/dark/*', '/assets/shots/*', '/assets/vendor/*', '/assets/intro-poster.jpg',
+const daily = ['/assets/films/*', '/assets/people/*', '/assets/vendor/*',
     '/assets/peach-logo.png', '/assets/peach-logo-192.webp', '/assets/peach-mark.svg',
     '/assets/peach-hello.svg', '/assets/mitao-hello.svg', '/favicon.ico'];
 export function renderCacheHeaders(manifest: { files: any; }, pages: any[]) {

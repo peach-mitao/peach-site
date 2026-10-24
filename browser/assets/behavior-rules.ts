@@ -8,7 +8,8 @@ export const siteRules:Rule[]=[
  rule('nav.language.zh','中文','a[lang="zh-CN"]'),rule('nav.language.en','英文','a[lang="en"]'),
  rule('external.github','GitHub','a[href*="github.com"]'),rule('external.telegram','Telegram','a[href*="t.me/"]'),rule('external.x','X','a[href*="x.com/"]'),
  rule('demo.open','打开演示','a[href^="https://demo.peach.video"]'),
- rule('external.docker','镜像仓库','a[href^="https://hub.docker.com/"]'),rule('video.volume','调节音量','[data-media-volume]'),
+ rule('external.docker','镜像仓库','a[href^="https://hub.docker.com/"]'),
+ rule('tour.open','界面导览','.hero a[href="#tour"]'),rule('credits.open','素材来源与许可','a[href="/credits/"],a[href="/en/credits/"]'),
  rule('nav.download','下载区域','a[href="#download"]'),rule('external.microsoft','Windows 安全说明','a[href^="https://support.microsoft.com/"]'),rule('external.gitgud','GitGud','a[href^="https://gitgud.io/"]'),rule('external.uv','uv 安装文档','a[href^="https://docs.astral.sh/"]'),
  rule('download.alternatives','其他下载','.download-alternatives'),rule('download.primary','下载 Peach','[data-primary-download]'),
  ...['windows','macos','docker'].map(id=>rule('platform.'+id,id,`[data-platform-option="${id}"]`)),
@@ -18,6 +19,5 @@ export const siteRules:Rule[]=[
  rule('copy.command','复制命令','button[data-copy]'),rule('privacy.open','统计偏好','a[href^="/privacy/analytics"]'),rule('copyright.open','版权','a[href*="copyright"]'),
  rule('copyright.prepare','准备投诉邮件','#prepare'),rule('copyright.compose','打开邮件客户端','#compose'),rule('copyright.copy','复制投诉正文','#copy'),rule('copyright.mail','投诉邮箱','a[href^="mailto:"]'),
  rule('copyright.field','填写投诉信息','#copyright-form input,#copyright-form select,#copyright-form textarea'),
- ...['01-open','close','center-toggle','play','mute','speed-toggle','speed-option','pip','fullscreen'].map(id=>rule('video.'+id,'视频 '+id,`[data-media-${id}]`)),
 ];
-export function siteState(){return document.querySelector('dialog[open][data-mac-help-dialog]')?'mac-help':document.querySelector('[data-media-modal]:not([hidden])')?'video':`platform.${document.querySelector<HTMLElement>('[data-platform-option][aria-pressed="true"]')?.dataset.platformOption||'windows'}`}
+export function siteState(){return document.querySelector('dialog[open][data-mac-help-dialog]')?'mac-help':`platform.${document.querySelector<HTMLElement>('[data-platform-option][aria-pressed="true"]')?.dataset.platformOption||'windows'}`}

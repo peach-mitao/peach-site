@@ -5,6 +5,7 @@ import {createReadStream} from 'node:fs';
 import {stat, readFile} from 'node:fs/promises';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import * as edit from './edit-server.ts';
+import * as localeEdit from './edit-locale.ts';
 
 const types: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript',
@@ -76,7 +77,10 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         }
         let input: unknown;
         try {input = JSON.parse(Buffer.concat(chunks).toString('utf8'))} catch {rejectEdit(400, '编辑请求无效，请刷新后重试'); return}
-        const result = await edit.post(options.editIndex?.(req)??editableSource(req), name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab') ? 'tab' : name.endsWith('/copy') ? 'copy' : name.endsWith('/block') ? 'block' : 'text', input);
+        const kind=name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab')?'tab':name.endsWith('/copy')?'copy':name.endsWith('/block')?'block':'text';
+        let refererPath='/';try{refererPath=new URL(req.headers.referer||'http://localhost/').pathname}catch{}
+        const localeContext=await localeEdit.forRoute(root,refererPath);
+        const result = localeContext?await localeEdit.post(localeContext,kind,input):await edit.post(options.editIndex?.(req)??editableSource(req),kind,input);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }
@@ -98,6 +102,10 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         ? body.replace('<head>', '<head>\n<meta name="peach-public-downloads" content="/__preview/releases.json">') : body;
       const injectDownloads = (body: string) => previewDownloads
         ? body.replace('<head>', '<head>\n<meta name="peach-local-downloads" content="/__preview/downloads.json">') : body;
+      if(url.searchParams.has('edit')){
+        const localeContext=await localeEdit.forRoute(root,name);
+        if(localeContext){const address=server.address();reply(injectPreview(injectDownloads(await localeEdit.page(localeContext,address&&typeof address!=='string'?address.port:0))),types['.html']);return}
+      }
       if (name === '/' || name === '/index.html') {
         if (url.searchParams.has('edit')) {
           const address = server.address();
@@ -105,7 +113,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         }
         reply(injectPreview(injectDownloads(await readFile(index, 'utf8'))), types['.html']); return;
       }
-      // 生成的外语首页同样读取预览下载清单；页面由 build_i18n 生成，不提供原位编辑。
+      // 外语普通预览读取生成页；编辑入口由翻译源适配。
       if (name === '/en/' || name === '/en/index.html') {
         reply(injectPreview(injectDownloads(await readFile(path.join(root, 'en', 'index.html'), 'utf8'))), types['.html']); return;
       }

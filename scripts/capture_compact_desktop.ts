@@ -6,14 +6,17 @@ import { chromium } from 'playwright';
 import { writeImmutableImage } from './immutable_image.ts';
 const base = process.argv[2] ?? 'https://demo.peach.video/';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0, 10).replaceAll('-', '');
-assert.match(captureDate, /^\d{8}$/);
+assert.match(captureDate, /^\d{8}(?:-\d+)?$/);
 const out = new URL('../site/assets/screenshots/', import.meta.url);
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome' });
 const report: { name: string; variant: string; route: string; viewport: number[]; renderScale: number; layoutDpr: number; pixels: number[]; path: string; images: any; errors: never[]; }[] = [];
 try {
-    const shots = [['home', '/?sort=release&jav=1'], ['people', '/performers'], ['profile', '/performers/102'], ['play', '/assets/1'], ['follow', '/follow?media=images'], ['stats', '/stats']];
-    for (const variant of [{ name: 'wide', width: 1920, height: 1080, scale: 2, pixels: [3840, 2160] }, { name: 'compact', width: 1280, height: 960, scale: 3, pixels: [3840, 2880] }] as const) {
+    const people = await (await fetch(new URL('/api/index?kind=performers', base))).json() as { items: { k: string; entity_id: number }[] };
+    const profile = people.items.find(row => /卓别林|Chaplin/i.test(row.k)) || people.items[0];
+    assert.ok(profile?.entity_id, '人物截图身份未取得');
+    const shots = [['home', '/?sort=release&jav=1'], ['people', '/performers'], ['profile', '/performers/' + profile.entity_id], ['play', '/assets/1'], ['follow', '/follow?media=images'], ['stats', '/stats']];
+    for (const variant of ([{ name: 'wide', width: 1920, height: 1080, scale: 2, pixels: [3840, 2160] }, { name: 'compact', width: 1280, height: 960, scale: 3, pixels: [3840, 2880] }] as const).filter(variant => !process.env.PEACH_CAPTURE_VARIANT || process.env.PEACH_CAPTURE_VARIANT === variant.name)) {
         for (const [name, route] of shots.filter(([name]) => !process.argv[3] || process.argv[3].split(',').includes(name))) {
             const context = await browser.newContext({ viewport: { width: variant.width, height: variant.height }, deviceScaleFactor: variant.scale, colorScheme: 'dark', locale: 'zh-CN', reducedMotion: 'reduce' });
             await context.addInitScript(() => {
@@ -40,7 +43,7 @@ try {
                     });
                     let timeout;
                     try {
-                        await Promise.race([Promise.all(visible.map((img: { decode: () => any; }) => img.decode())), new Promise((_, reject) => { timeout = setTimeout(() => reject(Error('可见图片解码超时')), 10000); })]);
+                        await Promise.race([Promise.all(visible.map(img => img.decode().catch(error => { throw Error('图片解码失败：' + img.currentSrc, { cause: error }); }))), new Promise((_, reject) => { timeout = setTimeout(() => reject(Error('可见图片解码超时')), 10000); })]);
                     }
                     finally {
                         clearTimeout(timeout);

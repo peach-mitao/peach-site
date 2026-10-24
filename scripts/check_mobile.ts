@@ -8,9 +8,9 @@ const out = new URL('../evidence/mobile/', import.meta.url);
 await mkdir(out, { recursive: true });
 const manifest = JSON.parse(await readFile(new URL('../assets-manifest.json', import.meta.url), 'utf8'));
 const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
-const referenced = [...new Set(html.match(/assets\/screenshots\/[\w-]+-(?:wide|compact)-\d{8}(?:-\d+)?\.webp/g))];
+const referenced = [...new Set(html.match(/assets\/screenshots\/[\w-]+-(?:wide|compact)-20261025(?:-\d+)*\.webp/g))];
 const published = manifest.files.filter((file: { path: string; }) => referenced.includes(file.path));
-assert.equal(referenced.length, 42, '六页两套截图各有 4K 原图与缩小候选');
+assert.equal(referenced.length, 42, '六页两套真实应用截图包含4K原图和响应式候选');
 assert.equal(published.length, referenced.length, '页面引用的截图均登记哈希');
 for (const file of published) {
     const response = await fetch(new URL(file.path, base));
@@ -28,7 +28,7 @@ try {
             requests.push(r.url()); });
         try {
             await page.route('https://api.github.com/**', route => route.fulfill({ json: [] }));
-            await page.route('https://downloads.peach.video/releases.json', route => route.fulfill({ json: [] }));
+            await page.route('**/releases.json', route => route.fulfill({ json: [] }));
             await page.route('https://img.shields.io/docker/v/longmeidao/peach.json?sort=semver', route => route.fulfill({ json: { message: 'v1.2.3' } }));
             await page.goto(base, { waitUntil: 'networkidle' });
             await page.evaluate(() => document.fonts.ready);
@@ -90,7 +90,7 @@ try {
             if (width === 390) {
                 let releaseImage!:()=>void;
                 const imageGate = new Promise<void>(resolve => { releaseImage = resolve; });
-                await page.route('**/people-compact-*.webp', async (route) => { await imageGate; await route.continue(); });
+                await page.route('**/people-compact-20261025-2*.webp', async (route) => { await imageGate; await route.continue(); });
                 try {
                     await page.reload({ waitUntil: 'networkidle' });
                     await page.locator('.dock button[data-k="people"]').click();
@@ -103,7 +103,7 @@ try {
                 }
                 finally {
                     releaseImage();
-                    await page.unroute('**/people-compact-*.webp');
+                    await page.unroute('**/people-compact-20261025-2*.webp');
                 }
             }
             assert.deepEqual(errors, []);

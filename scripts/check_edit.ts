@@ -25,6 +25,7 @@ try {
         await page.route('https://downloads.peach.video/releases.json', route => route.fulfill({ json: [], headers: { 'access-control-allow-origin': '*' } }));
         await page.route('https://img.shields.io/docker/v/**', route => route.fulfill({ json: { message: 'v7.8.9' }, headers: { 'access-control-allow-origin': '*' } }));
         const pixel = await sharp({ create: { width: 1, height: 1, channels: 4, background: '#18191a' } }).webp().toBuffer();
+        await page.route('**/assets/films/*.webp', route => route.fulfill({ contentType: 'image/webp', body: pixel }));
         await page.route('**/assets/screenshots/**', route => route.fulfill({ contentType: 'image/webp', body: pixel }));
         await page.goto(base, { waitUntil: 'networkidle' });
         async function beginEdit(locator: Locator) {
@@ -49,7 +50,7 @@ try {
             }
             catch (error) {
                 console.error(await page.evaluate(point => ({ point, hit: document.elementFromPoint(point.x, point.y)?.outerHTML,
-                    status: (document.querySelector('.__eb') as HTMLElement)?.innerText, caret: document.caretRangeFromPoint(point.x, point.y)?.startContainer?.textContent }), point));
+                    status: document.querySelector('[data-copy-toolbar-host]')?.shadowRoot?.querySelector('[role="status"]')?.textContent, caret: document.caretRangeFromPoint(point.x, point.y)?.startContainer?.textContent }), point));
                 throw error;
             }
             return box;
@@ -58,7 +59,7 @@ try {
             const box = await beginEdit(locator);
             await box.fill(text);
             await box.press('Enter');
-            await page.waitForFunction(() => /已保存|已删除/.test((document.querySelector('.__eb .st') as HTMLElement)?.textContent || ''));
+            await page.waitForFunction(() => /已保存|已删除/.test(document.querySelector('[data-copy-toolbar-host]')?.shadowRoot?.querySelector('[role="status"]')?.textContent || ''));
         }
         const mac = page.locator('[data-platform-option="macos"]');
         const docker = page.locator('[data-platform-option="docker"]');
@@ -159,7 +160,7 @@ try {
         assert.equal(await note.innerText(), originalNote);
         await dialog.getByRole('button', { name: '知道了', exact: true }).click();
         await dialog.waitFor({ state: 'hidden' });
-        assert.equal(await page.locator('.__eb').isVisible(), true);
+        assert.equal(await page.locator('[data-copy-bar]').isVisible(), true);
         console.log(`PASS ${width}: 编辑保存、整段误删撤销、重做、原生输入撤销、弹窗打开编辑与撤销`);
         await page.close();
     }

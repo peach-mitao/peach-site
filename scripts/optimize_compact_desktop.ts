@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import sharp, { type Sharp } from 'sharp';
 import { writeImmutableImage } from './immutable_image.ts';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0, 10).replaceAll('-', '');
-assert.match(captureDate, /^\d{8}$/);
+assert.match(captureDate, /^\d{8}(?:-\d+)?$/);
 // 4K 原图之外按显示尺寸缩小的候选宽度：桌面图最宽显示 1134 CSS 像素；
 // 手机看的是 4:3 完整桌面图，最小一档约为常见手机设备像素的 1.4 倍，留出双指放大的余量。
 export const VARIANT_WIDTHS = { wide: [1280, 1920, 2560], compact: [1440, 1920] };

@@ -1,0 +1,58 @@
+{
+  "repository": "https://github.com/peach-mitao/peach",
+  "commit": "821f0d0878921da1ec473e1d34ed4deb2bd47fc7",
+  "description": "复用应用现有 BoardUI 按钮、链接与 Peach Note；源码保持原样，别名由构建入口解析。",
+  "files": [
+    {
+      "source": "frontend/src/react/boardui/components/base/buttons/button.tsx",
+      "target": "components/base/buttons/button.tsx",
+      "sha256": "a49800d5cc58a9f8a98c07a7251e5923904b483b2f3e6e63e4fa0797acff101d"
+    },
+    {
+      "source": "frontend/src/react/boardui/components/base/buttons/link-button.tsx",
+      "target": "components/base/buttons/link-button.tsx",
+      "sha256": "f56415d9b83cfb4af68d9f359ccb8925f885bce60e6d29d38d73b14966499aaf"
+    },
+    {
+      "source": "frontend/src/react/boardui/utils/cx.ts",
+      "target": "utils/cx.ts",
+      "sha256": "db35ea5afa8b2e0fd51319bc49288c4df7c98ec53440b43903636a32e3319d9d"
+    },
+    {
+      "source": "frontend/src/react/components/note.tsx",
+      "target": "components/note.tsx",
+      "sha256": "fedbbc140e86712751c147ffc6451edb22770f2b56ec813b619ed0910068523f"
+    },
+    {
+      "source": "web/vendor/boardui-LICENSE.txt",
+      "target": "LICENSE",
+      "sha256": "7a28c78354f8f88d8773f72bf37fb9c037817f8abd2fa5a63694d6c946a5ce80"
+    },
+    {
+      "source": "frontend/src/react/boardui/styles/theme.css",
+      "target": "styles/theme.css",
+      "sha256": "cd4159cd6f121d8693fc3fcfa665126b49d6a23714a265b653c92cecef864136"
+    },
+    {
+      "source": "frontend/src/react/boardui/styles/typography.css",
+      "target": "styles/typography.css",
+      "sha256": "dfd4e9b446998d063efe96a47fc31fd2492639bf641d0da1b60645fe4dcc32a1"
+    },
+    {
+      "source": "https://www.boardui.com/r/divider.json",
+      "target": "components/base/divider/divider.tsx",
+      "sha256": "ed2abe1e2e29e925c63c6d1ea0971e19f4549fe6fea0daca3373d47a87500338"
+    },
+    {
+      "source": "frontend/src/react/preflight-scoped.css",
+      "target": "peach/preflight-scoped.css",
+      "sha256": "cee90c54dd56b9dd5b81b9f5f21628ca4840e3b2926760455786f701302e7ff2"
+    },
+    {
+      "source": "frontend/src/react/base.css",
+      "target": "peach/base.css",
+      "sha256": "1a6f260ce5cb35c7cbf51b90a4feaa623219dba3928eabae19d2a89269814f80"
+    }
+  ],
+  "registryDescription": "Divider 直接取自 BoardUI 官方注册表；其余源码取自记录的应用提交。组件源码、token、局部 reset 与字体基线均保持原样。"
+}

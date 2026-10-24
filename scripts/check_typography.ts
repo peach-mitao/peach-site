@@ -15,7 +15,7 @@ try {
             userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130.0.0.0 Safari/537.36' });
         try {
             const page = await context.newPage();
-            await page.route('https://downloads.peach.video/releases.json', route => route.fulfill({ json: [{
+            await page.route('**/releases.json', route => route.fulfill({ json: [{
                         tag_name: 'v1.2.3', published_at: '2030-01-01T00:00:00Z', assets: ['Peach-1.2.3-windows-x64-setup.exe', 'Peach-1.2.3-windows-x64.zip'].map(name => ({ name, state: 'uploaded' }))
                     }] }));
             await page.route('https://api.github.com/**', route => route.fulfill({ json: [] }));

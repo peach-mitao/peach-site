@@ -13,7 +13,7 @@ try{
   const context=await browser.newContext({viewport:{width:view.width,height:view.width===390?844:900},colorScheme:view.scheme,locale:view.locale||'zh-CN'}),page=await context.newPage();
   const response=await page.goto(view.url,{waitUntil:'networkidle',timeout:30000});
   await page.screenshot({path:path.join(directory,view.name+'.png'),fullPage:true});
-  report.push({name:view.name,status:response?.status(),...await page.evaluate(()=>({title:document.title,language:document.documentElement.lang,theme:document.documentElement.className,heading:document.querySelector('h1')?.textContent,edit:!!document.querySelector('[data-copy-bar],.__eb'),bodyWidth:document.body.scrollWidth,viewport:innerWidth}))});
+  report.push({name:view.name,status:response?.status(),...await page.evaluate(()=>({title:document.title,language:document.documentElement.lang,theme:document.documentElement.className,heading:document.querySelector('h1')?.textContent,edit:!!document.querySelector('[data-copy-toolbar-host],.__eb'),bodyWidth:document.body.scrollWidth,viewport:innerWidth}))});
   await context.close();
  }
 }finally{await browser.close()}

@@ -1,0 +1,10 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "./vendor/boardui/styles/theme.css";
+@import "./vendor/boardui/styles/typography.css";
+@import "./vendor/boardui/peach/preflight-scoped.css" layer(base);
+@import "./vendor/boardui/peach/base.css";
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "./vendor/boardui";
+@source "./assets/behavior-privacy.ts";
+@source "./assets/edit-toolbar.ts";

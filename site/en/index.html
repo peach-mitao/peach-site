@@ -7,10 +7,9 @@
 <script src="/assets/locale.js"></script>
 <title>Peach · Your private video library</title>
 <meta name="description" content="Local drives, cloud drives and the creators you follow, all in one place. Open source and self-hosted.">
-<meta name="rating" content="adult">
 <meta property="og:title" content="Peach · Your private video library">
 <meta property="og:description" content="Local drives, cloud drives and the creators you follow, all in one place.">
-<meta property="og:image" content="/assets/shots/h-dark.jpg">
+<meta property="og:image" content="/assets/screenshots/home-wide-20261025-2-1280.webp">
 <meta name="theme-color" content="#04060A">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="apple-touch-icon" href="/assets/peach-logo.png">
@@ -18,7 +17,6 @@
 <link rel="alternate" hreflang="en" href="https://peach.video/en/">
 <link rel="alternate" hreflang="x-default" href="https://peach.video/">
 <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/media-01.css">
 <!-- 下载按钮按访客平台改字、版本号来自发行清单；定稿前先隐去，最多等 3 秒。 -->
 <script src="/assets/boot.js"></script>
 <style>
@@ -111,21 +109,16 @@ body:has(.site-notice){padding-bottom:96px}
 .btn-quiet:hover{color:var(--ink);background:rgba(255,255,255,.08)}
 .btn-lg{height:44px;padding:0 18px;font-size:15px}
 .btn-lg svg{width:20px;height:20px}
-/* 介绍视频的打开按钮：沿用 media-01 的钩子，外观跟两侧按钮一致 */
-.cta .btn[data-media-01-open]{height:44px;padding:0 18px;gap:8px;border-radius:8px;corner-shape:round;font:500 15px/1 var(--font);
-  color:var(--ink-2);background:rgba(255,255,255,.04);backdrop-filter:none;-webkit-backdrop-filter:none}
-.cta .btn[data-media-01-open]:hover{color:var(--ink);background:rgba(255,255,255,.08)}
-.cta .btn[data-media-01-open] svg{width:24px;height:24px}
-
 /* 首屏：斜向光束 */
 .hero{position:relative;margin-top:-92px;padding:220px 0 120px;text-align:center;overflow:hidden;isolation:isolate}
 .beams{position:absolute;inset:0;z-index:-1;pointer-events:none}
-.hero .beams{opacity:.65;-webkit-mask-image:linear-gradient(#000 50%,transparent 96%);mask-image:linear-gradient(#000 50%,transparent 96%)}
+.hero .beams{opacity:.65;-webkit-mask-image:linear-gradient(#000 50%,transparent 96%);mask-image:linear-gradient(#000 50%,transparent 96%);contain:paint;transform:translateZ(0)}
 .beams svg{width:100%;height:100%}
 .hero h1{font-size:clamp(40px,5.4vw,64px);line-height:1.12;font-weight:600;letter-spacing:normal;margin:0 auto;max-width:12em;text-wrap:balance;
   text-shadow:0 2px 40px rgba(4,6,10,.6)}
 .hero .say{max-width:30em;margin:24px auto 0;color:var(--ink-2);text-shadow:0 1px 20px rgba(4,6,10,.8)}
-.hero .hello{display:block;width:min(440px,85%);height:auto;margin:-60px auto 24px;aspect-ratio:620/165}
+.hero .hello{display:block;width:min(440px,85%);height:auto;margin:-60px auto 24px;aspect-ratio:620/165;contain:paint}
+.hero .hello.is-writing{transform:translateZ(0)}
 .cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:40px}
 .cta-download{display:grid;justify-items:center}
 /* 按钮宽度容得下各平台的文字，换字时不改变位置；文字与版本行定稿后淡入。 */
@@ -169,7 +162,7 @@ body:has(.site-notice){padding-bottom:96px}
   box-shadow:0 7px 3px rgba(0,0,0,.03),0 4px 4px rgba(0,0,0,.25)}
 .stage-say{margin-top:32px;min-height:60px}
 
-/* 动效卡：照 raycast.com 的做法，用 HTML/CSS 画一块简化的 Peach 界面，脚本在上面演一遍，
+/* 动效卡用 HTML/CSS 展示简化的 Peach 界面，脚本在上面演一遍，
    播完复原再来。按 720×450 排版，再整体缩到卡片宽度；卡片进入画面才播，减少动态效果时停在第一帧。 */
 .live-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
 .live{display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
@@ -300,7 +293,7 @@ body:has(.site-notice){padding-bottom:96px}
 .mk-hit small{min-width:0;overflow:hidden;text-overflow:ellipsis;color:var(--mk-dim);font-size:10.5px}
 .mk-acts{display:flex;gap:8px;margin-top:10px}
 
-/* 订阅新作的女优页头 */
+/* 订阅列表的资料页头 */
 .mk-hero{display:flex;align-items:center;gap:16px;padding:14px 16px;border-radius:14px;background:var(--mk-surface);border:1px solid var(--mk-line)}
 .mk-ava{position:relative;width:76px;height:76px;flex:none}
 .mk-ava>img{width:100%;height:100%;border-radius:50%;object-fit:cover}
@@ -405,6 +398,7 @@ body:has(.site-notice){padding-bottom:96px}
   -webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .2s}
 .live:hover .live-go,.live:focus-visible .live-go{opacity:1}
 
+
 /* 通用段落 */
 .section{padding:160px 0 0}
 
@@ -446,6 +440,7 @@ body:has(.site-notice){padding-bottom:96px}
 .card .say .sub{font-size:15px}
 .card .pic{margin-top:24px}
 .card .pic img{width:100%;height:auto}
+
 
 /* 资料条：每行复制一份首尾相接。 */
 .marks{margin-top:44px;display:grid;gap:12px;overflow:hidden;
@@ -539,14 +534,14 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 .final footer{position:relative;margin-top:128px;padding:44px 0 28px;color:var(--ink-2);font-size:14px;text-align:left;
   background:linear-gradient(transparent,var(--page) 28px)}
 .foot-main{display:grid;grid-template-columns:1fr auto;gap:64px;padding:12px 0 32px;align-items:start}
-.foot-brand{display:inline-flex;align-items:center;gap:10px;color:var(--ink);font-size:18px;font-weight:500;text-decoration:none}
+.foot-brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--ink);font-size:18px;font-weight:500;text-decoration:none}
 .final .foot-brand img{width:32px;height:32px;margin:0;filter:none}
 .foot-info{display:grid;gap:4px;align-content:start;font-size:14px}
-.foot-info a{display:flex;align-items:center;min-height:36px;color:var(--ink-2);text-decoration:none}
+.foot-info a{display:flex;align-items:center;min-height:44px;color:var(--ink-2);text-decoration:none}
 .foot-info a:hover{color:var(--ink)}
 .foot-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px 32px;flex-wrap:wrap;padding-top:20px;border-top:1px solid var(--hair);font-size:13px;color:var(--muted)}
 .foot-languages{display:flex;align-items:center;gap:16px;min-height:36px}
-.foot-languages a{color:var(--ink-2);text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+.foot-languages a{color:var(--ink-2);text-decoration:none;min-height:44px;display:inline-flex;align-items:center}
 .foot-languages a:hover,.foot-languages [aria-current]{color:var(--ink)}
 .foot-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .foot-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 10px;border-radius:8px;white-space:nowrap}
@@ -555,7 +550,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 .foot-links svg{display:block;width:18px;height:18px;fill:currentColor}
 @media(max-width:640px){.foot-main{gap:32px;padding-bottom:24px}.foot-bottom{gap:4px 24px}.foot-links{margin-left:-10px}}
 
-/* 首屏贴纸（assets/stickers.js）：钉在页面上，往下滚跟首屏一起滚走；只在桌面端加载 */
+/* 首屏贴纸（可选增强）：钉在页面上，往下滚跟首屏一起滚走；只在桌面端加载 */
 .stk-layer{position:absolute;left:0;top:0;width:100%;height:0;z-index:14;pointer-events:none}
 .stk{position:absolute;left:0;top:0;pointer-events:none;opacity:0;transition:opacity .2s}
 .stk.on{opacity:1}
@@ -611,9 +606,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .dock-wrap{margin-top:-30px}
   .section{padding-top:88px}
   .window .screen{aspect-ratio:4/3}
-  .feature-more{display:none}
+  .film-credits li{padding:18px 0}
   .stage-say{margin-top:24px}
   .live-grid,.dl{margin-top:32px}
+  .feature-more{display:none}
   .final{margin-top:112px;padding-top:88px}
   .final footer{margin-top:72px}
   .foot-row{gap:8px}
@@ -724,8 +720,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="hero">
     <div class="beams" aria-hidden="true"><svg><use href="#beam-art"/></svg></div>
     <div class="wrap">
-      <!-- peach-hello:start --><svg class="hello" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 165" width="620" height="165" role="img" aria-label="Peach">
-<style>.hello .pen{stroke-dasharray:1;stroke-dashoffset:0;animation:hello-write var(--duration) ease-in-out var(--delay) both}@keyframes hello-write{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.hello .pen{animation:none}}</style>
+      <!-- peach-hello:start --><svg class="hello is-writing" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 165" width="620" height="165" role="img" aria-label="Peach">
+<style>.hello .pen{stroke-dasharray:1;stroke-dashoffset:0;animation:hello-write var(--duration) ease-in-out var(--delay) both}.hello.is-paused .pen{animation-play-state:paused}.hello .pen.is-drawn{animation:none;stroke-dasharray:none}@keyframes hello-write{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}@media(prefers-reduced-motion:reduce){.hello .pen{animation:none}.hero .hello.is-writing{transform:none}}</style>
 <g fill="none" stroke="#F4C0BD" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(4 0)"><path class="pen" pathLength="1" style="--duration:.65s;--delay:0s" d="M22 91 Q40 75 49 51 L30 143 M45 76 C64 35 98 49 86 79 C79 100 53 104 45 87"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:0.5s" d="M89 88 C114 85 137 67 129 56 C115 39 94 66 99 87 C105 111 140 98 152 79"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:1s" d="M184 60 C173 44 151 56 145 80 C138 104 163 109 177 83 L184 58 L179 87 Q177 107 200 86"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:1.5s" d="M237 59 C219 42 201 61 198 81 C194 107 226 105 246 81"/><path class="pen" pathLength="1" style="--duration:.65s;--delay:2s" d="M245 90 C265 67 286 29 280 18 C267 1 256 51 250 98 C261 67 278 51 286 64 C295 78 275 99 293 101 Q305 104 320 82"/></g><g color="#F4C0BD"><g transform="translate(344 7) scale(0.7)" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.650s" d="M87 16 Q92 19 97 26"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.815s" d="M44 37 Q45 45 39 56"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:2.980s" d="M44 44 C70 38 120 33 148 35 Q157 36 148 45 L139 55"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.145s" d="M56 65 Q54 77 46 84"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.310s" d="M70 61 C75 78 89 91 113 89 Q128 88 125 79 L121 67"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.475s" d="M87 52 Q94 57 99 63"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.640s" d="M119 49 C110 72 89 91 62 102 Q50 107 41 108"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.805s" d="M141 63 Q151 67 156 74"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:3.970s" d="M60 121 Q65 134 65 148"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.135s" d="M62 123 Q95 117 125 115 Q132 115 129 123 L122 140"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.300s" d="M65 145 Q94 139 123 140"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.465s" d="M96 104 C98 121 97 147 94 165"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.630s" d="M47 172 Q81 169 133 158"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:4.795s" d="M125 149 Q139 160 144 172"/></g><g transform="translate(474 7) scale(0.7)" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.050s" d="M19 74 Q46 71 73 62"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.215s" d="M53 23 C55 60 48 121 45 173"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.380s" d="M48 78 Q38 109 17 133"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.545s" d="M49 94 Q61 99 70 112"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.710s" d="M90 42 C98 78 95 117 86 139 Q80 154 67 163"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:5.875s" d="M73 77 Q81 82 85 90"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.040s" d="M72 122 Q86 114 95 102"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.205s" d="M120 27 C115 64 110 119 116 147 C120 169 145 163 155 152 Q160 145 163 130"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.370s" d="M150 65 Q139 80 120 91"/><path class="pen" pathLength="1" style="--duration:.38s;--delay:6.535s" d="M118 110 Q141 118 151 133"/></g></g></svg><!-- peach-hello:end -->
       <h1><span class="headline-first nowrap">All your videos<span class="punct">, </span></span><br class="hero-break"><span class="nowrap">in one place</span></h1>
       <p class="say"><span class="nowrap">Local drives, cloud drives</span><br class="caption-break"><span class="nowrap"> and the creators you follow,</span><span class="nowrap"> brought together.</span></p>
@@ -734,10 +730,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="download-meta"><p class="download-caption" data-download-caption>Windows, macOS and Docker</p><a class="download-alternatives" href="#download">Other platforms</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>Live demo</a>
-        <button type="button" class="btn btn-quiet btn-lg" data-media-01-open="demo-player" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Intro video</button>
+        <a class="btn btn-quiet btn-lg" href="#tour">Interface tour</a>
         </div>
       </div>
-      <p class="mono">Open source<span class="dot">Self-hosted</span><span class="dot">18+</span></p>
+      <p class="mono">Open source<span class="dot">Self-hosted</span></p>
     </div>
   </section>
 
@@ -746,12 +742,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <div class="wrap tour reveal">
       <div class="window">
         <div class="screen" id="screen">
-          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261018-1440.webp 1440w, /assets/screenshots/home-compact-20261018-1920.webp 1920w, /assets/screenshots/home-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261018.webp" srcset="/assets/screenshots/home-wide-20261018-1280.webp 1280w, /assets/screenshots/home-wide-20261018-1920.webp 1920w, /assets/screenshots/home-wide-20261018-2560.webp 2560w, /assets/screenshots/home-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Home: grid of video cards" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
-          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261018-1440.webp 1440w, /assets/screenshots/people-compact-20261018-1920.webp 1920w, /assets/screenshots/people-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261018.webp" data-srcset="/assets/screenshots/people-wide-20261018-1280.webp 1280w, /assets/screenshots/people-wide-20261018-1920.webp 1920w, /assets/screenshots/people-wide-20261018-2560.webp 2560w, /assets/screenshots/people-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Performers page" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261018-1440.webp 1440w, /assets/screenshots/profile-compact-20261018-1920.webp 1920w, /assets/screenshots/profile-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261018.webp" data-srcset="/assets/screenshots/profile-wide-20261018-1280.webp 1280w, /assets/screenshots/profile-wide-20261018-1920.webp 1920w, /assets/screenshots/profile-wide-20261018-2560.webp 2560w, /assets/screenshots/profile-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Performer profile" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261018-1440.webp 1440w, /assets/screenshots/play-compact-20261018-1920.webp 1920w, /assets/screenshots/play-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261018.webp" data-srcset="/assets/screenshots/play-wide-20261018-1280.webp 1280w, /assets/screenshots/play-wide-20261018-1920.webp 1920w, /assets/screenshots/play-wide-20261018-2560.webp 2560w, /assets/screenshots/play-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Player with climax logging" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261018-1440.webp 1440w, /assets/screenshots/follow-compact-20261018-1920.webp 1920w, /assets/screenshots/follow-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261018.webp" data-srcset="/assets/screenshots/follow-wide-20261018-1280.webp 1280w, /assets/screenshots/follow-wide-20261018-1920.webp 1920w, /assets/screenshots/follow-wide-20261018-2560.webp 2560w, /assets/screenshots/follow-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Following page" width="3840" height="2160" decoding="async"></picture>
-          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261018-1440.webp 1440w, /assets/screenshots/stats-compact-20261018-1920.webp 1920w, /assets/screenshots/stats-compact-20261018.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261018.webp" data-srcset="/assets/screenshots/stats-wide-20261018-1280.webp 1280w, /assets/screenshots/stats-wide-20261018-1920.webp 1920w, /assets/screenshots/stats-wide-20261018-2560.webp 2560w, /assets/screenshots/stats-wide-20261018.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Statistics page" width="3840" height="2160" decoding="async"></picture>
+          <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261025-2-1440.webp 1440w, /assets/screenshots/home-compact-20261025-2-1920.webp 1920w, /assets/screenshots/home-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261025-2.webp" srcset="/assets/screenshots/home-wide-20261025-2-1280.webp 1280w, /assets/screenshots/home-wide-20261025-2-1920.webp 1920w, /assets/screenshots/home-wide-20261025-2-2560.webp 2560w, /assets/screenshots/home-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Home: grid of video cards" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
+          <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261025-2-1440.webp 1440w, /assets/screenshots/people-compact-20261025-2-1920.webp 1920w, /assets/screenshots/people-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261025-2.webp" data-srcset="/assets/screenshots/people-wide-20261025-2-1280.webp 1280w, /assets/screenshots/people-wide-20261025-2-1920.webp 1920w, /assets/screenshots/people-wide-20261025-2-2560.webp 2560w, /assets/screenshots/people-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Performers page" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261025-2-1440.webp 1440w, /assets/screenshots/profile-compact-20261025-2-1920.webp 1920w, /assets/screenshots/profile-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261025-2.webp" data-srcset="/assets/screenshots/profile-wide-20261025-2-1280.webp 1280w, /assets/screenshots/profile-wide-20261025-2-1920.webp 1920w, /assets/screenshots/profile-wide-20261025-2-2560.webp 2560w, /assets/screenshots/profile-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Performer details" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="play"><source media="(max-width:560px)" data-srcset="/assets/screenshots/play-compact-20261025-2-1440.webp 1440w, /assets/screenshots/play-compact-20261025-2-1920.webp 1920w, /assets/screenshots/play-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/play-wide-20261025-2.webp" data-srcset="/assets/screenshots/play-wide-20261025-2-1280.webp 1280w, /assets/screenshots/play-wide-20261025-2-1920.webp 1920w, /assets/screenshots/play-wide-20261025-2-2560.webp 2560w, /assets/screenshots/play-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Film details and playback" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="follow"><source media="(max-width:560px)" data-srcset="/assets/screenshots/follow-compact-20261025-2-1440.webp 1440w, /assets/screenshots/follow-compact-20261025-2-1920.webp 1920w, /assets/screenshots/follow-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/follow-wide-20261025-2.webp" data-srcset="/assets/screenshots/follow-wide-20261025-2-1280.webp 1280w, /assets/screenshots/follow-wide-20261025-2-1920.webp 1920w, /assets/screenshots/follow-wide-20261025-2-2560.webp 2560w, /assets/screenshots/follow-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Following page" width="3840" height="2160" decoding="async"></picture>
+          <picture data-k="stats"><source media="(max-width:560px)" data-srcset="/assets/screenshots/stats-compact-20261025-3-1440.webp 1440w, /assets/screenshots/stats-compact-20261025-3-1920.webp 1920w, /assets/screenshots/stats-compact-20261025-3.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/stats-wide-20261025-3.webp" data-srcset="/assets/screenshots/stats-wide-20261025-3-1280.webp 1280w, /assets/screenshots/stats-wide-20261025-3-1920.webp 1920w, /assets/screenshots/stats-wide-20261025-3-2560.webp 2560w, /assets/screenshots/stats-wide-20261025-3.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="Statistics page" width="3840" height="2160" decoding="async"></picture>
         </div>
       </div>
       <div class="dock-wrap">
@@ -761,7 +757,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></button>
           <button role="tab" aria-selected="false" data-k="people" data-label="All performers" data-say='<b>Neatly organized</b><span class="sub">All your performers, organized by category.</span>' aria-label="All performers">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/></svg></button>
-          <button role="tab" aria-selected="false" data-k="profile" data-label="Performer details" data-say='<b>Every detail</b><span class="sub">Aliases, agencies, social media accounts, personal details…</span>' aria-label="Performer details">
+          <button role="tab" aria-selected="false" data-k="profile" data-label="Performer details" data-say='<b>Every detail</b><span class="sub">Artist aliases, social profiles and personal information.</span>' aria-label="Performer details">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10.5" r="2.5"/><path d="M5.5 17a3.8 3.8 0 0 1 7 0M15 9h3M15 13h3"/></svg></button>
           <button role="tab" aria-selected="false" data-k="play" data-label="Play" data-say='<b>Playback is just the start</b><span class="sub">Log it, analyze it, then find more like it.</span>' aria-label="Play">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l5.5-3.5z" fill="currentColor"/></svg></button>
@@ -775,21 +771,20 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </div>
   </section>
 
-  <!-- 动效卡：简化的 Peach 界面，脚本在上面演一遍；点开去演示站亲手试 -->
   <section class="section" id="live">
     <div class="wrap">
       <p class="say lg reveal"><b><span class="nowrap">What Peach can do</span></b><span class="sub">Track new releases, follow creators, understand your taste,<span class="nowrap"> customize colors…</span></span></p>
       <div class="live-grid">
-        <a class="card live reveal" href="https://demo.peach.video/performers/凉森玲梦" data-mock="feed">
-          <div class="txt"><p class="say"><b>Follow performers</b><span class="sub">Know about new releases as soon as they're out.</span></p></div>
+        <a class="card live reveal" href="https://demo.peach.video/performers" data-mock="feed">
+          <div class="txt"><p class="say"><b>Follow performers</b><span class="sub">Follow releases and manage watched and unwatched titles.</span></p></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-feed">
-            <div class="mk-hero"><div class="mk-ava"><img src="/assets/mock/f-remu.webp" alt="" loading="lazy"></div><div><h4>凉森玲梦</h4><p>3 个视频 · T-POWERS · 出道 2019-03-09</p></div></div>
-            <div class="mk-sect">订阅新作<small>4 部新发行</small></div>
+            <div class="mk-hero"><div class="mk-ava"><img src="/assets/people/q882.webp" alt="" loading="lazy"></div><div><h4>查理·卓别林</h4><p>预置电影资料 · 4 部作品</p></div></div>
+            <div class="mk-sect">作品列表<small>4 部示例电影</small></div>
             <div class="mk-row">
-              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-391 今日も清楚ぶって看護師してます。</b><small>2026-10-16</small></div>
-              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-376 新人女子アナ</b><small>2026-08-21</small></div>
-              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>ABF-367 涼森れむの「顔」で</b><small>2026-07-17</small></div>
-              <div class="mk-f"><div class="pic"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>PASN-027 神女優で童貞卒業</b><small>2026-06-18</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/films/q214723.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>淘金记</b><small>1925</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/films/q374172.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>寻子遇仙记</b><small>1921</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/films/q669929.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>马戏团 (电影)</b><small>1928</small></div>
+              <div class="mk-f"><div class="pic"><img src="/assets/films/q1151392.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>威尼斯兒童賽車</b><small>1914</small></div>
             </div>
           </div></div></div><span class="live-go ext">Open demo</span></div>
         </a>
@@ -810,10 +805,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
               <div class="mk-busy"><i class="mk-dots"><i></i><i></i><i></i></i>查找中…（首次按名字查要下载创作者索引，可能几十秒）</div>
               <div class="mk-found"><small>查找结果</small>
-                <div class="mk-hits"><b>billyhhyb</b>
-                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-kemono.webp" alt="" loading="lazy"><b>Kemono</b><span>Billyhhyb · patreon</span><small>创作者名精确匹配</small></div>
-                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-fanbox.webp" alt="" loading="lazy"><b>FANBOX</b><span>Billyhhyb</span><small>FANBOX 官方资料与归档身份一致</small></div>
-                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/mock/i-rule34xxx.webp" alt="" loading="lazy"><b>rule34.xxx</b><span>billyhhyb</span><small>站内标签 billyhhyb 下有作品</small></div>
+                <div class="mk-hits"><b>Blender Studio</b>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/peach-logo-192.webp" alt="" loading="lazy"><b>官方网站</b><span>Big Buck Bunny</span><small>预置电影资料 · 2008</small></div>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/peach-logo-192.webp" alt="" loading="lazy"><b>官方网站</b><span>Sintel</span><small>预置电影资料 · 2010</small></div>
+                  <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/peach-logo-192.webp" alt="" loading="lazy"><b>官方网站</b><span>Tears of Steel</span><small>预置电影资料 · 2012</small></div>
                 </div>
                 <div class="mk-acts"><span class="mk-btn blue add">添加选中（3）</span><span class="mk-btn">关闭</span></div>
               </div>
@@ -827,7 +822,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
             <div class="mk-stats">
               <div class="mk-stat"><small>浏览记录</small><b><span class="v" data-to="11537">0</span></b><em data-done="4 个数据源 · 2025/9/28—2026/9/27">尚未读取</em></div>
-              <div class="mk-stat"><small>口味维度</small><b><span class="v" data-to="7">0</span></b><em data-done="制服/角色扮演">尚未读取</em></div>
+              <div class="mk-stat"><small>口味维度</small><b><span class="v" data-to="7">0</span></b><em data-done="动画">尚未读取</em></div>
               <div class="mk-stat"><small>浏览候选</small><b><span class="v" data-to="12">0</span></b><em data-done="待你确认">尚未读取</em></div>
               <div class="mk-stat"><small>私有导出</small><b><span class="v" data-to="0">0</span></b><em data-done="0 MB">尚未读取</em></div>
             </div>
@@ -841,21 +836,21 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                     <path d="M115 95V25M115 95l60.6-35M115 95l60.6 35M115 95v70M115 95l-60.6 35M115 95l-60.6-35"/>
                   </g>
                   <polygon class="shape" points="115,25 162.9,67.3 158,119.9 115,141.2 88.3,110.4 90.8,81"/>
-                  <text x="115" y="14" text-anchor="middle">制服/角色扮演</text>
-                  <text x="182" y="58">3D/动画</text>
-                  <text x="182" y="138">乳系</text>
-                  <text x="115" y="184" text-anchor="middle">ASMR/音声</text>
-                  <text x="48" y="138" text-anchor="end">口交</text>
-                  <text x="48" y="58" text-anchor="end">足系</text>
+                  <text x="115" y="14" text-anchor="middle">动画</text>
+                  <text x="182" y="58">奇幻</text>
+                  <text x="182" y="138">科幻</text>
+                  <text x="115" y="184" text-anchor="middle">短片</text>
+                  <text x="48" y="138" text-anchor="end">冒险</text>
+                  <text x="48" y="58" text-anchor="end">喜剧</text>
                 </svg>
                 <div class="mk-bars">
-                  <span>制服/角色扮演</span><div><i style="--w:78%"></i><b>436</b></div>
-                  <span>3D/动画</span><div><i style="--w:48.8%"></i><b>273</b></div>
-                  <span>乳系</span><div><i style="--w:39.4%"></i><b>220</b></div>
-                  <span>ASMR/音声</span><div><i style="--w:34.3%"></i><b>192</b></div>
-                  <span>口交</span><div><i style="--w:15%"></i><b>84</b></div>
-                  <span>足系</span><div><i style="--w:12.7%"></i><b>71</b></div>
-                  <span>游戏同人</span><div><i style="--w:11.6%"></i><b>65</b></div>
+                  <span>动画</span><div><i style="--w:78%"></i><b>436</b></div>
+                  <span>奇幻</span><div><i style="--w:48.8%"></i><b>273</b></div>
+                  <span>科幻</span><div><i style="--w:39.4%"></i><b>220</b></div>
+                  <span>短片</span><div><i style="--w:34.3%"></i><b>192</b></div>
+                  <span>冒险</span><div><i style="--w:15%"></i><b>84</b></div>
+                  <span>喜剧</span><div><i style="--w:12.7%"></i><b>71</b></div>
+                  <span>实验动画</span><div><i style="--w:11.6%"></i><b>65</b></div>
                 </div>
               </div>
             </div>
@@ -868,7 +863,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               <div class="lib"><img src="/assets/peach-logo-192.webp" alt="" width="18" height="18">Peach</div>
               <div class="mk-nav on"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10"/></svg>首页</div>
               <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>关注</div>
-              <div class="mk-nav"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14"/></svg>JAV</div>
+              <div class="mk-nav"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14"/></svg>影片</div>
               <div class="mk-nav"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>艺人</div>
               <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1"/></svg>标签</div>
               <div class="mk-nav"><svg viewBox="0 0 24 24"><path d="M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h4v12M2 21h20M8 7h4M8 11h4M8 15h4"/></svg>厂牌</div>
@@ -879,13 +874,13 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             </aside>
             <div class="mk-tmain">
               <div class="mk-tbar"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜索馆藏</div>
-              <h4>首页<small>120 个作品</small></h4>
+              <h4>首页<small>4 个示例作品</small></h4>
               <div class="mk-chips"><span class="on">全部</span><span>没看过</span><span>稍后看</span><span>已标记</span><span class="shuf"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span></div>
               <div class="mk-tgrid">
-                <div><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><b>ABF-391 今日も清楚ぶって看護師してます。</b><small>新作</small></div>
-                <div><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><b>ABF-376 新人女子アナ</b><small>新作</small></div>
-                <div><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><b>ABF-367 涼森れむの「顔」で</b><small>新作</small></div>
-                <div><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><b>PASN-027 神女優で童貞卒業</b><small>新作</small></div>
+                <div><img src="/assets/films/q151599.webp" alt="" loading="lazy"><b>大都会</b><small>新作</small></div>
+                <div><img src="/assets/films/q850159.webp" alt="" loading="lazy"><b>将军号</b><small>新作</small></div>
+                <div><img src="/assets/films/q778755.webp" alt="" loading="lazy"><b>最后安全！</b><small>新作</small></div>
+                <div><img src="/assets/films/q927919.webp" alt="" loading="lazy"><b>歌剧魅影</b><small>新作</small></div>
               </div>
             </div>
             <div class="mk-pop">
@@ -915,33 +910,33 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <div class="txt"><p class="say"><b>Video wall</b><span class="sub">Drag through a full-screen wall of covers to pick your next watch.</span></p></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
             <div class="mk-wall-world">
-              <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:346px;--y:0px;--w:160px;--h:130px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>03</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:509px;--y:0px;--w:180px;--h:260px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>04</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:692px;--y:0px;--w:180px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>05</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:183px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>06</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile mk-wall-target" style="--x:346px;--y:133px;--w:160px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>07</small><small class="duration">2:04:00</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:692px;--y:173px;--w:180px;--h:260px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>08</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:0px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>09</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:509px;--y:263px;--w:180px;--h:180px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>10</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:183px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n1.webp" alt="" loading="lazy"><small>11</small><div class="mk-wall-copy"><b>ABF-391</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:346px;--y:396px;--w:160px;--h:170px"><img src="/assets/mock/f-n2.webp" alt="" loading="lazy"><small>12</small><div class="mk-wall-copy"><b>ABF-376</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:0px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>13</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:509px;--y:446px;--w:180px;--h:170px"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"><small>14</small><div class="mk-wall-copy"><b>ABF-367</b><span>凉森玲梦</span></div></div>
-              <div class="mk-wall-tile" style="--x:692px;--y:436px;--w:180px;--h:180px"><img src="/assets/mock/f-n4.webp" alt="" loading="lazy"><small>15</small><div class="mk-wall-copy"><b>PASN-027</b><span>凉森玲梦</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/films/q1024861.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>卡比利亚</b><span>1914 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/films/q690583.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>贪婪</b><span>1924 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:0px;--w:160px;--h:130px"><img src="/assets/films/q1219785.webp" alt="" loading="lazy"><small>03</small><div class="mk-wall-copy"><b>失落的世界</b><span>1925 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:0px;--w:180px;--h:260px"><img src="/assets/films/q1219825.webp" alt="" loading="lazy"><small>04</small><div class="mk-wall-copy"><b>启示录四骑士</b><span>1921 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:0px;--w:180px;--h:170px"><img src="/assets/films/q916078.webp" alt="" loading="lazy"><small>05</small><div class="mk-wall-copy"><b>碧玉無瑕</b><span>1929 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:133px;--w:160px;--h:260px"><img src="/assets/films/q1217715.webp" alt="" loading="lazy"><small>06</small><div class="mk-wall-copy"><b>十诫 (1923年电影)</b><span>1923 · 示例作品</span></div></div>
+              <div class="mk-wall-tile mk-wall-target" style="--x:346px;--y:133px;--w:160px;--h:260px"><img src="/assets/films/q1193655.webp" alt="" loading="lazy"><small>07</small><small class="duration">演示</small><div class="mk-wall-copy"><b>幻影馬車</b><span>1921 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:173px;--w:180px;--h:260px"><img src="/assets/films/q258830.webp" alt="" loading="lazy"><small>08</small><div class="mk-wall-copy"><b>最卑賤的人</b><span>1924 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:263px;--w:180px;--h:180px"><img src="/assets/films/q776337.webp" alt="" loading="lazy"><small>09</small><div class="mk-wall-copy"><b>亚利桑那剑侠</b><span>1928 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:263px;--w:180px;--h:180px"><img src="/assets/films/q905932.webp" alt="" loading="lazy"><small>10</small><div class="mk-wall-copy"><b>残花泪</b><span>1919 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:183px;--y:396px;--w:160px;--h:170px"><img src="/assets/films/q1304986.webp" alt="" loading="lazy"><small>11</small><div class="mk-wall-copy"><b>群众</b><span>1928 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:346px;--y:396px;--w:160px;--h:170px"><img src="/assets/films/q2985396.webp" alt="" loading="lazy"><small>12</small><div class="mk-wall-copy"><b>哈里什昌德拉国王</b><span>1913 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:0px;--y:446px;--w:180px;--h:170px"><img src="/assets/films/q1214957.webp" alt="" loading="lazy"><small>13</small><div class="mk-wall-copy"><b>母亲</b><span>1926 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:509px;--y:446px;--w:180px;--h:170px"><img src="/assets/films/q672480.webp" alt="" loading="lazy"><small>14</small><div class="mk-wall-copy"><b>浮士德</b><span>1926 · 示例作品</span></div></div>
+              <div class="mk-wall-tile" style="--x:692px;--y:436px;--w:180px;--h:180px"><img src="/assets/films/q952079.webp" alt="" loading="lazy"><small>15</small><div class="mk-wall-copy"><b>神圣的女人</b><span>1929 · 示例作品</span></div></div>
             </div>
             <div class="mk-wall-dim"></div>
             <div class="mk-wall-nav"><span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span></div>
             <span class="mk-wall-settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m9 3 6 0 1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z"/></svg></span>
             <div class="mk-wall-focus">
-              <img class="mk-wall-art" src="/assets/mock/f-n3.webp" alt="" loading="lazy"><div class="mk-wall-preview"><img src="/assets/mock/f-n3.webp" alt="" loading="lazy"></div><div class="mk-wall-shade"></div>
+              <img class="mk-wall-art" src="/assets/films/q1193655.webp" alt="" loading="lazy"><div class="mk-wall-preview"><img src="/assets/films/q1193655.webp" alt="" loading="lazy"></div><div class="mk-wall-shade"></div>
               <span class="mk-wall-number">07</span>
-              <div class="mk-wall-head"><b>ABF-367</b><strong>涼森れむの「顔」で</strong><span>凉森玲梦</span></div>
+              <div class="mk-wall-head"><b>幻影馬車</b><strong>1921 · 影片详情</strong><span>示例作品</span></div>
               <span class="mk-wall-close"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></span>
               <div class="mk-wall-actions"><div class="mk-wall-controls">
                 <span class="mk-wall-play"><svg class="play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></svg><svg class="pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></span>
-                <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">00:00 / 2:04:00</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
+                <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">仅提供演示</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
               </div><div class="mk-wall-seek"><i></i></div></div>
             </div>
           </div></div></div><span class="live-go ext">Open demo</span></div>
@@ -971,52 +966,69 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8a4 4 0 0 1 0 10z"/></svg>
           <p><b>Cloud drives as local drives</b>Add mounted cloud drives to your library</p></div>
         <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M15 3h6v6M21 3l-9 9"/></svg>
-          <p><b>Metadata scraping</b>Fill in missing metadata from multiple sources</p></div>
+          <p><b>Local management</b>Keep control of metadata, covers and viewing history</p></div>
         <div class="key"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>
           <p><b>Open source</b>All source code is available under AGPL-3.0</p></div>
       </div>
     </div>
   </section>
 
-  <!-- 资料：厂商、事务所、女优各一行 -->
+  <!-- 资料条：电影、创作与演员。 -->
   <section class="section" id="features">
     <div class="wrap">
       <p class="say lg reveal"><b>More than a player</b><span class="sub">Peach is your ultimate<span class="nowrap"> media library.</span></span></p>
     </div>
-    <div class="marks reveal" role="group" aria-label="Studios, agencies and performers">
-      <div class="marks-row"><span><img src="/assets/marks/s1.webp" alt="" width="48" height="48" loading="lazy">S1 NO.1 STYLE</span><span><img src="/assets/marks/moodyz.webp" alt="" width="48" height="48" loading="lazy">MOODYZ</span><span><img src="/assets/marks/prestige.webp" alt="" width="48" height="48" loading="lazy">PRESTIGE</span><span><img src="/assets/marks/sod.webp" alt="" width="48" height="48" loading="lazy">SOD Create</span><span><img src="/assets/marks/kawaii.webp" alt="" width="48" height="48" loading="lazy">kawaii*</span><span><img src="/assets/marks/premium.webp" alt="" width="48" height="48" loading="lazy">PREMIUM</span><span><img src="/assets/marks/maxing.webp" alt="" width="48" height="48" loading="lazy">MAXING</span><span><img src="/assets/marks/rocket.webp" alt="" width="48" height="48" loading="lazy">ROCKET</span><span><img src="/assets/marks/hmjm.webp" alt="" width="48" height="48" loading="lazy">HMJM</span><span><img src="/assets/marks/tma.webp" alt="" width="48" height="48" loading="lazy">TMA</span><span><img src="/assets/marks/kmp.webp" alt="" width="48" height="48" loading="lazy">K.M.Produce</span><span><img src="/assets/marks/doc.webp" alt="" width="48" height="48" loading="lazy">DOC</span><span><img src="/assets/marks/dogma.webp" alt="" width="48" height="48" loading="lazy">Dogma</span><span><img src="/assets/marks/kirakira.webp" alt="" width="48" height="48" loading="lazy">kira☆kira</span><span><img src="/assets/marks/million.webp" alt="" width="48" height="48" loading="lazy">MILLION</span><span><img src="/assets/marks/scute.webp" alt="" width="48" height="48" loading="lazy">S-Cute</span></div>
-      <div class="marks-row rev" data-kind="agency" role="group" aria-label="Agencies">
-        <span><img src="/assets/entities/agency-t-powers.webp" alt="" width="48" height="48" loading="lazy">T-POWERS</span>
-        <span><img src="/assets/entities/agency-c-more.webp" alt="" width="48" height="48" loading="lazy">C-more Entertainment</span>
-        <span><img src="/assets/entities/agency-life.webp" alt="" width="48" height="48" loading="lazy">Life Promotion</span>
-        <span><img src="/assets/entities/agency-linx.webp" alt="" width="48" height="48" loading="lazy">LINX</span>
-        <span><img src="/assets/entities/agency-bambi.webp" alt="" width="48" height="48" loading="lazy">Bambi Promotion</span>
-        <span><img src="/assets/entities/agency-nax.webp" alt="" width="48" height="48" loading="lazy">New Actor eXperience</span>
-        <span><img src="/assets/entities/agency-listar.webp" alt="" width="48" height="48" loading="lazy">LiStarPRO</span>
-        <span><img src="/assets/entities/agency-mines.webp" alt="" width="48" height="48" loading="lazy">マインズ</span>
-        <span><img src="/assets/entities/agency-capsule.webp" alt="" width="48" height="48" loading="lazy">Capsule Agency</span>
-        <span><img src="/assets/entities/agency-so-model.webp" alt="" width="48" height="48" loading="lazy">SO MODEL AGENT</span>
-        <span><img src="/assets/entities/agency-krone.webp" alt="" width="48" height="48" loading="lazy">Krone</span>
-        <span><img src="/assets/entities/agency-dino.webp" alt="" width="48" height="48" loading="lazy">DINO</span>
+    <div class="marks reveal" role="group" aria-label="Films, creators and cast">
+      <div class="marks-row" role="group" aria-label="Films">
+        <span><img src="/assets/films/big-buck-bunny.webp" alt="" width="48" height="48" loading="lazy">Big Buck Bunny · 2008</span>
+        <span><img src="/assets/films/sintel.webp" alt="" width="48" height="48" loading="lazy">Sintel · 2010</span>
+        <span><img src="/assets/films/tears-of-steel.webp" alt="" width="48" height="48" loading="lazy">Tears of Steel · 2012</span>
+        <span><img src="/assets/films/elephants-dream.webp" alt="" width="48" height="48" loading="lazy">Elephants Dream · 2006</span>
+        <span><img src="/assets/films/coffee-run.webp" alt="" width="48" height="48" loading="lazy">Coffee Run · 2020</span>
+        <span><img src="/assets/films/q152350.webp" alt="" width="48" height="48" loading="lazy">Battleship Potemkin · 1925</span>
+        <span><img src="/assets/films/q151599.webp" alt="" width="48" height="48" loading="lazy">Metropolis · 1927</span>
+        <span><img src="/assets/films/q151895.webp" alt="" width="48" height="48" loading="lazy">Nosferatu · 1922</span>
+        <span><img src="/assets/films/q214723.webp" alt="" width="48" height="48" loading="lazy">The Gold Rush · 1925</span>
+        <span><img src="/assets/films/q374172.webp" alt="" width="48" height="48" loading="lazy">The Kid · 1921</span>
+        <span><img src="/assets/films/q272036.webp" alt="" width="48" height="48" loading="lazy">Wings · 1927</span>
+        <span><img src="/assets/films/q463620.webp" alt="" width="48" height="48" loading="lazy">The Broadway Melody · 1929</span>
+        <span><img src="/assets/films/q465087.webp" alt="" width="48" height="48" loading="lazy">The Jazz Singer · 1927</span>
+        <span><img src="/assets/films/q669929.webp" alt="" width="48" height="48" loading="lazy">The Circus · 1928</span>
+        <span><img src="/assets/films/q192206.webp" alt="" width="48" height="48" loading="lazy">Intolerance · 1916</span>
+        <span><img src="/assets/films/q431093.webp" alt="" width="48" height="48" loading="lazy">Sunrise · 1927</span>
       </div>
-      <div class="marks-row" data-kind="performer" role="group" aria-label="Performers">
-        <span><img src="/assets/entities/performer-remu.webp" alt="" width="48" height="48" loading="lazy">Remu Suzumori</span>
-        <span><img src="/assets/entities/performer-arina.webp" alt="" width="48" height="48" loading="lazy">Arina Hashimoto</span>
-        <span><img src="/assets/entities/performer-minami.webp" alt="" width="48" height="48" loading="lazy">Minami Aizawa</span>
-        <span><img src="/assets/entities/performer-mia.webp" alt="" width="48" height="48" loading="lazy">Mia Nanasawa</span>
-        <span><img src="/assets/entities/performer-momo.webp" alt="" width="48" height="48" loading="lazy">Momo Sakura</span>
-        <span><img src="/assets/entities/performer-karen.webp" alt="" width="48" height="48" loading="lazy">Karen Kaede</span>
-        <span><img src="/assets/entities/performer-kana.webp" alt="" width="48" height="48" loading="lazy">Kana Momonogi</span>
-        <span><img src="/assets/entities/performer-mayuki.webp" alt="" width="48" height="48" loading="lazy">Mayuki Ito</span>
-        <span><img src="/assets/entities/performer-yua.webp" alt="" width="48" height="48" loading="lazy">Yua Mikami</span>
-        <span><img src="/assets/entities/performer-ichika.webp" alt="" width="48" height="48" loading="lazy">Ichika Hoshimiya</span>
-        <span><img src="/assets/entities/performer-mio.webp" alt="" width="48" height="48" loading="lazy">Mio Ishikawa</span>
-        <span><img src="/assets/entities/performer-kojima.webp" alt="" width="48" height="48" loading="lazy">Minami Kojima</span>
-        <span><img src="/assets/entities/performer-suzu.webp" alt="" width="48" height="48" loading="lazy">Suzu Honjo</span>
-        <span><img src="/assets/entities/performer-airi.webp" alt="" width="48" height="48" loading="lazy">Airi Suzumura</span>
-        <span><img src="/assets/entities/performer-tsumugi.webp" alt="" width="48" height="48" loading="lazy">Tsumugi Akari</span>
-        <span><img src="/assets/entities/performer-tsukasa.webp" alt="" width="48" height="48" loading="lazy">Tsukasa Aoi</span>
-        <span><img src="/assets/entities/performer-saika.webp" alt="" width="48" height="48" loading="lazy">Saika Kawakita</span>
+      <div class="marks-row rev" data-kind="agency" role="group" aria-label="Creators">
+        <span><img src="/assets/films/q850159.webp" alt="" width="48" height="48" loading="lazy">The General · 1926</span>
+        <span><img src="/assets/films/q829250.webp" alt="" width="48" height="48" loading="lazy">Man with a Movie Camera · 1929</span>
+        <span><img src="/assets/films/q927919.webp" alt="" width="48" height="48" loading="lazy">The Phantom of the Opera · 1925</span>
+        <span><img src="/assets/films/q51520.webp" alt="" width="48" height="48" loading="lazy">The Passion of Joan of Arc · 1928</span>
+        <span><img src="/assets/films/q918401.webp" alt="" width="48" height="48" loading="lazy">Nanook of the North · 1922</span>
+        <span><img src="/assets/films/q368451.webp" alt="" width="48" height="48" loading="lazy">7th Heaven · 1927</span>
+        <span><img src="/assets/films/q778755.webp" alt="" width="48" height="48" loading="lazy">Safety Last! · 1923</span>
+        <span><img src="/assets/films/q1192927.webp" alt="" width="48" height="48" loading="lazy">The Thief of Bagdad · 1924</span>
+        <span><img src="/assets/films/q151177.webp" alt="" width="48" height="48" loading="lazy">Strike · 1925</span>
+        <span><img src="/assets/films/q1151392.webp" alt="" width="48" height="48" loading="lazy">Kid Auto Races at Venice · 1914</span>
+        <span><img src="/assets/films/q466816.webp" alt="" width="48" height="48" loading="lazy">The Last Command · 1928</span>
+        <span><img src="/assets/films/q470895.webp" alt="" width="48" height="48" loading="lazy">A Woman of Paris · 1923</span>
+      </div>
+      <div class="marks-row" data-kind="performer" role="group" aria-label="Cast">
+        <span><img src="/assets/people/q882.webp" alt="" width="48" height="48" loading="lazy">Charlie Chaplin</span>
+        <span><img src="/assets/people/q4612.webp" alt="" width="48" height="48" loading="lazy">Marlene Dietrich</span>
+        <span><img src="/assets/people/q5443.webp" alt="" width="48" height="48" loading="lazy">Greta Garbo</span>
+        <span><img src="/assets/people/q71243.webp" alt="" width="48" height="48" loading="lazy">Clark Gable</span>
+        <span><img src="/assets/people/q40475.webp" alt="" width="48" height="48" loading="lazy">Joan Crawford</span>
+        <span><img src="/assets/people/q104109.webp" alt="" width="48" height="48" loading="lazy">Mary Pickford</span>
+        <span><img src="/assets/people/q103949.webp" alt="" width="48" height="48" loading="lazy">Buster Keaton</span>
+        <span><img src="/assets/people/q93957.webp" alt="" width="48" height="48" loading="lazy">Gary Cooper</span>
+        <span><img src="/assets/people/q104183.webp" alt="" width="48" height="48" loading="lazy">Lillian Gish</span>
+        <span><img src="/assets/people/q103846.webp" alt="" width="48" height="48" loading="lazy">Groucho Marx</span>
+        <span><img src="/assets/people/q229232.webp" alt="" width="48" height="48" loading="lazy">Gloria Swanson</span>
+        <span><img src="/assets/people/q187166.webp" alt="" width="48" height="48" loading="lazy">Antonin Artaud</span>
+        <span><img src="/assets/people/q104340.webp" alt="" width="48" height="48" loading="lazy">Harold Lloyd</span>
+        <span><img src="/assets/people/q105719.webp" alt="" width="48" height="48" loading="lazy">Jean Harlow</span>
+        <span><img src="/assets/people/q232404.webp" alt="" width="48" height="48" loading="lazy">Asta Nielsen</span>
+        <span><img src="/assets/people/q182462.webp" alt="" width="48" height="48" loading="lazy">Janet Gaynor</span>
+        <span><img src="/assets/people/q253384.webp" alt="" width="48" height="48" loading="lazy">Loretta Young</span>
       </div>
     </div>
   </section>
@@ -1081,7 +1093,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">For developers. Requires Git and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">setup and configuration</a>.</p>
+          <p class="note">Requires Git and <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">setup and configuration</a>.</p>
         </div>
       </div>
     </div>
@@ -1132,6 +1144,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <nav class="foot-info" aria-label="Site information">
           <a href="/en/copyright/" title="DMCA copyright notice">Copyright</a>
           <a href="/privacy/analytics?lang=en">Analytics preferences</a>
+          <a href="/en/credits/">Credits and licenses</a>
         </nav>
       </div>
       <div class="foot-bottom">
@@ -1145,8 +1158,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
 <aside class="site-notice" aria-label="Notice">
   <div class="wrap">
-    <p>The developer's GitHub account is temporarily suspended. Get the latest version here, and send questions or feature requests on <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a>.</p>
-    <a href="#download">Download latest version →</a>
+    <p>Developer's GitHub account is suspended. Feedback through <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a>.</p>
+    <a href="#download">Download latest version→</a>
   </div>
 </aside>
 
@@ -1169,108 +1182,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   </form>
 </dialog>
 
-<!-- 介绍视频播放器（media-01） -->
-<div class="media-01" data-media-01-player="demo-player" data-media-modal role="dialog" aria-modal="true" aria-label="Intro video" hidden>
-  <div class="backdrop" data-media-close aria-hidden="true"></div>
-  <div class="frame">
-    <button class="close" type="button" data-media-close aria-label="Close">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-    </button>
-    <section class="shell" data-media-shell>
-      <div class="stage" data-media-stage>
-        <video class="video" data-media-video data-default-speed="1" data-src="https://media.peach.video/site/cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c.mp4" poster="/assets/intro-poster.jpg?v=6072b6576c6e" preload="none" playsinline></video>
-        <div class="loader" aria-hidden="true">
-          <svg viewBox="0 0 19 19"><path d="M9.5 2.938v2.625
-                m0 7.875v2.624
-                M2.938 9.5h2.625
-                m7.875 0h2.624
-                M4.86 4.86l1.856 1.856
-                m5.569 5.568 1.856 1.856
-                m-9.28 0 1.855-1.856
-                m5.569-5.568L14.14 4.86" stroke-linecap="round" stroke-width="1.875"></path></svg>
-        </div>
-        <div class="shade" aria-hidden="true"></div>
-        <div class="pulse" data-media-pulse aria-hidden="true">
-          <svg class="pulse-play" viewBox="0 0 36 36"><path d="M11.45 8.68C9.7 7.78 7.7 9 7.7 10.96V25.04C7.7 27 9.7 28.22 11.45 27.32L23.95 20.86C25.96 19.82 27.9 19.12 27.9 18C27.9 16.88 25.96 16.18 23.95 15.14L11.45 8.68Z"></path></svg>
-          <svg class="pulse-pause" viewBox="0 0 36 36"><rect x="10" y="8" width="6.5" height="20" rx="1.75"></rect><rect x="19.5" y="8" width="6.5" height="20" rx="1.75"></rect></svg>
-        </div>
-        <button class="center-toggle" type="button" data-media-center-toggle aria-label="Play">
-          <svg class="center-play" viewBox="0 0 36 36" aria-hidden="true"><path d="M11.45 8.68C9.7 7.78 7.7 9 7.7 10.96V25.04C7.7 27 9.7 28.22 11.45 27.32L23.95 20.86C25.96 19.82 27.9 19.12 27.9 18C27.9 16.88 25.96 16.18 23.95 15.14L11.45 8.68Z"></path></svg>
-          <svg class="center-pause" viewBox="0 0 36 36" aria-hidden="true"><rect x="10" y="8" width="6.5" height="20" rx="1.75"></rect><rect x="19.5" y="8" width="6.5" height="20" rx="1.75"></rect></svg>
-        </button>
-        <div class="seek">
-          <div class="preview" data-media-preview-card aria-hidden="true">
-            <video class="thumb" data-media-preview-video data-src="https://media.peach.video/site/cc650b81f18b8187ec10854ba6c44e3d4dc1720a67a61a827c01ae3c6f28080c.mp4" preload="none" playsinline muted></video>
-            <div class="meta"><span data-media-preview-time>0:00</span><span data-media-preview-title>Library</span></div>
-          </div>
-          <div class="timeline" data-media-timeline role="slider" tabindex="0" aria-label="Playback position" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="0:00">
-            <div class="track" data-media-chapter-track></div>
-            <div class="scrubber" data-media-scrubber></div>
-          </div>
-        </div>
-        <div class="controls">
-          <button class="control play" type="button" data-media-play aria-label="Play">
-            <svg class="morph" viewBox="0 0 36 36" aria-hidden="true">
-              <defs>
-                <filter id="media-01-round-icon" data-media-round-filter x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="0.7" result="blur"></feGaussianBlur>
-                  <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"></feColorMatrix>
-                </filter>
-              </defs>
-              <path data-media-play-path filter="url(#media-01-round-icon)" d="M 11 10 L 18 13.74 L 18 22.28 L 11 26 Z M 18 13.74 L 26 18 L 26 18 L 18 22.28 Z"></path>
-            </svg>
-          </button>
-          <div class="volume">
-            <button class="control mute" type="button" data-media-mute aria-label="Mute">
-              <svg class="volume-icon volume-low" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path></svg>
-              <svg class="volume-icon volume-mid" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path></svg>
-              <svg class="volume-icon volume-high" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
-              <svg class="volume-icon muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
-            </button>
-            <input class="range" data-media-volume type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
-          </div>
-          <div class="time" aria-live="off"><span data-media-current>0:00</span><span aria-hidden="true">/</span><span data-media-duration>0:00</span></div>
-          <div class="speed" data-media-speed>
-            <button class="control speed-toggle" type="button" data-media-speed-toggle aria-label="Playback speed" aria-expanded="false"><span data-media-speed-label>1x</span></button>
-            <div class="speed-menu" data-media-speed-menu hidden>
-              <button type="button" data-media-speed-option data-speed="1">1x</button>
-              <button type="button" data-media-speed-option data-speed="1.25">1.25x</button>
-              <button type="button" data-media-speed-option data-speed="1.5">1.5x</button>
-              <button type="button" data-media-speed-option data-speed="1.75">1.75x</button>
-              <button type="button" data-media-speed-option data-speed="2">2x</button>
-            </div>
-          </div>
-          <button class="control pip" type="button" data-media-pip aria-label="Picture in picture">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 9V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h4"></path><rect width="10" height="7" x="12" y="13" rx="2"></rect></svg>
-          </button>
-          <button class="control full" type="button" data-media-fullscreen aria-label="Full screen">
-            <svg class="enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-3"></path><path d="M3 16v3a2 2 0 0 0 2 2h3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path></svg>
-            <svg class="exit" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"></path></svg>
-          </button>
-        </div>
-      </div>
-      <!-- 章节按介绍片分镜表 -->
-      <ul class="chapters" hidden>
-        <li data-media-chapter data-start="0" data-title="Library"></li>
-        <li data-media-chapter data-start="5" data-title="Filters"></li>
-        <li data-media-chapter data-start="10" data-title="Performers"></li>
-        <li data-media-chapter data-start="15" data-title="Details"></li>
-        <li data-media-chapter data-start="21" data-title="Follow performers"></li>
-        <li data-media-chapter data-start="26" data-title="Play and log"></li>
-        <li data-media-chapter data-start="32" data-title="Follow creators"></li>
-        <li data-media-chapter data-start="38.5" data-title="Stats"></li>
-        <li data-media-chapter data-start="43.5" data-title="Taste"></li>
-        <li data-media-chapter data-start="49.5" data-title="Customize"></li>
-        <li data-media-chapter data-start="55" data-title="Local data"></li>
-        <li data-media-chapter data-start="60.5" data-title="Any device"></li>
-        <li data-media-chapter data-start="66" data-title="Metadata"></li>
-        <li data-media-chapter data-start="70.5" data-title="Outro"></li>
-      </ul>
-    </section>
-  </div>
-</div>
-
-<script src="/assets/media-01.js" defer></script>
 <script type="module" src="/assets/downloads.js"></script>
 <script type="module" src="/assets/analytics.js"></script>
 <script type="module" src="/assets/behavior.js"></script>

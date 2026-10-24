@@ -1,5 +1,9 @@
 # 复用与实现边界
 
+文案工具条唯一实现在 `browser/assets/edit-toolbar.ts`，按钮使用 `browser/vendor/boardui/` 的固定来源组件，浮动栏几何复用应用 SelectionDock。`browser/edit-client.ts` 只适配官网源码保存与撤销。构建生成 `site/assets/edit-toolbar.js`，演示站通过其 `edit:ui:sync` 入口同步同一产物并校验来源摘要。样式隔离在 Shadow DOM 内；说明收在支持悬停、焦点和点击的帮助提示中。改动工具条时分别预览官网和演示站，不以交互核心相同推断工具条一致。
+
+外语生成页的原位编辑由 `scripts/edit-locale.ts` 适配，复用 `edit-server.ts` 的纯 HTML 编辑变换、`build_i18n.ts` 的译文位置绑定及生成器、`edit-history.ts` 的版本校验与撤销记录。英文修改写回翻译源，保存后生成页面；中文维护源保持独立。动态控件通过翻译表中的 `overrides` 读取稳定文案键。英文首页的目录别名和文件别名使用同一维护源。
+
 依赖版本以 `package.json` 和 `package-lock.json` 为准。构建工具属于开发依赖，`jose` 用于 Worker 签名校验，Kumo、React 与 Phosphor 用于分析后台控件。页面加载由 TS 编译的 JS 和既有第三方资源，许可范围见 [NOTICE](../NOTICE.md)。
 
 | 能力 | 实现与许可 | 验证与边界 |
@@ -13,6 +17,7 @@
 | 下载版本说明 | 现有 R2／GitHub 发行解析与 Shields Docker 版本 JSON 接口 | 安装包和镜像各取实际版本；可变清单使用原生 Fetch 的 `no-store`，页面恢复及过期交互重新核对，合并进行中的请求。同版本优先 R2；真实浏览器 HTTP 缓存回归覆盖旧清单、来源回退与恢复。沿用静态官网，无新增运行时依赖 |
 | 图片与浏览器验收 | 既有 Sharp 与 Playwright | 无损 WebP 编解码测试、合成 Release 响应、手机与桌面下载验证；固定版本见依赖清单 |
 | 离屏动效卡 | 浏览器原生 `content-visibility`、ResizeObserver 与现有 IntersectionObserver，无新增依赖 | 固定比例画框保留占位，缩放读取观察结果，首次可见才创建播放脚本；验证滚动、窗口缩放、暂停与减少动态效果。不支持内容可见性的浏览器正常布局。属性行为见 [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility) |
+| 首屏手写标题 | 原有 SVG／CSS 笔画、IntersectionObserver 与页面可见性事件，无新增依赖 | 手写与静态光束使用绘制隔离和合成提示；笔画沿用 SVG 的路径、延迟、时长与缓动，完成后移除动画。离屏、后台及往返缓存期间暂停，减少动态效果时显示完整标题；没有逐帧脚本或几何读取 |
 | 静态资源缓存 | Cloudflare Workers Assets 原生 `_headers`、ETag 与既有 Sharp，无新增依赖 | 日期截图一年不可变，捕获与编码入口按解码像素拒绝覆盖冲突；可更新页面和自有脚本保持校验。真实响应验收覆盖缓存头与 304，不使用 Worker 包装静态资源 |
 | 访问统计 | Cloudflare Web Analytics（平台自动注入）与 Workers Analytics Engine，无新增依赖 | Web Analytics 已有国家、路径、来源、设备、浏览器族与系统族，缺语言、版本号与自定义事件；只补这几项，由 `worker/` 的单一埋点入口写入。D1 要自建聚合，KV 免费档每天只能写 1,000 次，Observability 日志免费档只留 3 天，都不适合看趋势 |
 | 点击与动线 | 两站共用 TS 协议与浏览器观察器，D1、私有 R2、Cloudflare Access；`jose` 6.2.13，MIT | D1 保存可排序的匿名会话事件，R2 保存维护者构建截图，Access JWT 校验签发者、应用 AUD 与有效期。复用现有 Worker、Sharp、Playwright 和原位编辑器；不用 Analytics Engine 的抽样事件重建精确动线。来源与维护见[访问分析](ANALYTICS.md) |

@@ -1,12 +1,13 @@
-interface Locale {attributes?:Record<string,Record<string,string>>;text:Record<string,string>;runtime?:Record<string,string>;pages?:Record<string,string>}
-interface TranslationReport {missing:Set<string>;used:Set<string>}
+export interface Locale {attributes?:Record<string,Record<string,string>>;text:Record<string,string>;runtime?:Record<string,string>;pages?:Record<string,string>;overrides?:Record<string,string>}
+export interface TranslationBinding {key:string;from:number;to:number;valueFrom:number;valueTo:number}
+interface TranslationReport {missing:Set<string>;used:Set<string>;bindings?:TranslationBinding[]}
 // 由中文页生成其他语言的页面。中文 HTML 是唯一手编源，译文按原文片段保存在 i18n/<语言>.json。
 // 文字节点与可读属性按整段原文查表；带 translate="no" 的子树连同属性保留原文。脚本里的动态文案用 t('原文')，
 // 生成的页面注入 window.PEACH_I18N 供脚本查表。中文改动后缺译或多余的译文都会让检查失败。
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-const root = fileURLToPath(new URL('../', import.meta.url));
+const defaultRoot = fileURLToPath(new URL('../', import.meta.url));
 const CJK = /[　-〿぀-ヿ㐀-鿿＀-￯]/;
 const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
 const TEXT_ATTRIBUTES = new Set(['alt', 'title', 'aria-label', 'placeholder', 'content', 'data-label', 'data-say', 'data-title', 'data-done']);
@@ -65,23 +66,37 @@ export function translateHtml(html: string, locale: Locale, report: TranslationR
             continue;
         }
         const [, before, core, after] = token.match(/^(\s*)([\s\S]*?)(\s*)$/)!;
+        const from=out.length;
         if (skip || !core || !(Object.hasOwn(locale.text, core) || CJK.test(core))) {
             out += token;
+            if(!skip&&core)report.bindings?.push({key:core,from,to:out.length,valueFrom:from+before.length,valueTo:out.length-after.length});
             continue;
         }
         report.used.add(core);
         if (!Object.hasOwn(locale.text, core)) {
             report.missing.add(core);
             out += token;
+            report.bindings?.push({key:core,from,to:out.length,valueFrom:from+before.length,valueTo:out.length-after.length});
             continue;
         }
         // 中文在西文词两侧留空格；译文以标点开头时去掉前面的空格。
         const text = locale.text[core];
-        out += (/^[.,;:!?)]/.test(text) ? '' : before) + text + after;
+        const lead=/^[.,;:!?)]/.test(text)?'':before;
+        out += lead + text + after;
+        report.bindings?.push({key:core,from,to:out.length,valueFrom:from+lead.length,valueTo:from+lead.length+text.length});
     }
     return out;
 }
-async function scriptSources() {
+export function finishTranslation(translated:string,locale:Locale){
+    const runtime=JSON.stringify(locale.runtime||{}).replaceAll('<','\\u003c');
+    let html=translated.replace('</head>',`<script>window.PEACH_I18N=${runtime}</script>\n</head>`);
+    if(locale.overrides&&Object.keys(locale.overrides).length){
+        const attribute=escapeAttribute(JSON.stringify(locale.overrides),'"').replaceAll('<','&lt;').replaceAll('>','&gt;');
+        html=html.replace(/<body\b/,()=>'<body data-copy-overrides="'+attribute+'"');
+    }
+    return html;
+}
+async function scriptSources(root:string) {
     const files: string[] = [];
     async function walk(directory: string) {
         for (const entry of await readdir(path.join(root, directory), { withFileTypes: true })) {
@@ -97,17 +112,16 @@ async function scriptSources() {
     await walk('site');
     return files;
 }
-export async function buildLocale(code: string, { write = false } = {}) {
+export async function buildLocale(code: string, { write = false, projectRoot = defaultRoot } = {}) {
+    const root=projectRoot;
     const locale: Locale & {pages:Record<string,string>;runtime:Record<string,string>} = JSON.parse(await readFile(path.join(root, 'i18n', `${code}.json`), 'utf8'));
     const report: TranslationReport & {runtimeMissing:Set<string>;runtimeUsed:Set<string>;stale:string[];changed:string[]} = { missing: new Set(), used: new Set(), runtimeMissing: new Set(), runtimeUsed: new Set(), stale: [], changed: [] };
-    const runtime = JSON.stringify(locale.runtime).replaceAll('<', '\\u003c');
     for (const [source, target] of Object.entries(locale.pages)) {
         // 签出可能是 CRLF；统一按 LF 生成与比较。
         const html = (await readFile(path.join(root, 'site', source), 'utf8')).replaceAll('\r\n', '\n');
         const banner = `<!-- 由 scripts/build_i18n.ts 从 site/${source} 生成，译文在 i18n/${code}.json；不要直接编辑本文件。 -->\n`;
-        const translated = translateHtml(html, locale, report)
-            .replace(/^<!doctype html>\n/i, match => match + banner)
-            .replace('</head>', `<script>window.PEACH_I18N=${runtime}</script>\n</head>`);
+        const translated = finishTranslation(translateHtml(html, locale, report),locale)
+            .replace(/^<!doctype html>\n/i, match => match + banner);
         const file = path.join(root, 'site', target);
         const current = (await readFile(file, 'utf8').catch(() => null))?.replaceAll('\r\n', '\n');
         if (current !== translated) {
@@ -118,7 +132,7 @@ export async function buildLocale(code: string, { write = false } = {}) {
             }
         }
     }
-    for (const file of await scriptSources()) {
+    for (const file of await scriptSources(root)) {
         for (const [, , text] of (await readFile(path.join(root, file), 'utf8')).matchAll(RUNTIME_CALL)) {
             report.runtimeUsed.add(text);
             if (!Object.hasOwn(locale.runtime, text))

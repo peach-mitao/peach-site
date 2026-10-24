@@ -14,17 +14,12 @@ import { t } from "./i18n.ts";
 // 按 1440 宽排：x 为正从左边量、为负从右边量，y 从顶上量，size 是贴纸本体的显示宽度（CSS 像素）。
 // size 不超过贴纸图宽度的一半，高分屏上也不糊。corner 是翘角提示从哪一角起（0..1，y 向下）。
 const LIST = [
-    { src: "/assets/stickers/115.png", x: 145, y: 175, size: 68, tilt: -10, corner: [0.9, 0.9] },
-    { src: "/assets/stickers/kemono.png", x: 280, y: 270, size: 58, tilt: -4, corner: [0.9, 0.2] },
-    { src: "/assets/stickers/pikpak.png", x: 120, y: 350, size: 64, tilt: 8, corner: [0.06, 0.94] },
-    { src: "/assets/stickers/javdb.svg", x: 245, y: 440, size: 140, tilt: -6, corner: [0.97, 0.9] },
-    { src: "/assets/stickers/patreon.png", x: 130, y: 535, size: 56, tilt: -12, corner: [0.94, 0.94] },
-    { src: "/assets/stickers/remu.png", x: -155, y: 180, size: 88, tilt: 7, corner: [0.85, 0.75], hint: true },
-    { src: "/assets/stickers/fanbox.png", x: -280, y: 295, size: 62, tilt: 12, corner: [0.94, 0.94] },
-    { src: "/assets/stickers/yuna.png", x: -140, y: 410, size: 84, tilt: -5, corner: [0.15, 0.75] },
-    { src: "/assets/stickers/f95zone.png", x: -265, y: 525, size: 58, tilt: 9, corner: [0.1, 0.9] },
+    { src: "/assets/films/q465087.webp", x: 145, y: 210, size: 114, tilt: -10, corner: [0.9, 0.9] },
+    { src: "/assets/people/q882.webp", x: 170, y: 430, size: 110, tilt: 8, corner: [0.06, 0.94] },
+    { src: "/assets/films/tears-of-steel.webp", x: -155, y: 210, size: 140, tilt: 7, corner: [0.85, 0.75], hint: true },
+    { src: "/assets/people/q7374.webp", x: -170, y: 440, size: 110, tilt: -5, corner: [0.15, 0.75] },
 ];
-const KEY = "peach.stickers.v3";
+const KEY = "peach.stickers.films.v1";
 const PAD = 36; // 贴图四周留的透明像素，白边画在这里（不计入显示尺寸）
 const ROOM = 2; // 盒子是贴纸的几倍大，给卷边和投影留地方
 const CARRY_AT = 0.5; // 边缘撕起到这个进度，开始整张跟着走
@@ -252,7 +247,7 @@ async function start() {
     setTimeout(tick, 2600);
     return stickers;
 }
-// 没有硬件加速时 WebGL 走软件渲染，九张贴纸的纹理生成与重绘会占满主线程好几秒；这时只留静态贴纸图。
+// 没有硬件加速时 WebGL 走软件渲染，电影贴纸的纹理生成与重绘会占满主线程好几秒；这时只留静态贴纸图。
 // 软件渲染作为回退时浏览器按 failIfMajorPerformanceCaveat 拒绝；被显式选中时只能从渲染器名称认出来。
 function accelerated() {
     for (const type of ["webgl2", "webgl"] as const) {

@@ -21,9 +21,12 @@
     "behavior:capture": "node scripts/capture_site_behavior.ts",
     "edit:sync": "node scripts/sync_copy_editor.ts",
     "i18n": "node scripts/build_i18n.ts",
+    "prei18n": "npm run credits:build",
+    "credits:build": "node scripts/build_credits.ts",
     "prebuild": "npm run browser:build",
     "build": "cf build",
     "assets:fetch": "node scripts/fetch_assets.ts",
+    "assets:prepare-films": "node scripts/prepare_films.ts",
     "cache:sync": "node scripts/cache_headers.ts",
     "check": "tsc --noEmit && tsc -p tsconfig.browser.json && node scripts/check.ts",
     "precheck": "npm run browser:build && cf workers types",
@@ -32,6 +35,7 @@
     "verify": "node scripts/check_publish.ts",
     "verify:typography": "node scripts/check_typography.ts",
     "verify:mobile": "node scripts/check_mobile.ts",
+    "verify:marquee": "node scripts/check_marquee.ts",
     "verify:downloads": "node scripts/check_downloads.ts",
     "verify:analytics": "node scripts/check_analytics.ts",
     "verify:interface": "node scripts/check_interface.ts",
@@ -53,6 +57,8 @@
     "test:behavior": "node scripts/check_behavior_browser.ts"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "@types/canvas-confetti": "1.9.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
@@ -66,8 +72,10 @@
   "dependencies": {
     "@cloudflare/kumo": "2.15.0",
     "@phosphor-icons/react": "2.1.10",
+    "canvas-confetti": "1.9.4",
     "jose": "6.2.13",
     "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react-dom": "19.3.1",
+    "tailwind-merge": "3.7.0"
   }
 }

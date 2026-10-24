@@ -1,0 +1,24 @@
+{
+  "sha256": "9f5d8e1bd3e4321e16997db73be49b6c4e0463e96d7f68530fd0b73c724194f0",
+  "sources": {
+    "browser/assets/boardui.ts": "ea902011928d4698dbd60b90f5c97fcf11da221ada71eef38b214f191c7eea68",
+    "browser/assets/edit-toolbar.ts": "47616f1e856994a4d74adc9847667225668dc37cbe0f14783e7468913fc82ba9",
+    "browser/vendor/boardui/components/base/buttons/button.tsx": "a49800d5cc58a9f8a98c07a7251e5923904b483b2f3e6e63e4fa0797acff101d",
+    "browser/vendor/boardui/components/base/buttons/link-button.tsx": "f56415d9b83cfb4af68d9f359ccb8925f885bce60e6d29d38d73b14966499aaf",
+    "browser/vendor/boardui/components/base/divider/divider.tsx": "ed2abe1e2e29e925c63c6d1ea0971e19f4549fe6fea0daca3373d47a87500338",
+    "browser/vendor/boardui/components/note.tsx": "fedbbc140e86712751c147ffc6451edb22770f2b56ec813b619ed0910068523f",
+    "browser/vendor/boardui/utils/cx.ts": "db35ea5afa8b2e0fd51319bc49288c4df7c98ec53440b43903636a32e3319d9d",
+    "node_modules/react-dom/cjs/react-dom-client.production.js": "a319b413b7a19ee34422d9a12a8e7afd003c07846716d278ba1a0898e8cb6251",
+    "node_modules/react-dom/cjs/react-dom.production.js": "7a05d7f7bb2b02aae84018a88d4815a2181eef48d2cb8172d403eaa2b131eefd",
+    "node_modules/react-dom/client.js": "00e348ab3d6bc2eef908345d0bc4e008c95bcfecec060dfda5c4967953761396",
+    "node_modules/react-dom/index.js": "ba1a3e33489f868371561777607e3ee5091df0f7ea3f1a10f789d6b86e4c1505",
+    "node_modules/react/cjs/react-jsx-runtime.production.js": "1e46f15002696985e80c61d47aaa30dabb03c954270a690f5f7dfbbacfa9002b",
+    "node_modules/react/cjs/react.production.js": "0b5529981841afa1b58c76ba85c29bb681ff5f07cd8cde6a10b967d3915b8e1c",
+    "node_modules/react/index.js": "60caffdecbdc5db3bc4ec4e83df9488345ccb271d07533b9210bf5750918d97e",
+    "node_modules/react/jsx-runtime.js": "b392951a77d0a2e6a6bd017e49d768481ae5b63c4109c6c31f622cf7b2433edc",
+    "node_modules/scheduler/cjs/scheduler.production.js": "679adff761d31e9426604f80c0e99be44a3e6f4c6834b0218ecf0312a67c171f",
+    "node_modules/scheduler/index.js": "145965504d60007bc25486ab930b0367867dcd5d579ccd343c148d69349a7cfb",
+    "node_modules/tailwind-merge/dist/bundle-mjs.mjs": "4a952fc10c828632c608dd103b7d8bcab097d9c6f32bfc343a2d9e0822c86116",
+    "site/assets/boardui.css": "3b6c3037027699b21610bedd5cf4bd617e2c88e1d65f7b77b66774c0b60924e7"
+  }
+}

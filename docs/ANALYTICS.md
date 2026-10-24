@@ -40,7 +40,7 @@ HTTP 请求包含图片、视频、缓存校验和自动化访问，不等于页
 
 - 构建浏览器资源：`npm run browser:build`。
 - 启动本地分析与文字编辑预览：`npm run dev:behavior`。预览使用独立空数据库，不连接生产访问事件。
-- 官网截图入口 `npm run behavior:capture -- <本地预览地址>` 覆盖中英文页面、三个下载平台、Mac 打开步骤与介绍视频。通用 `scripts/capture_behavior.ts` 接收本地预览地址和路由 JSON 文件，也支持带 `route`、`click` 选择器列表的场景；仅允许本地地址。
+- 官网截图入口 `npm run behavior:capture -- <本地预览地址>` 覆盖中英文页面、三个下载平台与 Mac 打开步骤。通用 `scripts/capture_behavior.ts` 接收本地预览地址和路由 JSON 文件，也支持带 `route`、`click` 选择器列表的场景；仅允许本地地址。
 - 发布前契约检查：`npm run behavior:check`。`PEACH_BEHAVIOR_ARTIFACTS` 可指定产物目录。
 - 采集链路浏览器回归：`npm run test:behavior`，使用临时数据库核验采集、隐私、会话和补充页。
 - 发布截图与元数据：`scripts/publish_behavior.ts` 接收产物目录、`site` 或 `demo`、当前构建指纹三个参数。先通过契约检查，再上传私有 R2、校验图片回读并分批登记和核对 D1；不插入访问事件。

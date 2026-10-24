@@ -5,7 +5,6 @@ export const siteScenes:(string|CaptureScene)[]=[...siteRoutes,...['/','/en/'].f
  {route,click:['[data-platform-option="macos"]']},
  {route,click:['[data-platform-option="docker"]']},
  {route,click:['[data-platform-option="macos"]','[data-mac-help]']},
- {route,click:['[data-media-01-open]']},
 ])];
 if(process.argv[1]&&fileURLToPath(import.meta.url)===process.argv[1]){
  const base=process.argv[2];if(!base)throw Error('请提供本地官网预览地址');

@@ -21,6 +21,24 @@ for (const file of published) {
 }
 const browser = await chromium.launch({ channel: 'chrome' }), report: Record<string,any>[] = [];
 try {
+    for (const width of [390, 1440]) {
+        const page = await browser.newPage({ viewport: { width, height: 844 }, javaScriptEnabled: false });
+        try {
+            const pictures: string[] = [];
+            page.on('request', request => { if (request.url().includes('/screenshots/')) pictures.push(request.url()); });
+            await page.goto(base, { waitUntil: 'load' });
+            const shot = await page.locator('#screen picture.on img').evaluate(img => {
+                let opacity = 1;
+                for (let node: Element | null = img; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
+                return { opacity, src: (img as HTMLImageElement).currentSrc, decoded: (img as HTMLImageElement).naturalWidth > 0 };
+            });
+            assert.equal(shot.opacity, 1, '导览主图在脚本不可用时直接可见');
+            assert.equal(shot.decoded, true);
+            assert.equal(pictures.length, 1, '响应式预加载与实际主图共用一次下载');
+            assert.equal(shot.src.includes('-compact-'), width <= 560);
+            report.push({ width, javascript: false, shot, pictureRequests: pictures.length });
+        } finally { await page.close(); }
+    }
     for (const width of [320, 390, 560, 561, 1440] as const) {
         const page = await browser.newPage({ viewport: { width, height: 844 }, locale: 'zh-CN', deviceScaleFactor: width === 390 ? 3 : 1, reducedMotion: 'reduce' }), errors: string[] = [], requests: string[] = [];
         page.on('pageerror', e => errors.push(e.message));

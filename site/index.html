@@ -18,6 +18,8 @@
 <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <!-- 下载按钮按访客平台改字、版本号来自发行清单；定稿前先隐去，最多等 3 秒。 -->
 <script src="/assets/boot.js"></script>
+<link rel="preload" as="image" media="(max-width:560px)" href="/assets/screenshots/home-compact-20261025-2-1440.webp" imagesrcset="/assets/screenshots/home-compact-20261025-2-1440.webp 1440w, /assets/screenshots/home-compact-20261025-2-1920.webp 1920w, /assets/screenshots/home-compact-20261025-2.webp 3840w" imagesizes="calc(100vw - 50px)" fetchpriority="high">
+<link rel="preload" as="image" media="(min-width:561px)" href="/assets/screenshots/home-wide-20261025-2-1280.webp" imagesrcset="/assets/screenshots/home-wide-20261025-2-1280.webp 1280w, /assets/screenshots/home-wide-20261025-2-1920.webp 1920w, /assets/screenshots/home-wide-20261025-2-2560.webp 2560w, /assets/screenshots/home-wide-20261025-2.webp 3840w" imagesizes="(min-width:1204px) 1134px, calc(100vw - 70px)" fetchpriority="high">
 <style>
 @font-face{font-family:"Inter Variable";font-style:normal;font-display:swap;font-weight:100 900;
   src:url(/assets/fonts/inter-latin-wght-normal.woff2) format("woff2")}
@@ -737,7 +739,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 
   <!-- 导览：窗口里切六个页面 -->
   <section id="tour">
-    <div class="wrap tour reveal">
+    <div class="wrap tour">
       <div class="window">
         <div class="screen" id="screen">
           <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261025-2-1440.webp 1440w, /assets/screenshots/home-compact-20261025-2-1920.webp 1920w, /assets/screenshots/home-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261025-2.webp" srcset="/assets/screenshots/home-wide-20261025-2-1280.webp 1280w, /assets/screenshots/home-wide-20261025-2-1920.webp 1920w, /assets/screenshots/home-wide-20261025-2-2560.webp 2560w, /assets/screenshots/home-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>

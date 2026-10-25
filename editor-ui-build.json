@@ -1,5 +1,5 @@
 {
-  "sha256": "9f5d8e1bd3e4321e16997db73be49b6c4e0463e96d7f68530fd0b73c724194f0",
+  "sha256": "862b08ead449c444c70cb116e60cf874e9edc7b13eca3401fbb226cd2c30b2dd",
   "sources": {
     "browser/assets/boardui.ts": "ea902011928d4698dbd60b90f5c97fcf11da221ada71eef38b214f191c7eea68",
     "browser/assets/edit-toolbar.ts": "47616f1e856994a4d74adc9847667225668dc37cbe0f14783e7468913fc82ba9",
@@ -19,6 +19,6 @@
     "node_modules/scheduler/cjs/scheduler.production.js": "679adff761d31e9426604f80c0e99be44a3e6f4c6834b0218ecf0312a67c171f",
     "node_modules/scheduler/index.js": "145965504d60007bc25486ab930b0367867dcd5d579ccd343c148d69349a7cfb",
     "node_modules/tailwind-merge/dist/bundle-mjs.mjs": "4a952fc10c828632c608dd103b7d8bcab097d9c6f32bfc343a2d9e0822c86116",
-    "site/assets/boardui.css": "3b6c3037027699b21610bedd5cf4bd617e2c88e1d65f7b77b66774c0b60924e7"
+    "site/assets/boardui.css": "a53fe4ae8503cf306f17f13ba5b28cdfb82f897681c58f658ab4fd76e851fe3c"
   }
 }

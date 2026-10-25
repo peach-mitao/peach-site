@@ -6,15 +6,15 @@
 
 ## 独立支持页
 
-所有请求先由 Worker 使用 Cloudflare 的 `request.cf.country` 与边缘设置的 `CF-Connecting-IP` 判断服务地区。Cloudflare 为 `CN`，或 DB-IP Country Lite、IPLocate Country 任一库命中大陆网段时，跳转到 `/unavailable`，提示页返回 403 并复用 404 样式。`HK`、`MO`、`TW` 不按国家码拦截；库间冲突时仍按任一来源命中即拦截，允许增加误封以减少漏放。两份库只提取 `CN`，IPv4、IPv6 及 IPv4 映射 IPv6 都在 Worker 内离线查询，不把访问者 IP 发给外部查询服务，也不使用语言、时区、`X-Forwarded-For` 或客户端地区声明。
+服务地区在 Cloudflare Single Redirects 阶段使用 `ip.src.country` 判断，范围只含官网与演示站。`CN` 的 GET／HEAD 请求以 302 跳转到同源 `/unavailable`，其他方法使用 303；提示页、样式、字体和标识放行。`HK`、`MO`、`TW` 与未知地区不按国家码拦截。动态接口另外检查可信的 `request.cf.country`，不使用客户端地区请求头、语言、时区或 `X-Forwarded-For`。
 
-跳转和提示页均为 `private, no-store`，只有提示页所需的样式、字体和标识直接放行。`runWorkerFirst: true` 保证每次服务器请求先判断地区，再读取静态缓存，因此资源请求均产生 Worker 调用。已在浏览器中显示或保存且没有发起请求的内容无法远程撤回。
+入口规则必须在选择性 Worker 路由生效前完成配置与验证。`runWorkerFirst` 只匹配动态接口和专用页面；公开页面和静态文件由 Assets 提供。提示页返回 403、`private, no-store`。独立媒体和下载域名不在本规则范围内。已经显示或保存且没有重新请求的内容无法远程撤回。
 
-官网的 Cloudflare Cron 在每天 06:30 UTC（Asia/Taipei 14:30）检查官方数据，保留原有统计清理定时器。DB-IP 使用当月版本，IPLocate 先查询官方最新提交，再按固定提交下载。归档按流解压与解析，不将整个 CSV 保存在内存中；每个来源缓存版本、SHA-256 与 CN 网段。两库成功且 IPv4／IPv6 完整、规模合理时，才原子替换 R2 `peach-region-data` 中的 `regions/cn/current.json`。大陆网段相同则不替换生效表，来源缓存可更新。失败保留当前表并记录定时器错误；定时日志包含版本、哈希和计数，不包含访问者 IP。
+生产请求不读取第三方地区数据库，Worker 不绑定地区 R2 桶，也不运行地区更新 Cron。地区依据由 Cloudflare 原生连接元数据提供；它与第三方网段并集的判定结果可能不同。地区识别没有零误判保证。
 
-两站通过 `REGION_DATA` 绑定共读 R2 生效表，每个 Worker 实例最多约五分钟重新读取一次，并合并并发读取；读取失败时继续用上一份有效表，冷启动兜底使用 `worker/region-data.ts` 的内置快照。定时更新不需要本机、Codex、GitHub Actions 或重新部署网站。R2 请求和存储按现有账户计量；数据版本、哈希与网段摘要可在 R2 对象及 Worker 定时日志中查看。
+使用 Cloudflare Request Trace 模拟 CN、HK、TW 的页面、资源和 POST 请求，确认地区跳转发生于 Worker 前，提示页资源不循环跳转，媒体与下载域名不受影响。Request Trace 的模拟结果不能代替实际站点内容与 HTTPS 验收。
 
-内置快照记录官方归档版本、下载地址、SHA-256 与来源计数。手工更新内置快照时使用 Python 标准库脚本 `scripts/build_region_data.py`，传入 `--dbip`、`--dbip-month`、`--iplocate` 和 `--iplocate-revision`。预览、网站构建与云端定时器不需要 Python。修改地区判断后验证命中、未命中、冲突、地址族、更新失败保留及热更新缓存。
+Workers Issues 保持启用，错误日志完整保留；`observability.logs.invocationLogs: false` 关闭逐请求调用日志。平台请求与 CPU 指标仍由 Workers Metrics 提供。安全扫描路径在边缘拦截，不转发给 Worker 或 Assets。
 
 404 位于 `site/404.html`，版权投诉中文源位于 `site/copyright/index.html`，英文页由 `npm run i18n` 生成。版权页按保存偏好或浏览器语言跳转到静态版本；404 由 `browser/assets/page-support.ts` 显示单一语言，显式 `lang` 参数优先。
 
@@ -148,7 +148,7 @@ Workers 静态资源请求免费且不限量；R2 不收公网出口流量费，
 
 本项目使用固定版本的 `cf` 与 [`cloudflare.config.ts`](https://developers.cloudflare.com/cf/projects/cloudflare-config/)，官网域名、Worker 名称和可观测性在此维护。`wrangler.config.ts` 仅维护打包器设置、素材目录和本地监听地址；Wrangler 是 cf 调用的打包依赖。`.cloudflare/` 保存生成类型和 Build Output，不进 Git。`npm run build` 执行 `cf build`，`npm run deploy` 执行 `cf deploy`。配置由官方 `cf migrate` 转换；这套配置仍为公开测试版，升级须核对构建和本地行为。
 
-站点有一个 Worker（`worker/index.ts`），`assets.runWorkerFirst` 只把 `/api/event` 交给它；页面、资源与未匹配路径都由静态资源层返回，不计 Worker 调用。未匹配路径返回 `site/404.html`，缺少这一页时资源层没有可返回的 404 页，扫描与探测请求会全部落到 Worker。Workers 免费档每天 10 万次调用按账号计，与演示站共用；超出后只有埋点收到 429，页面不受影响。
+站点有一个 Worker（`worker/index.ts`），`assets.runWorkerFirst` 匹配 `/api/*`、`/analytics*`、`/privacy/analytics*`、`/unavailable*` 与 `/credits/ip-data`。静态资源直出不计 Worker 调用；动态接口按实际调用计量。未匹配页面返回 `site/404.html`，发布包必须包含该页。生产 `workers.dev` 入口关闭，避免绕过区域规则；开发服务默认使用本地模拟绑定。
 
 Dependabot 分别对普通小版本更新与安全更新分组，大版本单独审阅；`@types/node` 保持 Node 24 运行基线，只自动更新同一大版本。CI 在 Windows 和 Linux 运行安装、类型与语法检查、行为测试和 cf 构建，Linux 另跑 Chromium 下载流程测试。依赖版本只在 `package.json` 与锁文件维护，素材清单的内容哈希不随工具版本机械改变。素材许可见 [NOTICE](../NOTICE.md)。
 

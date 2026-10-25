@@ -5,6 +5,8 @@
 .feature-category button{position:relative;z-index:1;padding:0;border:0;background:transparent;font:inherit;color:var(--Text-Muted);cursor:pointer;white-space:nowrap;transition:color .3s}
 .feature-category._3Yq4tG_active button,.feature-category button:hover{color:var(--Text-Loud)}
 .feature-card-wrapper[hidden]{display:none!important}
+.feature-card-wrapper,.feature-card-wrapper>.live{display:flex}
+.feature-card-wrapper .feature-card{height:auto}
 .live{--feature-top:rgba(32,35,91,.7);--feature-bottom:rgba(7,9,33,.7);--feature-accent:#B5B4FF}
 .live[data-mock=follow]{--feature-top:rgba(119,57,15,.76);--feature-bottom:rgba(39,19,7,.8);--feature-accent:#FF9D4D}
 .live[data-mock=taste]{--feature-top:rgba(77,37,104,.72);--feature-bottom:rgba(24,10,37,.82);--feature-accent:#DFB1FF}

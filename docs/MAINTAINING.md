@@ -146,6 +146,8 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 导航按钮按平台显示图标与「下载」或 Docker 的「部署」，无障碍名称保留完整平台说明。原位改字使用 `download.nav.<platform>`，与正文的 `download.primary.<platform>` 分开。按钮不使用正文外链箭头；正文中明确标记的外链和支持页引用保留标识。本地查看真实发行版本使用 `npm run dev:edit -- <端口>`；直接创建预览服务器时需显式启用 `publicReleases`，避免浏览器跨域读取失败后只显示回退来源的版本。自动验收继续使用合成发行清单。
 
+功能卡的包裹层与链接使用 Flex 拉伸，让同排卡片按最长说明自然等高。说明全文保留；内部 Grid 的弹性行吸收行数差异，分隔线、预览画面与底边对齐。中英文桌面和手机均测量这些边界，并检查说明未被截断。
+
 Docker 与 Windows、macOS 共用平台选择入口；Linux 桌面默认显示 Docker，手机保持通用入口。Docker 面板链接到主仓库部署指南与 Docker Hub，说明 `linux/amd64`、数据卷与媒体挂载，不将 ARM NAS 标为已验收。通过 `?platform=docker#download` 可直接预览 Docker 面板。
 
 ## 发布与 Cloudflare 配置

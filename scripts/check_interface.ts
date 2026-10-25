@@ -52,6 +52,14 @@ try {
                 // 首次可见才初始化；离屏不继续改写内容，重新进入可续播。
                 const card = page.locator('.live[data-mock="feed"]');
                 await card.scrollIntoViewIfNeeded();
+                await page.waitForFunction(()=>[...document.querySelectorAll('.feature-card-wrapper')].every(el=>el.getAnimations().every(animation=>animation.playState!=='running')));
+                const heights=await page.locator('.feature-card-wrapper:not([hidden]) .feature-card').evaluateAll(cards=>cards.map(card=>{
+                    const bounds=card.getBoundingClientRect(),divider=card.querySelector('.pFn2Lq_divider')!.getBoundingClientRect(),screen=card.querySelector('.live-screen')!.getBoundingClientRect();
+                    const text=card.querySelector('.pFn2Lq_description')!,range=document.createRange();range.selectNodeContents(text);
+                    return {height:bounds.height,divider:divider.top-bounds.top,screen:screen.top-bounds.top,textHeight:range.getBoundingClientRect().height,available:text.getBoundingClientRect().height};
+                }));
+                for(const key of ['height','divider','screen'] as const)assert.ok(Math.max(...heights.map(row=>row[key]))-Math.min(...heights.map(row=>row[key]))<1,`${language} ${width} 功能卡 ${key} 对齐：${JSON.stringify(heights)}`);
+                assert.ok(heights.every(row=>row.textHeight<=row.available+1),'完整保留所有说明文字');
                 assert.equal(await card.locator('.feature-icon svg use').count(),1);
                 assert.match(await card.locator('.feature-card').evaluate(el=>getComputedStyle(el).backgroundImage),/linear-gradient/);
                 assert.equal(await card.locator('.pFn2Lq_action svg path').count(),1);

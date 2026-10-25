@@ -20,6 +20,13 @@ export async function ensureReference(image:string,load:()=>Promise<Buffer>,uplo
  if(!image.endsWith('/'+createHash('sha256').update(body).digest('hex')+'.webp'))throw Error('R2 回读指纹不一致：'+image);
  return uploaded;
 }
+export async function forEachReference<T>(rows:readonly T[],operation:(row:T)=>Promise<void>){
+ let next=0,failed=false;
+ const results=await Promise.allSettled(Array.from({length:Math.min(4,rows.length)},async()=>{
+  while(!failed&&next<rows.length){const row=rows[next++]!;try{await operation(row)}catch(error){failed=true;throw error}}
+ }));
+ const failure=results.find(result=>result.status==='rejected');if(failure?.status==='rejected')throw failure.reason;
+}
 export function registrationBatches(layouts:Layout[],limit=512*1024){
  const chunks:{sql:string;params:unknown[]}[][]=[];let current:{sql:string;params:unknown[]}[]=[],bytes=2;
  for(const row of layouts){const statement={sql:'INSERT OR REPLACE INTO behavior_layouts(site,version,page,viewport,state,lang,image,width,height,boxes,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)',params:[row.site,row.version,row.page,row.viewport,row.state,row.lang,row.image,row.width,row.height,JSON.stringify(row.boxes),row.created]},size=Buffer.byteLength(JSON.stringify(statement))+1;if(size+2>limit)throw Error('单页布局元数据过大，请收窄截图场景');if(current.length&&(bytes+size>limit||current.length>=30)){chunks.push(current);current=[];bytes=2}current.push(statement);bytes+=size}
@@ -28,7 +35,7 @@ export function registrationBatches(layouts:Layout[],limit=512*1024){
 export async function publishBehavior(directory:string,site:Site,version:string,routes:string[]){
  const manifest=await checkBehaviorArtifacts(directory,site,version,routes);
  let completed=0;
- for(const row of manifest.layouts){await ensureReference(row.image,()=>cf(['r2','objects','get',row.image,'--bucket-name','peach-behavior-layouts']),()=>cf(['r2','objects','put',row.image,'--bucket-name','peach-behavior-layouts','--file',path.join(directory,row.image),'--content-type','image/webp']));completed++;if(completed%10===0||completed===manifest.layouts.length)console.log(`已回读核对 ${completed}/${manifest.layouts.length} 份 ${site} 参考图`)}
+ await forEachReference(manifest.layouts,async row=>{await ensureReference(row.image,()=>cf(['r2','objects','get',row.image,'--bucket-name','peach-behavior-layouts']),()=>cf(['r2','objects','put',row.image,'--bucket-name','peach-behavior-layouts','--file',path.join(directory,row.image),'--content-type','image/webp']));completed++;if(completed%10===0||completed===manifest.layouts.length)console.log(`已回读核对 ${completed}/${manifest.layouts.length} 份 ${site} 参考图`)});
  await mkdir(path.join(root,'evidence'),{recursive:true});const file=path.join(root,'evidence/behavior-register.json');
  for(const batch of registrationBatches(manifest.layouts)){await writeFile(file,JSON.stringify(batch));await cf(['d1','query','11f04f71-9abb-4073-8fec-116078742e97','--batch','@'+file])}
  const queries=manifest.layouts.map(row=>({sql:'SELECT image,width,height,boxes FROM behavior_layouts WHERE site=? AND version=? AND page=? AND viewport=? AND state=? AND lang=?',params:[row.site,row.version,row.page,row.viewport,row.state,row.lang]}));

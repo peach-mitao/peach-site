@@ -65,12 +65,12 @@ test('生产采集拒绝缺失 Stream，不向 D1 回退写入；发送失败不
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,0);
  }finally{sqlite.close()}
 });
-test('归档查询编码参数、去重事件并拒绝写入和错误响应',async()=>{
+test('归档查询编码参数并拒绝写入和错误响应',async()=>{
  const config={BEHAVIOR_SQL_TOKEN:'test-secret',BEHAVIOR_SQL_ACCOUNT:'account',BEHAVIOR_SQL_BUCKET:'private-bucket'};
  const calls:{url:string;query:string}[]=[];
  const db=archiveDatabase(config,async(input,options)=>{calls.push({url:String(input),query:JSON.parse(String(options?.body)).query});assert.equal(new Headers(options?.headers).get('authorization'),'Bearer test-secret');return Response.json({success:true,result:{rows:[{events:1}]}})});
  assert.deepEqual(await db.prepare('SELECT COUNT(*) events FROM behavior_events WHERE session=? AND at>=?').bind("x' OR 1=1 --",123).all(),{results:[{events:1}]});
- assert.ok(calls[0].query.includes("session='x'' OR 1=1 --'"));assert.ok(calls[0].query.includes('PARTITION BY id'));assert.ok(calls[0].query.includes('at>=123'));
+ assert.ok(calls[0].query.includes("session='x'' OR 1=1 --'"));assert.ok(calls[0].query.includes('at>=123'));
  await assert.rejects(db.prepare('DELETE FROM behavior_events').all(),/只允许读取/);
  await assert.rejects(db.prepare('SELECT * FROM behavior_events WHERE id=?').all(),/参数不足/);
  const denied=archiveDatabase(config,async()=>Response.json({success:false,errors:[{code:40004}]},{status:400}));
@@ -84,6 +84,22 @@ test('功能点击率按页面去重；热力图必须选择具体布局',async(
   const exact=await report(database,new URL(base+'&layout='+ 'a'.repeat(64)+'&page=/&viewport=desktop&state=default&lang=zh-CN'),now);assert.ok(exact.points);assert.equal(exact.points.length,2);
  }finally{sqlite.close()}
 });
+
+test('日志查询暂时不可用时返回受保护的错误响应',async()=>{
+ const unavailable={prepare(){throw Error('upstream unavailable')},async batch(){return []}};
+ const response=await behaviorRequest(new Request('http://127.0.0.1/analytics/api/report'),{BEHAVIOR:unavailable,BEHAVIOR_PREVIEW:'1'});
+ assert.equal(response!.status,503);assert.equal(response!.headers.get('retry-after'),'300');assert.equal(response!.headers.get('cache-control'),'private, no-store');assert.deepEqual(await response!.json(),{error:'archive_unavailable'});
+});
+test('历史会话按选择的时间范围查询，并显式分页保留完整时间线',async()=>{
+ const {database,sqlite}=behaviorStorage(':memory:'),session=id(),at=now-60*86400e3;
+ try{
+  await insert({BEHAVIOR:database},Array.from({length:1001},(_,seq)=>event({at:at+seq,seq})),session);
+  const url='http://127.0.0.1/analytics/api/session?id='+session+'&days=365',env={BEHAVIOR:database,BEHAVIOR_PREVIEW:'1'};
+  const first=await behaviorRequest(new Request(url),env);assert.equal((await first!.json() as unknown[]).length,1000);assert.equal(first!.headers.get('x-peach-next-offset'),'1000');
+  const last=await behaviorRequest(new Request(url+'&offset=1000'),env);assert.equal((await last!.json() as {seq:number}[])[0].seq,1000);assert.equal(last!.headers.has('x-peach-next-offset'),false);
+  const recent=new URL(url);recent.searchParams.set('days','30');assert.deepEqual(await (await behaviorRequest(new Request(recent),env))!.json(),[]);
+ }finally{sqlite.close()}
+});
 test('跨站会话只在真正的最后页面计入离开，活动会话不计入',async()=>{
  const {database,sqlite}=behaviorStorage(':memory:'),env={BEHAVIOR:database},session=id();
  try{
@@ -92,6 +108,21 @@ test('跨站会话只在真正的最后页面计入离开，活动会话不计�
   await insert(env,[event({at:now-60000})]);
   const site=await report(database,new URL('https://peach.video/analytics/api/report?section=journey&site=site'),now);assert.deepEqual(site.exits,[]);
   const demo=await report(database,new URL('https://peach.video/analytics/api/report?section=journey&site=demo'),now);assert.deepEqual(demo.exits,[{page:'/stats',target:'region.content',count:1}]);assert.deepEqual(demo.sources,[{referrer:'search.example',sessions:1}]);assert.deepEqual(demo.paths,[{node:'site:/',next:'demo:/stats',count:1}]);
+ }finally{sqlite.close()}
+});
+test('至少一次交付的重复记录不放大点击、曝光、路径、漏斗和会话计数',async()=>{
+ const {database,sqlite}=behaviorStorage(':memory:'),env={BEHAVIOR:database},sid=id(),view=id();
+ try{
+  await insert(env,[event({at:now-3600000,view}),event({at:now-3599000,view,kind:'click',target:'download.primary',x:.5,y:.5}),event({at:now-3599000,view,kind:'click',target:'download.primary',x:.5,y:.5})],sid);
+  await insert(env,[event({site:'demo',at:now-3598000}),event({site:'demo',at:now-3597000,kind:'click',target:'link.stats'}),event({site:'demo',at:now-3596000,kind:'navigate',destination:'download'})],sid);
+  sqlite.exec('CREATE TABLE repeated AS SELECT * FROM behavior_events; INSERT INTO repeated SELECT * FROM behavior_events; INSERT INTO repeated SELECT * FROM behavior_events');
+  const repeated={prepare(sql:string){return database.prepare(sql.replaceAll(/\bbehavior_events\b/g,'repeated'))},batch:database.batch.bind(database)};
+  for(const site of ['site','demo'])for(const section of ['heatmap','journey','visits']){
+   const url=new URL(`https://peach.video/analytics/api/report?site=${site}&section=${section}`);
+   assert.deepEqual(await report(repeated,url,now),await report(database,url,now));
+  }
+  const response=await behaviorRequest(new Request('http://127.0.0.1/analytics/api/session?id='+sid),{BEHAVIOR:repeated,BEHAVIOR_PREVIEW:'1'});
+  assert.equal((await response!.json() as unknown[]).length,6);
  }finally{sqlite.close()}
 });
 test('转化漏斗遵守事件顺序与筛选，下载先于演示不算完成',async()=>{

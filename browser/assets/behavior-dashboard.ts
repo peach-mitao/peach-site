@@ -1,7 +1,7 @@
 import type {Layout,Box} from './behavior-contract.ts';
 import {enhanceSelects} from './behavior-controls.ts';
 type Row=Record<string,string|number|null>;
-interface Report {summary:Row;targets:Row[];points:Row[];paths:Row[];exits:Row[];sessions:Row[];sources:Row[];pages:Row[];layouts:(Omit<Layout,'boxes'>&{boxes:string})[];funnel:Row}
+interface Report {summary:Row;targets:Row[];points:Row[];paths:Row[];exits:Row[];sessions:Row[];sources:Row[];pages:Row[];layouts:Omit<Layout,'boxes'>[];funnel:Row}
 const $=<T extends HTMLElement=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const form=$<HTMLFormElement>('#filters'),status=$('#status'),layout=$<HTMLSelectElement>('#layout');
 const refreshControls=enhanceSelects();
@@ -24,6 +24,7 @@ const stateName=(value:string)=>({'platform.windows':'Windows','platform.macos':
 async function fetchJSON<T>(url:string):Promise<T>{const response=await fetch(url,{credentials:'same-origin'});if(!response.ok)throw new Error(response.status===401?'登录已失效，请刷新后重新登录。':`读取失败（${response.status}），请稍后重试。`);return response.json() as Promise<T>}
 async function load(){
  const token=++generation;status.textContent='正在读取…';status.classList.remove('error');form.setAttribute('aria-busy','true');
+ ++detailGeneration;$('#session-detail').replaceChildren();$('#session-more').hidden=true;
  try{
   const result=await fetchJSON<Report>('/analytics/api/report?'+params());if(token!==generation)return;data=result;
   table($('#targets'),['区域 / 按钮','可见页面','点击页面','点击率','点击次数'],result.targets.map(row=>[`${row.target}${Number(row.slot)?' #'+(Number(row.slot)+1):''}`,number(row.exposures),number(row.clicked_views),Number(row.exposures)?(Number(row.clicked_views)/Number(row.exposures)*100).toFixed(1)+'%':'—',number(row.clicks)]));
@@ -43,9 +44,10 @@ async function load(){
  }catch(error){if(token===generation){status.textContent=String((error as Error).message);status.classList.add('error')}}finally{if(token===generation)form.removeAttribute('aria-busy')}
 }
 let detailGeneration=0;
-async function session(id:string,button:HTMLButtonElement){
+async function session(id:string,button:HTMLButtonElement,offset=0){
  const token=++detailGeneration;button.setAttribute('aria-busy','true');button.setAttribute('aria-disabled','true');
- try{const rows=await fetchJSON<Row[]>('/analytics/api/session?id='+id);if(token!==detailGeneration)return;const list=document.createElement('ol');list.className='timeline';for(const row of rows){const li=document.createElement('li');li.textContent=`${time(row.at)} · ${displaySite(row.site)} ${row.page} · ${row.kind} ${row.target||row.destination||''}`;list.append(li)}$('#session-detail').replaceChildren(list)}catch(error){status.textContent=(error as Error).message}finally{button.removeAttribute('aria-busy');button.removeAttribute('aria-disabled')}
+ if(!offset)$('#session-more').hidden=true;
+ try{const query=new URLSearchParams({id,offset:String(offset),days:params().get('days')||'7'}),response=await fetch('/analytics/api/session?'+query,{credentials:'same-origin'});if(!response.ok)throw Error(`读取失败（${response.status}），请稍后重试。`);const rows=await response.json() as Row[];if(token!==detailGeneration)return;const list=offset?$('#session-detail').querySelector('ol')!:document.createElement('ol');list.className='timeline';for(const row of rows){const li=document.createElement('li');li.textContent=`${time(row.at)} · ${displaySite(row.site)} ${row.page} · ${row.kind} ${row.target||row.destination||''}`;list.append(li)}if(!offset)$('#session-detail').replaceChildren(list);const more=$<HTMLButtonElement>('#session-more'),next=response.headers.get('x-peach-next-offset');more.hidden=!next;more.onclick=()=>void session(id,more,Number(next))}catch(error){status.textContent=(error as Error).message}finally{button.removeAttribute('aria-busy');button.removeAttribute('aria-disabled')}
 }
 let heatGeneration=0;
 async function heatmap(){
@@ -54,8 +56,8 @@ async function heatmap(){
  if(!row){empty(parent,'暂无页面截图','发布对应页面的截图后，可查看该版本的点击分布。');return}
  const query=params();query.set('section','heatmap');for(const key of ['page','viewport','state','lang'] as const)query.set(key,row[key]);query.set('layout',row.version);
  try{
-  const result=await fetchJSON<Report>('/analytics/api/report?'+query);if(token!==heatGeneration)return;
-  const boxes=JSON.parse(row.boxes) as Box[],image=new Image();image.alt=`${pageName(row.page)} · ${device(row.viewport)}页面截图`;image.src='/analytics/image?'+query;
+  const [result,selectedLayout]=await Promise.all([fetchJSON<Report>('/analytics/api/report?'+query),fetchJSON<{boxes:string}>('/analytics/api/layout?'+query)]);if(token!==heatGeneration)return;
+  const boxes=JSON.parse(selectedLayout.boxes) as Box[],image=new Image();image.alt=`${pageName(row.page)} · ${device(row.viewport)}页面截图`;image.src='/analytics/image?'+query;
   image.onerror=()=>{if(token===heatGeneration)empty(parent,'截图未取得','请重新发布当前布局的参考截图。')};
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox',`0 0 ${row.width} ${row.height}`);svg.setAttribute('aria-label','点击位置');
   const maximum=Math.max(1,...result.points.map(point=>Number(point.hits)));let hits=0,omitted=0;

@@ -68,5 +68,8 @@ try{
   await chainPage.getByRole('combobox',{name:'设备',exact:true}).click();await chainPage.getByRole('option',{name:'手机',exact:true}).click();await chainPage.waitForLoadState('networkidle');
   for(const name of ['访问动线','会话明细','点击热力图']){await chainPage.getByRole('tab',{name,exact:true}).click();await chainPage.waitForLoadState('networkidle');assert.equal(await chainPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false)}
  }
- await chain.close();assert.deepEqual(errors,[]);console.log('PASS 浏览器 → 采集 API → SQLite → 分析页；桌面/手机筛选与三个视图');
+ const sample=sqlite.prepare('SELECT * FROM behavior_events LIMIT 1').get()!,sid='c'.repeat(32),columns=Object.keys(sample),statement=sqlite.prepare(`INSERT INTO behavior_events(${columns.join(',')}) VALUES(${columns.map(()=>'?').join(',')})`);
+ for(let seq=0;seq<1001;seq++){const row={...sample,id:crypto.randomUUID().replaceAll('-',''),session:sid,at:Date.now()+seq,seq};statement.run(...columns.map(key=>row[key as keyof typeof row] as string|number))}
+ await chainPage.goto(base+'/analytics/');await chainPage.getByRole('tab',{name:'会话明细',exact:true}).click();await chainPage.locator('#sessions button').filter({hasText:sid.slice(0,8)}).click();await chainPage.waitForFunction(()=>document.querySelectorAll('#session-detail li').length===1000);await chainPage.locator('#session-more').click();await chainPage.waitForFunction(()=>document.querySelectorAll('#session-detail li').length===1001);assert.equal(await chainPage.locator('#session-more').isVisible(),false);
+ await chain.close();assert.deepEqual(errors,[]);console.log('PASS 浏览器 → 采集 API → SQLite → 分析页；桌面/手机筛选、三个视图与完整时间线分页');
 }finally{await browser.close();server.closeAllConnections();await new Promise<void>((resolve,reject)=>server.close(error=>error?reject(error):resolve()));sqlite.close()}

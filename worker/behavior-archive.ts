@@ -16,11 +16,9 @@ export function archiveDatabase(env:ArchiveConfig,request:typeof fetch=fetch):Da
    let index=0;
    // 查询模板由服务端维护；所有外部值仅通过 SQL 字面量编码进入参数位置。
    const source=sql.replaceAll(/\bbehavior_events\b/g,'peach.behavior_events');
-   // 管道允许至少一次交付；事件 ID 负责精确去重，不丢弃不同 ID 的真实事件。
-   const template=source.replaceAll('peach.behavior_events',"(SELECT * FROM peach.behavior_events QUALIFY ROW_NUMBER() OVER(PARTITION BY id ORDER BY at)=1)");
-   const query=template.replaceAll('?',()=>{if(index>=values.length)throw Error('查询参数不足');return literal(values[index++])});
+   const query=source.replaceAll('?',()=>{if(index>=values.length)throw Error('查询参数不足');return literal(values[index++])});
    if(index!==values.length)throw Error('查询参数过多');
-   const response=await request(endpoint,{method:'POST',headers:{authorization:'Bearer '+env.BEHAVIOR_SQL_TOKEN,'content-type':'application/json'},body:JSON.stringify({query})});
+   const response=await request(endpoint,{method:'POST',headers:{authorization:'Bearer '+env.BEHAVIOR_SQL_TOKEN,'content-type':'application/json'},body:JSON.stringify({query}),signal:AbortSignal.timeout(60000)});
    const data=await response.json() as {success?:boolean;result?:{rows?:T[]};errors?:{code?:number}[]};
    if(!response.ok||!data.success||!Array.isArray(data.result?.rows))throw Error('日志查询失败：'+response.status+' / '+(data.errors?.map(error=>error.code).join(',')||'invalid_response'));
    return {results:data.result.rows};

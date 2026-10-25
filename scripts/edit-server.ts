@@ -54,12 +54,13 @@ export function bounds(html: string) {
   return { from, to };
 }
 
-export async function page(file: string, port: number) {
-  return serialize(file,()=>editablePage(file,port));
+export interface SourceView {render(source:string):string;extract(html:string):string;saved():Promise<void>}
+export async function page(file: string, port: number,view?:SourceView) {
+  return serialize(file,()=>editablePage(file,port,view));
 }
-async function editablePage(file:string,port:number){
+async function editablePage(file:string,port:number,view?:SourceView){
   const html = await readFile(file, "utf8");
-  return injectEditor(html,port,await currentHistory(file));
+  return injectEditor(view?view.render(html):html,port,await currentHistory(file));
 }
 export function injectEditor(html:string,port:number,history:Awaited<ReturnType<typeof currentHistory>>,extra:Record<string,unknown>={}){
   const { from, to } = bounds(html);
@@ -140,22 +141,22 @@ function cleanInline(html: string) {
   return html;
 }
 
-export async function post(file:string,kind:'tab'|'text'|'copy'|'block'|'undo'|'redo',input:unknown){
+export async function post(file:string,kind:'tab'|'text'|'copy'|'block'|'undo'|'redo',input:unknown,view?:SourceView){
   return serialize(file,async()=>{
     try{
       if(!input||typeof input!=='object')return {status:400,json:{error:'编辑请求格式无效'}};
       const body=input as Record<string,unknown>;
-      if(kind==='undo'||kind==='redo')return await travel(file,kind,body.revision);
+      if(kind==='undo'||kind==='redo'){const result=await travel(file,kind,body.revision);if(result.status===200)await view?.saved();return result}
       if(!sameRevision(await readFile(file,'utf8'),body.revision))return {status:409,json:{error:'源文件已被其他操作修改，请刷新后重试'}};
-      const result=await applyPost(file,kind,input);
+      const result=await applyPost(file,kind,input,view);
       return result.status===200?{...result,json:{...result.json,history:await currentHistory(file)}}:result;
     }catch(error){if(error instanceof EditConflict)return {status:409,json:{error:(error instanceof Error ? error.message : String(error))}};throw error}
   });
 }
-async function applyPost(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown) {
+async function applyPost(file: string, kind: 'tab' | 'text' | 'copy' | 'block', input: unknown,view?:SourceView) {
   const before=await readFile(file,'utf8');
-  const {html,...result}=editHtml(before,kind,input);
-  if(result.status===200&&html!==undefined)await save(file,before,html);
+  const {html,...result}=editHtml(view?view.render(before):before,kind,input);
+  if(result.status===200&&html!==undefined){await save(file,before,view?view.extract(html):html);await view?.saved()}
   return result;
 }
 export interface EditResult {status:number;json:Record<string,unknown>;html?:string}

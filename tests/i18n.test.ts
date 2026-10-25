@@ -1,11 +1,23 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-import { buildLocale, translateHtml } from '../scripts/build_i18n.ts';
+import { buildLocale, translateHtml, finishTranslation, sourceCopyOverrides } from '../scripts/build_i18n.ts';
 const locale = {
     attributes: { lang: { 'zh-CN': 'en' }, href: { '/': '/en/' } },
     text: { '下载': 'Download', '首页': 'Home', '<b>全在这了</b>': "<b>It's all here</b>" },
 };
+
+test('动态译文绑定当前中文，变更后报告缺译，撤销后移除绑定', () => {
+    const bound = { ...locale, overrides: { title: 'New title' }, overrideSources: { title: '新标题' } };
+    const source = (value: string) => `<body data-copy-overrides='${JSON.stringify({ title: value })}'></body>`;
+    const report = { missing: new Set<string>(), used: new Set<string>() };
+    assert.deepEqual(sourceCopyOverrides(finishTranslation('<head></head><body></body>', bound, source('新标题'), report)), { title: 'New title' });
+    assert.deepEqual([...report.missing], []);
+    finishTranslation('<head></head><body></body>', bound, source('另一标题'), report);
+    assert.deepEqual([...report.missing], ['动态文案 title: 另一标题']);
+    assert.deepEqual(sourceCopyOverrides(finishTranslation('<head></head><body></body>', bound, '<body></body>')), {});
+    assert.deepEqual(sourceCopyOverrides(finishTranslation('<head></head><body></body>', bound, source(''))), { title: '' });
+});
 test('按整段原文替换文字与可读属性，保留文档类型和结构', () => {
     const report: {missing:Set<string>;used:Set<string>} = { missing: new Set(), used: new Set() };
     const html = translateHtml('<!doctype html>\n<html lang="zh-CN"><a href="/" aria-label="首页"> 下载 </a>'

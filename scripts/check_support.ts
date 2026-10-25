@@ -35,4 +35,21 @@ try{
   await page.locator('#result').waitFor({state:'visible'});assert.match(await page.locator('#notice').inputValue(),/Synthetic work/);assert.match(await page.locator('#compose').getAttribute('href')||'',/^mailto:dmca@peach.video\?/);assert.deepEqual(sent,[]);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await context.close();console.log(`PASS copyright ${width} ${locale}: 自动版本、表单整理与无外发`);
  }
+ if(!demo)for(const width of [320,1025])for(const language of ['zh-CN','en']){
+  const context=await browser.newContext({viewport:{width,height:844},locale:language,colorScheme:language==='en'?'light':'dark'}),page=await context.newPage();
+  const prefix=language==='en'?'/en':'';
+  for(const route of ['/credits/','/copyright/']){
+   await page.goto(new URL(prefix+route+'?edit',base).href,{waitUntil:'networkidle'});
+   const title=await page.locator('h1').innerText(),editor=await beginEdit(page,page.locator('h1'));
+   await editor.fill('临时标题');await editor.press('Escape');assert.equal(await page.locator('h1').innerText(),title);
+   const arrows=await page.locator('.support-document a[href^="http"]').evaluateAll(links=>links.map(link=>getComputedStyle(link,'::after').maskImage));
+   assert.ok(arrows.length>0);assert.ok(arrows.every(mask=>mask.includes('data:image/svg')),'外链均显示图形标识');
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   if(route==='/credits/'){
+    const sizes=await page.evaluate(()=>['h1','h2','h3','p'].map(selector=>parseFloat(getComputedStyle(document.querySelector('.support-document '+selector)!).fontSize)));
+    assert.ok(sizes[0]>sizes[1]&&sizes[1]>sizes[2]&&sizes[2]>sizes[3],'来源页面标题层级清楚');
+   }
+  }
+  await context.close();console.log(`PASS 支持页 ${width} ${language}: 层级、外链、编辑取消与布局`);
+ }
 }finally{await browser.close()}

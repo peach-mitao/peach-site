@@ -21,6 +21,14 @@
     }
   },
   "text": {
+    "功能分类": "Feature categories",
+    "全部功能": "All features",
+    "订阅与关注": "Follow",
+    "偏好与外观": "Personalize",
+    "功能预览": "Feature previews",
+    "切换功能卡片": "Browse features",
+    "上一个功能": "Previous feature",
+    "下一个功能": "Next feature",
     "站点信息": "Site information",
     "页面语言": "Page language",
     "版权投诉": "Copyright",
@@ -108,7 +116,7 @@
     "CloudDrive2 需要单独安装。如果你已经用它挂载了网盘，Peach 在配置后能够直接识别。": "Install CloudDrive2 separately. If you already use it to mount cloud drives, Peach can recognize them after setup.",
     "从源码运行": "Run from source",
     "复制": "Copy",
-    "开发者使用，需要 Git 和": "Requires Git and",
+    "需要 Git 和": "Requires Git and",
     "。详见": ". See ",
     "运行与配置": "setup and configuration",
     "项目与联系开发者": "Project links and developer contact",
@@ -273,7 +281,9 @@
     "缩放至240像素宽并转换为WebP；头像按圆形容器裁切。": "Resized to 240 pixels wide and converted to WebP; cropped to a circle for the avatar."
   },
   "runtime": {
+    "部署": "Deploy",
     "Windows、macOS 与 Docker": "Windows, macOS and Docker",
+    "下载": "Download",
     "下载 Windows 版": "Download",
     "下载 macOS 版": "Download",
     "部署 Docker 版": "Deploy",

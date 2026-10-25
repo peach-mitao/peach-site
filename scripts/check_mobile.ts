@@ -53,7 +53,7 @@ try {
             assert.equal(await page.locator('#screen img[src]').count(), 1);
             assert.equal(requests.length, 1, '初次只读取首页截图');
             assert.equal(requests[0].includes('-compact-'), width <= 560, '只读取当前视口的图片');
-            assert.equal(await page.locator('.feature-more').isVisible(), width > 560);
+            assert.equal(await page.locator('.feature-more').count(),1);
             assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'), '#download');
             assert.equal(await page.locator('.package-option:visible').count(), 2);
             const downloads = await page.locator('.windows-download .package-option a').evaluateAll(ns => ns.map(n => ({ text: n.textContent.trim(), href: (n as HTMLAnchorElement).href })));
@@ -86,7 +86,7 @@ try {
                 assert.equal(dimensions.fit, 'contain');
                 assert.equal(await page.locator('#screen picture.on').getAttribute('data-k'), key);
                 assert.equal(await page.locator('.dock button[aria-selected=true]').getAttribute('data-k'), key);
-                await page.waitForFunction(() => [...(document.querySelectorAll('#screen picture') as NodeListOf<HTMLElement>)].every(p => Math.abs(Number(getComputedStyle(p).opacity) - (p.classList.contains('on') ? 1 : 0)) < .001));
+                await page.waitForFunction(() => {const frame=document.getElementById('screen')!,shot=document.querySelector('#screen picture.on')!;return Math.abs(shot.getBoundingClientRect().left-frame.getBoundingClientRect().left-frame.clientLeft)<1});
                 assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
                 if (width === 390 || width === 1440) {
                     await page.evaluate(() => scrollTo({ top: scrollY + (document.querySelector('.window') as HTMLElement).getBoundingClientRect().top - 100, behavior: 'instant' }));

@@ -19,6 +19,7 @@
 !/browser/
 !/docs/
 !/scripts/
+!/templates/
 !/worker/
 !/tests/
 !/i18n/
@@ -41,6 +42,8 @@
 /site/assets/*
 !/site/assets/media-01.css
 !/site/assets/support.css
+!/site/assets/raycast-features.css
+!/site/assets/peach-features.css
 !/site/assets/support-ui/
 !/site/assets/peach-logo.png
 !/site/assets/peach-logo-192.webp

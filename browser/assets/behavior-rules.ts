@@ -8,6 +8,8 @@ export const siteRules:Rule[]=[
  rule('nav.language.zh','中文','a[lang="zh-CN"]'),rule('nav.language.en','英文','a[lang="en"]'),
  rule('external.github','GitHub','a[href*="github.com"]'),rule('external.telegram','Telegram','a[href*="t.me/"]'),rule('external.x','X','a[href*="x.com/"]'),
  rule('demo.open','打开演示','a[href^="https://demo.peach.video"]'),
+ ...['all','library','personal'].map(id=>rule('features.filter.'+id,id,`[data-feature-filter="${id}"]`)),
+ rule('features.previous','上一个功能','[data-feature-step="-1"]'),rule('features.next','下一个功能','[data-feature-step="1"]'),
  rule('external.docker','镜像仓库','a[href^="https://hub.docker.com/"]'),
  rule('tour.open','界面导览','.hero a[href="#tour"]'),rule('credits.open','素材来源与许可','a[href="/credits/"],a[href="/en/credits/"]'),
  rule('nav.download','下载区域','a[href="#download"]'),rule('external.microsoft','Windows 安全说明','a[href^="https://support.microsoft.com/"]'),rule('external.gitgud','GitGud','a[href^="https://gitgud.io/"]'),rule('external.uv','uv 安装文档','a[href^="https://docs.astral.sh/"]'),

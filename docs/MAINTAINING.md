@@ -70,7 +70,7 @@ npm run check:deploy
 
 CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不访问真实 GitHub API，也不要求下载媒体。电影素材与导览完整性由下述发布验收覆盖。Node 直接运行可擦除类型的 TS；`tsconfig.json` 与 `tsconfig.browser.json` 分别严格检查 Node／Worker 和浏览器代码。检查入口拒绝在维护源码目录新增 `.js` 或 `.mjs`。
 
-`npm run browser:build` 通过 esbuild 将 `browser/assets/`、`browser/copyright/` 和编辑适配器编译到对应的浏览器 JS 路径。构建、预览、检查、测试与 npm 部署入口自动准备这些文件；直接调用 cf 前须先生成浏览器产物。编译副本不进 Git。第三方库与按来源锁定的共享编辑核心保持 JS 产物，不在本站维护副本实现。
+`npm run browser:build` 通过 esbuild 将 `browser/assets/`、`browser/copyright/` 和编辑适配器编译到对应的浏览器 JS 路径，生成素材来源页与英文页，最后计算布局指纹。缺译、过期译文或动态文案缺少对应原文绑定时拒绝完成构建。构建、预览、检查、测试与 npm 部署入口自动准备这些文件；直接调用 cf 前须先生成浏览器产物。编译副本不进 Git。第三方库与按来源锁定的共享编辑核心保持 JS 产物，不在本站维护副本实现。
 
 ## 素材与预览
 
@@ -78,9 +78,13 @@ CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不�
 
 首页六页导览使用演示站的真实应用截图，路径位于 `site/assets/screenshots/`，采用 `20261025` 日期与响应式候选。桌面保持 16:9，手机以 4:3 展示完整桌面布局；切换前等待解码，快速切换时只有最后一次选择生效。左右方向键、Home 与 End 可切换导览标签。电影图像不能代替应用截图。
 
+指针选择导览时，截图按原站组件的原生横向 `scrollTo` 移动；键盘与减少动态效果时立即对齐。功能卡采用锁定版本的原站 CSS、DOM 层级和滚动逻辑，支持分类、前后按钮与触屏横滑；品牌、图标、语义配色和预置界面集中在 `peach-features.css` 适配，创作者使用 RSS 橙色。`sync_raycast_features.ts` 是参考样式同步入口，普通构建不联网同步。来源与差异见 [Raycast 首页](reference-snapshots/raycast-home.md)。
+
 导览主图直接显示，不依赖脚本添加可见性类。首页在文档头按视口预加载同一组响应式候选，`imagesrcset` 与 `imagesizes` 必须和实际图片一致；浏览器验收确认只读取一张当前候选，避免重复下载与手机误取桌面图。其他内容的入场动效继续由可见性观察器管理。
 
 电影与人物图像分别位于 `site/assets/films/`、`site/assets/people/`，来源维护在 `docs/film-sources.json`。图片取得后运行 `npm run assets:prepare-films` 更新清单；`assets:fetch` 从锁定的来源恢复图像，并从维护清单生成机器可读来源文件。来源 HTML 页面位于 `site/credits/index.html`，由 `npm run credits:build` 生成，英文沿用 `npm run i18n`；检查入口拒绝来源页未同步。首页只在页脚提供来源页面入口。
+
+来源页的布局和说明维护在 `templates/credits.html`，`/credits/?edit` 保存说明并重新生成页面，撤销也恢复模板；素材署名和许可须维护来源清单。中英文来源页与版权页均使用支持页的标题层级、分组间距和外链图标。
 
 三条资料滚动条沿用 48px 图像、66px 卡片与原方向和周期：电影行、创作行、演员行分别为 108、95、107 秒，创作行反向。每行复制一份以首尾相接，副本标记 `aria-hidden`；单份内容不短于 1920px。悬停暂停，减少动态效果时保留可横向浏览的静态条目。电影行与创作行使用不同作品，演员行使用对应人物的真实头像。
 
@@ -118,6 +122,8 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 ## 多语言
 
+维护中文改字时，同批更新对应英文、动态覆盖与生成页，不使用外部自动翻译服务。动态中文覆盖的译文保存在 `overrides`，对应中文原文保存在 `overrideSources`；构建逐键核对原文，拒绝沿用其他版本的译文。中文删除或不含中文的值直接同步；撤销掉中文覆盖时，其绑定译文不继续覆盖默认英文。英文编辑入口保存动态文字时会记录当前中文原文。
+
 `site/index.html` 与 `site/copyright/index.html` 是唯一手编的中文源。英文页 `site/en/` 由 `npm run i18n` 生成并随源码提交，译文在 `i18n/en.json`：
 
 | 字段 | 内容 |
@@ -138,9 +144,23 @@ Windows 的系统安全提示链接到 [Microsoft 应用与浏览器控制说明
 
 首页与页尾的下载说明统一使用「平台 · v版本号」。Windows、macOS 的版本来自完整公开发行包；Docker 版本由 Shields 的镜像版本 JSON 接口按语义版本查询，独立于安装包版本。只接受符合版本格式的值，版本未取得时只显示平台名。公开下载清单同时核对 R2 与 GitHub，同版本优先 R2。本地编辑预览通过同源代理读取公开 R2 清单。
 
+导航按钮按平台显示图标与「下载」或 Docker 的「部署」，无障碍名称保留完整平台说明。原位改字使用 `download.nav.<platform>`，与正文的 `download.primary.<platform>` 分开。按钮不使用正文外链箭头；正文中明确标记的外链和支持页引用保留标识。本地查看真实发行版本使用 `npm run dev:edit -- <端口>`；直接创建预览服务器时需显式启用 `publicReleases`，避免浏览器跨域读取失败后只显示回退来源的版本。自动验收继续使用合成发行清单。
+
 Docker 与 Windows、macOS 共用平台选择入口；Linux 桌面默认显示 Docker，手机保持通用入口。Docker 面板链接到主仓库部署指南与 Docker Hub，说明 `linux/amd64`、数据卷与媒体挂载，不将 ARM NAS 标为已验收。通过 `?platform=docker#download` 可直接预览 Docker 面板。
 
 ## 发布与 Cloudflare 配置
+
+官网功能卡按画面中的实际操作进入演示站，不用相邻页面代替。当前入口如下；更换演示资料时须同步人物身份与对应详情路径。
+
+| 功能卡 | 演示站路径 | 对应内容 |
+| --- | --- | --- |
+| 订阅艺人 | `/performers/135` | 查理·卓别林详情与订阅入口 |
+| 关注创作者 | `/subscriptions?tab=add` | 关注管理的添加关注页 |
+| 口味分析 | `/taste` | 口味页 |
+| 自定义外观 | `/settings/appearance` | 外观与导航设置 |
+| 影片墙 | `/wall` | 播放墙 |
+
+关注内容列表使用 `/follow?media=images`，与添加关注的入口分开；官网导览中的关注截图从该列表取得。旧的 `/follow-manage` 不作为公开入口。
 
 素材应先取得并核对来源、许可与哈希，再用 `npm run deploy` 发布页面。`site/.assetsignore` 排除原型与历史素材，本地编辑服务位于发布目录之外。
 

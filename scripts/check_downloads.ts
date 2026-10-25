@@ -145,7 +145,7 @@ try {
                     const expectedCaption = { windows: 'Windows · v0.46.1', macos: 'macOS · v0.46.1', docker: 'Docker · v7.8.9', other: 'Windows、macOS 与 Docker' }[scenario.system];
                     assert.deepEqual(await page.locator('[data-download-caption]').allTextContents(), [expectedCaption, expectedCaption]);
                     const expected = scenario.system === 'docker' ? '部署 Docker 版' : scenario.system === 'other' ? '下载 Peach' : `下载 ${scenario.system === 'macos' ? 'macOS' : 'Windows'} 版`;
-                    assert.deepEqual(await primary.locator('span').allTextContents(), [expected, expected, expected]);
+                    assert.deepEqual(await primary.locator('span').allTextContents(), [scenario.system === 'docker' ? '部署' : '下载', expected, expected]);
                     for (const link of await primary.all()) {
                         assert.ok((await link.getAttribute('href'))!.endsWith(scenario.file));
                         assert.equal(await link.locator('use').getAttribute('href'), scenario.icon);
@@ -213,7 +213,7 @@ try {
                     const docker = page.locator('[data-download-panel="docker"]');
                     assert.equal(await docker.isVisible(), true);
                     assert.equal(await page.locator('[data-source-panel]').isVisible(), false);
-                    assert.deepEqual(await primary.locator('span').allTextContents(), Array(3).fill('部署 Docker 版'));
+                    assert.deepEqual(await primary.locator('span').allTextContents(), ['部署','部署 Docker 版','部署 Docker 版']);
                     assert.equal(await docker.getByRole('link', { name: '查看部署指南' }).getAttribute('href'), 'https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md');
                     assert.equal(await docker.getByRole('link', { name: '打开镜像仓库' }).getAttribute('href'), 'https://hub.docker.com/r/longmeidao/peach');
                     assert.deepEqual(await docker.locator('> p:has(code) code').allTextContents(), ['/data', '/media']);

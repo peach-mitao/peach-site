@@ -3,8 +3,8 @@
 .support-document{max-width:760px}
 .support-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .support-top a,.support-document p a{color:var(--color-text-primary);text-decoration:underline;text-underline-offset:4px}
-.support-document h1{font-size:20px;font-weight:500;line-height:26px}
-.support-document h2{font-size:16px;font-weight:600;line-height:24px;margin:0}
+.support-document h1{font-size:24px;font-weight:600;line-height:32px}
+.support-document h2{font-size:18px;font-weight:600;line-height:26px;margin:0;color:var(--color-text-primary)}
 .support-document p:not(.boardui-root *),.support-document li:not(.boardui-root *){font-size:14px;line-height:22px;color:var(--color-text-secondary);overflow-wrap:anywhere;margin:0}
 .support-document form{display:grid;gap:24px}
 .support-document label{display:grid;gap:8px;font-size:14px;font-weight:500;line-height:20px;color:var(--color-text-primary)}
@@ -19,6 +19,17 @@
 .support-document button:not(.boardui-root *):disabled{background:var(--color-background-tertiary-default);color:var(--color-text-disabled);cursor:not-allowed}
 .support-document .actions{display:flex;gap:8px;flex-wrap:wrap}
 .support-document .subtle{font-size:12px;line-height:18px}
+.support-document > header{gap:12px}
+.support-document > header img{margin-bottom:4px}
+.support-document .support-section{display:grid;gap:12px;margin-top:12px}
+.support-document .credit-group{display:grid;margin-top:12px}
+.support-document .credit-group > h2{margin-bottom:16px}
+.support-document .credit-item{padding:22px 0;border-top:1px solid var(--color-separator-border)}
+.support-document .credit-item h3{margin:0 0 8px;font-size:16px;font-weight:600;line-height:24px;color:var(--color-text-primary)}
+.support-document .credit-item p{margin:6px 0}
+.support-document .credit-links{display:flex;align-items:center;flex-wrap:wrap;gap:6px 18px}
+.support-document .credit-links a{display:inline-flex;align-items:center;min-height:32px}
+.support-document a[href^="http"]:not(.action):not([role="button"])::after{content:"";display:inline-block;flex:none;width:.8em;height:.8em;margin-left:.3em;vertical-align:-.04em;background:currentColor;-webkit-mask:var(--external-arrow) center/contain no-repeat;mask:var(--external-arrow) center/contain no-repeat;--external-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E")}
 .support-document .result{display:grid;gap:16px;border-top:1px solid var(--color-separator-border);padding-top:24px}
 .support-document #notice{min-height:280px}
 .support-preference{display:grid;gap:16px;padding:24px 0;border-top:1px solid var(--color-separator-border);border-bottom:1px solid var(--color-separator-border)}

@@ -1,4 +1,4 @@
-export interface Locale {attributes?:Record<string,Record<string,string>>;text:Record<string,string>;runtime?:Record<string,string>;pages?:Record<string,string>;overrides?:Record<string,string>}
+export interface Locale {attributes?:Record<string,Record<string,string>>;text:Record<string,string>;runtime?:Record<string,string>;pages?:Record<string,string>;overrides?:Record<string,string>;overrideSources?:Record<string,string>}
 export interface TranslationBinding {key:string;from:number;to:number;valueFrom:number;valueTo:number}
 interface TranslationReport {missing:Set<string>;used:Set<string>;bindings?:TranslationBinding[]}
 // 由中文页生成其他语言的页面。中文 HTML 是唯一手编源，译文按原文片段保存在 i18n/<语言>.json。
@@ -87,11 +87,27 @@ export function translateHtml(html: string, locale: Locale, report: TranslationR
     }
     return out;
 }
-export function finishTranslation(translated:string,locale:Locale){
+export function sourceCopyOverrides(html:string):Record<string,string>{
+    const body=html.match(/<body\b[^>]*>/)?.[0]||'',value=body.match(/\sdata-copy-overrides=(?:"([^"]*)"|'([^']*)')/);
+    if(!value)return {};
+    return JSON.parse((value[1]??value[2]).replaceAll('&quot;','"').replaceAll('&#39;',"'").replaceAll('&lt;','<').replaceAll('&gt;','>').replaceAll('&amp;','&'));
+}
+export function finishTranslation(translated:string,locale:Locale,source?:string,report?:TranslationReport){
     const runtime=JSON.stringify(locale.runtime||{}).replaceAll('<','\\u003c');
     let html=translated.replace('</head>',`<script>window.PEACH_I18N=${runtime}</script>\n</head>`);
-    if(locale.overrides&&Object.keys(locale.overrides).length){
-        const attribute=escapeAttribute(JSON.stringify(locale.overrides),'"').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    const overrides:Record<string,string>={...locale.overrides};
+    if(source!==undefined){
+        for(const key of Object.keys(locale.overrideSources||{}))delete overrides[key];
+        for(const [key,value] of Object.entries(sourceCopyOverrides(source))){
+            const text=locale.overrideSources?.[key]===value?locale.overrides?.[key]:undefined;
+            if(value===''){overrides[key]='';continue}
+            if(text!==undefined){overrides[key]=text;continue}
+            if(!CJK.test(value)){overrides[key]=value;continue}
+            report?.missing.add(`动态文案 ${key}: ${value}`);overrides[key]=value;
+        }
+    }
+    if(Object.keys(overrides).length){
+        const attribute=escapeAttribute(JSON.stringify(overrides),'"').replaceAll('<','&lt;').replaceAll('>','&gt;');
         html=html.replace(/<body\b/,()=>'<body data-copy-overrides="'+attribute+'"');
     }
     return html;
@@ -120,7 +136,7 @@ export async function buildLocale(code: string, { write = false, projectRoot = d
         // 签出可能是 CRLF；统一按 LF 生成与比较。
         const html = (await readFile(path.join(root, 'site', source), 'utf8')).replaceAll('\r\n', '\n');
         const banner = `<!-- 由 scripts/build_i18n.ts 从 site/${source} 生成，译文在 i18n/${code}.json；不要直接编辑本文件。 -->\n`;
-        const translated = finishTranslation(translateHtml(html, locale, report),locale)
+        const translated = finishTranslation(translateHtml(html, locale, report),locale,html,report)
             .replace(/^<!doctype html>\n/i, match => match + banner);
         const file = path.join(root, 'site', target);
         const current = (await readFile(file, 'utf8').catch(() => null))?.replaceAll('\r\n', '\n');

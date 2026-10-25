@@ -3,6 +3,21 @@ const t=(text:string)=>window.PEACH_I18N?.[text]??text;
 const shots=[...(document.querySelectorAll('#screen picture') as NodeListOf<HTMLElement>)];
 const tabs=[...(document.querySelectorAll('.dock button') as NodeListOf<HTMLElement>)];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
+const dock=document.querySelector<HTMLElement>('.dock')!,tour=document.querySelector<HTMLElement>('.tour')!;
+const screen=document.getElementById('screen')!;
+const scrollShot=(index:number,instant:boolean)=>{
+  const target=shots[index].getBoundingClientRect(),viewport=screen.getBoundingClientRect();
+  screen.scrollTo({left:target.left+screen.scrollLeft-viewport.left-screen.clientLeft,behavior:instant?'instant':'smooth'});
+};
+new ResizeObserver(()=>scrollShot(tabs.findIndex(tab=>tab.getAttribute('aria-selected')==='true'),true)).observe(screen);
+const indicator=document.createElement('span');indicator.className='dock-indicator';indicator.setAttribute('aria-hidden','true');dock.prepend(indicator);
+const placeIndicator=(tab:HTMLElement)=>{
+  indicator.style.width=tab.offsetWidth+'px';indicator.style.height=tab.offsetHeight+'px';
+  indicator.style.transform=`translate3d(${tab.offsetLeft}px,${tab.offsetTop}px,0)`;
+};
+placeIndicator(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!);
+requestAnimationFrame(()=>dock.classList.add('has-indicator'));
+new ResizeObserver(()=>placeIndicator(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!)).observe(dock);
 const loadShot=(tab: HTMLElement)=>{
   const picture=shots.find(shot=>shot.dataset.k===tab.dataset.k);
   const source=(picture!.querySelector('source') as HTMLSourceElement),img=(picture!.querySelector('img') as HTMLImageElement);
@@ -13,18 +28,63 @@ const loadShot=(tab: HTMLElement)=>{
   return img;
 };
 let shotRequest=0;
-tabs.forEach(tab=>tab.addEventListener('click',async()=>{
+tabs.forEach(tab=>tab.addEventListener('click',async event=>{
   const request=++shotRequest,img=loadShot(tab);
   try{await img.decode()}catch{return}
   if(request!==shotRequest)return;
+  tour.classList.toggle('is-instant',event.detail===0);
   tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
-  shots.forEach(img=>img.classList.toggle('on',img.dataset.k===tab.dataset.k));
+  const selectedIndex=tabs.indexOf(tab),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  shots.forEach((shot,index)=>shot.classList.toggle('on',index===selectedIndex));
+  scrollShot(selectedIndex,reduced||event.detail===0);
+  placeIndicator(tab);
   label!.textContent=tab.dataset.label!;
   say!.innerHTML=tab.dataset.say!;
 }));
 tabs.forEach(tab=>tab.addEventListener('mouseenter',()=>{label!.textContent=tab.dataset.label!;loadShot(tab)}));
 tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));
 (document.querySelector('.dock') as HTMLElement).addEventListener('mouseleave',()=>{label!.textContent=tabs.find(t=>t.getAttribute('aria-selected')==='true')!.dataset.label!});
+// 移植原站模块 926753 的滚动、边界与分类底板逻辑；静态页面适配见参考记录。
+{
+  const reel=document.querySelector<HTMLElement>('.feature-reel')!;
+  const cards=[...reel.querySelectorAll<HTMLElement>('.feature-card-wrapper')];
+  const filters=[...document.querySelectorAll<HTMLButtonElement>('[data-feature-filter]')];
+  const filterGroup=document.querySelector<HTMLElement>('.feature-filters')!,filterIndicator=document.createElement('span');
+  filterIndicator.className='feature-filter-indicator _3Yq4tG_activeBackdrop';filterIndicator.setAttribute('aria-hidden','true');filterGroup.prepend(filterIndicator);
+  const placeFilter=()=>{const selected=filters.find(button=>button.getAttribute('aria-pressed')==='true')!;
+    const category=selected.parentElement!;
+    filterIndicator.style.setProperty('--width',category.clientWidth+24+'px');
+    filterIndicator.style.setProperty('--offset',category.offsetLeft+'px');
+  };
+  placeFilter();new ResizeObserver(placeFilter).observe(filterGroup);
+  const previous=document.querySelector<HTMLButtonElement>('[data-feature-step="-1"]')!;
+  const next=document.querySelector<HTMLButtonElement>('[data-feature-step="1"]')!;
+  const firstCard=()=>cards.find(card=>!card.hidden);
+  const sync=()=>{const first=firstCard();if(!first)return;previous.disabled=reel.scrollLeft===0;next.disabled=reel.scrollLeft+reel.clientWidth>=reel.scrollWidth-first.clientWidth};
+  const move=(direction:number,instant:boolean)=>{
+    const first=firstCard();if(!first)return;
+    reel.scrollTo({left:reel.scrollLeft+first.clientWidth*direction,behavior:instant||matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  };
+  document.querySelectorAll<HTMLButtonElement>('[data-feature-step]').forEach(button=>button.addEventListener('click',event=>move(Number(button.dataset.featureStep),event.detail===0)));
+  reel.addEventListener('keydown',event=>{if(event.target!==reel||!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();move(event.key==='ArrowRight'?1:-1,true)});
+  filters.forEach(button=>button.addEventListener('click',event=>{
+    if(button.getAttribute('aria-pressed')==='true')return;
+    const instant=event.detail===0||matchMedia('(prefers-reduced-motion: reduce)').matches;
+    reel.parentElement!.querySelectorAll('.feature-exit').forEach(node=>node.remove());
+    if(!instant){
+      // 原组件的 TransitionGroup 退出副本仅负责绘制，不参与编辑、焦点与埋点。
+      const outgoing=reel.cloneNode(true) as HTMLElement;outgoing.removeAttribute('id');outgoing.inert=true;outgoing.setAttribute('aria-hidden','true');outgoing.classList.add('feature-exit','_3Yq4tG_reelExit');
+      reel.parentElement!.append(outgoing);outgoing.scrollLeft=reel.scrollLeft;
+      requestAnimationFrame(()=>outgoing.classList.add('_3Yq4tG_reelExitActive'));setTimeout(()=>outgoing.remove(),300);
+    }
+    filterGroup.classList.toggle('is-instant',event.detail===0);
+    filters.forEach(filter=>{filter.setAttribute('aria-pressed',String(filter===button));filter.parentElement!.classList.toggle('_3Yq4tG_active',filter===button)});
+    placeFilter();
+    let index=0;cards.forEach(card=>{card.hidden=button.dataset.featureFilter!=='all'&&card.dataset.category!==button.dataset.featureFilter;if(!card.hidden)card.style.setProperty('--delay',100+80*index+++'ms')});
+    reel.scrollTo({left:0,behavior:'instant'});sync();
+  }));
+  reel.addEventListener('scroll',sync,{passive:true});new ResizeObserver(sync).observe(reel);sync();
+}
 // 导览截图在指向、聚焦或切换对应标签时加载。
 const pageLoaded=document.readyState==='complete' ? Promise.resolve() : new Promise(resolve=>addEventListener('load',resolve,{once:true}));
 

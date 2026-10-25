@@ -80,9 +80,12 @@ function start() {
         const label = state.platform === 'windows' ? t('下载 Windows 版') : state.platform === 'macos' ? t('下载 macOS 版')
             : state.platform === 'docker' ? t('部署 Docker 版') : t('下载 Peach');
         const icon = state.platform === 'windows' ? '#i-windows' : state.platform === 'macos' ? '#i-apple' : state.platform === 'docker' ? '#i-docker' : '#i-download';
+        const compactLabel=state.platform==='docker'?t('部署'):t('下载');
         (document.querySelectorAll('[data-primary-download]') as NodeListOf<HTMLAnchorElement>).forEach(link => {
             link.href = file?.href || '#download';
-            renderCopy((link.querySelector('span') as HTMLElement), `download.primary.${state.platform}`, label);
+            const compact=Boolean(link.closest('.nav'));
+            renderCopy((link.querySelector('span') as HTMLElement), `download.${compact?'nav':'primary'}.${state.platform}`, compact?compactLabel:label);
+            link.setAttribute('aria-label',label);
             (link.querySelector('use') as SVGUseElement).setAttribute('href', icon);
             link.title = state.platform === 'macos' && !state.architecture ? t('选择 Apple Silicon 或 Intel 版本') : label;
         });

@@ -6,6 +6,7 @@ import {stat, readFile} from 'node:fs/promises';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import * as edit from './edit-server.ts';
 import * as localeEdit from './edit-locale.ts';
+import * as creditsEdit from './edit-credits.ts';
 
 const types: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript',
@@ -82,7 +83,8 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         const kind=name.endsWith('/undo')?'undo':name.endsWith('/redo')?'redo':name.endsWith('/tab')?'tab':name.endsWith('/copy')?'copy':name.endsWith('/block')?'block':'text';
         let refererPath='/';try{refererPath=new URL(req.headers.referer||'http://localhost/').pathname}catch{}
         const localeContext=await localeEdit.forRoute(root,refererPath);
-        const result = localeContext?await localeEdit.post(localeContext,kind,input):await edit.post(options.editIndex?.(req)??editableSource(req),kind,input);
+        const creditsContext=localeContext?null:await creditsEdit.context(root,refererPath);
+        const result = localeContext?await localeEdit.post(localeContext,kind,input):await edit.post(creditsContext?.file??options.editIndex?.(req)??editableSource(req),kind,input,creditsContext?.view);
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }
@@ -107,6 +109,8 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
       if(url.searchParams.has('edit')){
         const localeContext=await localeEdit.forRoute(root,name);
         if(localeContext){const address=server.address();reply(injectPreview(injectDownloads(await localeEdit.page(localeContext,address&&typeof address!=='string'?address.port:0))),types['.html']);return}
+        const creditsContext=await creditsEdit.context(root,name);
+        if(creditsContext){const address=server.address();reply(await edit.page(creditsContext.file,address&&typeof address!=='string'?address.port:0,creditsContext.view),types['.html']);return}
       }
       if (name === '/' || name === '/index.html') {
         if (url.searchParams.has('edit')) {

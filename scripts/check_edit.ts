@@ -8,9 +8,10 @@ import { chromium, type Locator } from 'playwright';
 import sharp from 'sharp';
 import { createPreviewServer } from './serve.ts';
 // 写操作只落到临时站点，验证真实编辑、平台切换、重绘与刷新后的持久化。
-const root = await mkdtemp(path.join(tmpdir(), 'peach-edit-browser-'));
+const project = await mkdtemp(path.join(tmpdir(), 'peach-edit-browser-')),root=path.join(project,'site');
 await cp(fileURLToPath(new URL('../site/', import.meta.url)), root, { recursive: true,
     filter: source => !(/\.(png|webp|jpg|mp4|woff2|zip|dmg)$/i.test(source)) });
+for(const directory of ['templates','docs'])await cp(fileURLToPath(new URL('../'+directory+'/',import.meta.url)),path.join(project,directory),{recursive:true});
 const server = await createPreviewServer({ root });
 let browser;
 try {
@@ -63,7 +64,7 @@ try {
         }
         const mac = page.locator('[data-platform-option="macos"]');
         const docker = page.locator('[data-platform-option="docker"]');
-        const sentence = page.locator('.say.lg .sub').nth(2);
+        const sentence = page.locator('#features .say.lg .sub');
         await edit(sentence, `Peach 是你的个人资源管理库 ${width}。`);
         assert.equal(await sentence.innerText(), `Peach 是你的个人资源管理库 ${width}。`);
         await page.reload({ waitUntil: 'networkidle' });
@@ -161,6 +162,13 @@ try {
         await dialog.getByRole('button', { name: '知道了', exact: true }).click();
         await dialog.waitFor({ state: 'hidden' });
         assert.equal(await page.locator('[data-copy-bar]').isVisible(), true);
+        await page.goto(new URL('/credits/?edit',base).href,{waitUntil:'networkidle'});
+        const heading=page.locator('h1'),originalHeading=await heading.innerText();
+        await edit(heading,`来源说明 ${width}`);
+        await page.reload({waitUntil:'networkidle'});assert.equal(await heading.innerText(),`来源说明 ${width}`);
+        assert.match(await readFile(path.join(project,'templates/credits.html'),'utf8'),new RegExp(`来源说明 ${width}`));
+        await command(()=>page.getByRole('button',{name:'撤销',exact:true}).click());
+        assert.equal(await heading.innerText(),originalHeading);
         console.log(`PASS ${width}: 编辑保存、整段误删撤销、重做、原生输入撤销、弹窗打开编辑与撤销`);
         await page.close();
     }
@@ -169,5 +177,5 @@ finally {
     await browser?.close();
     server.closeAllConnections();
     await new Promise(resolve => server.close(resolve));
-    await rm(root, { recursive: true, force: true });
+    await rm(project, { recursive: true, force: true });
 }

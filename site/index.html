@@ -31,6 +31,7 @@
   --font:"Inter Variable","Segoe UI","Microsoft YaHei UI","PingFang SC",sans-serif;
   --mono:"Cascadia Mono",Consolas,ui-monospace,"Microsoft YaHei UI",monospace;
   --wrap:1204px;
+  --ease-out:cubic-bezier(.23,1,.32,1);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
@@ -39,7 +40,7 @@ a{color:inherit;text-decoration:none}
 /* 正文外链整条换行，末尾的箭头不单独落到下一行。 */
 p a[href^="http"]{white-space:nowrap}
 /* 外链箭头用 SVG 遮罩绘制，跟随文字颜色；iOS 不会把它换成 emoji。 */
-.ext::after{content:"";display:inline-block;width:.78em;height:.78em;margin-left:.22em;vertical-align:-.04em;background:currentColor;
+.ext:not(.btn):not([role="button"])::after{content:"";display:inline-block;flex:none;width:.78em;height:.78em;margin-left:.22em;vertical-align:-.04em;background:currentColor;
   -webkit-mask:var(--ext-arrow) center/contain no-repeat;mask:var(--ext-arrow) center/contain no-repeat;
   --ext-arrow:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E")}
 img,video{display:block;max-width:100%}
@@ -84,8 +85,9 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .lang-list{position:absolute;left:0;top:calc(100% + 8px);z-index:20;min-width:156px;margin:0;padding:6px;list-style:none;border-radius:12px;border:1px solid var(--hair-3);
   background:linear-gradient(137deg,rgba(17,18,20,.94) 4.87%,rgba(12,13,15,.98) 75.88%);box-shadow:inset 0 1px 1px rgba(255,255,255,.12),0 12px 32px rgba(0,0,0,.45)}
 .lang-list a{display:flex;align-items:center;justify-content:space-between;gap:16px;height:36px;padding:0 10px;border-radius:8px;font-size:14px;color:var(--ink-2);white-space:nowrap}
-.lang-list a:is(:hover,:focus-visible){color:var(--ink);background:rgba(255,255,255,.08)}
-:is(html[lang="zh-CN"] .lang-list [lang="zh-CN"],html[lang="en"] .lang-list [lang="en"]){color:var(--ink)}
+.lang-list li+li{margin-top:4px}
+.lang-list a:is(:hover,:focus-visible){color:var(--ink);background:rgba(255,255,255,.035)}
+:is(html[lang="zh-CN"] .lang-list [lang="zh-CN"],html[lang="en"] .lang-list [lang="en"]){color:var(--ink);background:rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
 :is(html[lang="zh-CN"] .lang-list [lang="zh-CN"],html[lang="en"] .lang-list [lang="en"])::after{content:"";width:14px;height:14px;background:currentColor;
   -webkit-mask:var(--check) center/contain no-repeat;mask:var(--check) center/contain no-repeat;
   --check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
@@ -124,8 +126,7 @@ body:has(.site-notice){padding-bottom:96px}
 .cta-download{display:grid;justify-items:center}
 /* 按钮宽度容得下各平台的文字，换字时不改变位置；文字与版本行定稿后淡入。 */
 .cta-download>.btn{min-width:180px}
-.nav [data-primary-download]{min-width:162px}
-:lang(en) .nav [data-primary-download]{min-width:124px}
+.nav [data-primary-download]{min-width:86px}
 [data-primary-download]>*,.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]{transition:opacity .2s}
 .dl-label-pending [data-primary-download]>*,.dl-meta-pending :is(.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]){opacity:0}
 .cta-secondary{display:flex;justify-content:center;gap:12px}
@@ -139,8 +140,8 @@ body:has(.site-notice){padding-bottom:96px}
   box-shadow:0 0 40px 20px rgba(255,255,255,.03),inset 0 .5px 0 rgba(255,255,255,.3)}
 .window .screen{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--hair-2);background:#07080A;aspect-ratio:16/9;
   box-shadow:0 0 2px rgba(255,255,255,.19),inset 0 .5px 0 rgba(255,255,255,.1)}
-.window .screen picture{position:absolute;inset:0;opacity:0}
-.window .screen picture.on{opacity:1}
+.window .screen picture{position:relative;width:100%;height:100%;pointer-events:none}
+.tour.is-instant .dock.has-indicator .dock-indicator{transition:none}
 .window .screen img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
 .tour{position:relative;margin-top:-40px}
 /* 点顶栏「导览」跳过来时，产品窗口落在粘性顶栏下方，不被它盖住 */
@@ -150,11 +151,11 @@ body:has(.site-notice){padding-bottom:96px}
 .dock-wrap{display:flex;flex-direction:column;align-items:center;margin-top:-46px;position:relative;z-index:2}
 .dock-label{font-size:12.5px;font-weight:500;color:var(--ink);margin-bottom:10px;height:26px;padding:0 10px;display:grid;place-items:center;border-radius:8px;
   background:rgba(12,13,16,.8);border:1px solid var(--hair-2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
-.dock{display:flex;gap:10px;padding:9px;border-radius:20px;border:1px solid var(--hair);
+.dock{position:relative;display:flex;gap:10px;padding:9px;border-radius:20px;border:1px solid var(--hair);
   background:linear-gradient(181deg,rgba(0,0,0,.1) 4.5%,rgba(255,255,255,.03) 99.51%),rgba(12,13,16,.72);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   box-shadow:0 0 1px rgba(0,0,0,.2),0 2px 2px rgba(0,0,0,.17),0 4px 3px rgba(0,0,0,.1),0 4px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.1)}
-.dock button{width:54px;height:54px;display:grid;place-items:center;border-radius:12px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;
+.dock button{position:relative;z-index:1;width:54px;height:54px;display:grid;place-items:center;border-radius:12px;border:1px solid transparent;background:transparent;color:var(--muted);cursor:pointer;
   transition:background .2s,color .2s,border-color .2s}
 .dock button svg{width:22px;height:22px}
 .dock button:hover{color:var(--ink)}
@@ -162,14 +163,12 @@ body:has(.site-notice){padding-bottom:96px}
   background:radial-gradient(1139.98% 138.18% at 0 0,rgba(255,255,255,.1) 0%,rgba(255,255,255,0) 100%);
   box-shadow:0 7px 3px rgba(0,0,0,.03),0 4px 4px rgba(0,0,0,.25)}
 .stage-say{margin-top:32px;min-height:60px}
+.dock-indicator{position:absolute;left:0;top:0;border:1px solid #2F3031;border-radius:12px;pointer-events:none;background:radial-gradient(130% 160% at 10% 0,rgba(255,255,255,.14),rgba(255,255,255,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 4px rgba(0,0,0,.25)}
+.dock.has-indicator .dock-indicator{transition:transform 260ms var(--ease-out)}
+.dock.has-indicator button[aria-selected="true"]{border-color:transparent;background:transparent;box-shadow:none}
 
 /* 动效卡用 HTML/CSS 展示简化的 Peach 界面，脚本在上面演一遍，
    播完复原再来。按 720×450 排版，再整体缩到卡片宽度；卡片进入画面才播，减少动态效果时停在第一帧。 */
-.live-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:48px}
-.live{display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s}
-.live:hover{border-color:var(--hair-3)}
-.live-screen{position:relative;margin:24px 28px 28px;aspect-ratio:720/450;border-radius:10px;overflow:hidden;
-  border:1px solid var(--hair-2);background:#0B0C0F;content-visibility:auto}
 /* 播放墙按真实界面缩排：无圆角作品块、方形展开块、块内标题与两行控制条。 */
 .mk-wall{overflow:hidden;background:#070707;color:#F7F4EE}
 .mk-wall-world{position:absolute;inset:0;width:900px;height:620px;transform:translate(-30px,-30px);transition:transform 950ms cubic-bezier(.77,0,.175,1)}
@@ -216,8 +215,6 @@ body:has(.site-notice){padding-bottom:96px}
 .mk-wall.playing .mk-wall-head strong{font-size:9px}
 .mk-wall-play .pause,.mk-wall.playing:not(.paused) .mk-wall-play .play{display:none}
 .mk-wall.playing:not(.paused) .mk-wall-play .pause{display:block}
-.feature-more{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:28px;text-align:center}
-.feature-more img{width:96px;height:96px;opacity:.65}
 .mk{position:absolute;left:0;top:0;width:720px;height:450px;transform-origin:0 0;transform:scale(var(--mk-s,.75));
   font:13px/1.45 var(--font);color:#EDEEF0;text-align:left;
   --mk-line:rgba(255,255,255,.08);--mk-dim:#8B9098;--mk-surface:#16171B;--mk-raise:#1E2025;--mk-blue:#2F7BF5;--mk-red:#E5484D}
@@ -568,7 +565,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 /* 进场：只淡入一次 */
 .reveal{opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
 .reveal.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.window .screen picture{transition:none}html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.window .screen picture{transform:none;transition:opacity 100ms ease}.dock.has-indicator .dock-indicator{transition:none}.live{transition:border-color 100ms ease}.live:hover{transform:none}html{scroll-behavior:auto}}
 
 /* 窄屏 */
 @media (max-width:960px){
@@ -577,7 +574,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .nav-bar{display:flex;justify-content:space-between}
   .split{grid-template-columns:1fr;gap:32px}
   .keys{grid-template-columns:repeat(2,1fr)}
-  .live-grid{grid-template-columns:1fr}
   .dl{grid-template-columns:1fr}
 }
 @media (max-width:560px){
@@ -609,8 +605,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .window .screen{aspect-ratio:4/3}
   .film-credits li{padding:18px 0}
   .stage-say{margin-top:24px}
-  .live-grid,.dl{margin-top:32px}
-  .feature-more{display:none}
+  .dl{margin-top:32px}
   .final{margin-top:112px;padding-top:88px}
   .final footer{margin-top:72px}
   .foot-row{gap:8px}
@@ -625,6 +620,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .platform-options button{flex:1;justify-content:center;gap:6px;padding:10px 6px}
 }
 </style>
+<link rel="stylesheet" href="/assets/raycast-features.css">
+<link rel="stylesheet" href="/assets/peach-features.css">
 </head>
 <body>
 
@@ -690,6 +687,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     <symbol id="i-telegram" viewBox="0 0 24 24"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></symbol>
     <symbol id="i-x" viewBox="0 0 24 24"><path fill="currentColor" d="M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"/></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13.5 13.5 0 0 1 0 18M12 3a13.5 13.5 0 0 0 0 18"/></g></symbol>
+    <symbol id="i-tour" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M3 9h18M8 9v10M12 13h5M12 16h3"/></g></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></g></symbol>
+    <symbol id="i-follow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="19" r="1.5" fill="currentColor"/><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/></g></symbol>
+    <symbol id="i-taste" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/></g></symbol>
+    <symbol id="i-theme" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 3v7m0 5v6M12 3v12m0 5v1M19 3v2m0 5v11"/><circle cx="5" cy="12.5" r="2.5"/><circle cx="12" cy="17.5" r="2.5"/><circle cx="19" cy="7.5" r="2.5"/></g></symbol>
+    <symbol id="i-wall" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="10" rx="2"/><rect x="14" y="3" width="7" height="6" rx="2"/><rect x="3" y="17" width="7" height="4" rx="2"/><rect x="14" y="13" width="7" height="8" rx="2"/></g></symbol>
   </defs>
 </svg>
 
@@ -711,7 +714,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         </ul>
       </div>
       <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
-      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载 Peach</span></a>
+      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>下载</span></a>
     </div>
   </div>
 </header>
@@ -730,7 +733,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="download-meta"><p class="download-caption" data-download-caption>Windows、macOS 与 Docker</p><a class="download-alternatives" href="#download">其他平台</a></div>
         <div class="cta-secondary">
         <a class="btn btn-quiet btn-lg" href="https://demo.peach.video"><svg aria-hidden="true"><use href="#i-demo"/></svg>在线演示</a>
-        <a class="btn btn-quiet btn-lg" href="#tour">界面导览</a>
+        <a class="btn btn-quiet btn-lg" href="#tour"><svg aria-hidden="true"><use href="#i-tour"/></svg>界面导览</a>
         </div>
       </div>
       <p class="mono">开源<span class="dot">自托管</span></p>
@@ -741,7 +744,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section id="tour">
     <div class="wrap tour">
       <div class="window">
-        <div class="screen" id="screen">
+        <div class="screen utU0aa_showcaseReel" id="screen">
           <picture class="on" data-k="home"><source media="(max-width:560px)" srcset="/assets/screenshots/home-compact-20261025-2-1440.webp 1440w, /assets/screenshots/home-compact-20261025-2-1920.webp 1920w, /assets/screenshots/home-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img src="/assets/screenshots/home-wide-20261025-2.webp" srcset="/assets/screenshots/home-wide-20261025-2-1280.webp 1280w, /assets/screenshots/home-wide-20261025-2-1920.webp 1920w, /assets/screenshots/home-wide-20261025-2-2560.webp 2560w, /assets/screenshots/home-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="首页：影片卡片网格" width="3840" height="2160" decoding="async" fetchpriority="high"></picture>
           <picture data-k="people"><source media="(max-width:560px)" data-srcset="/assets/screenshots/people-compact-20261025-2-1440.webp 1440w, /assets/screenshots/people-compact-20261025-2-1920.webp 1920w, /assets/screenshots/people-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/people-wide-20261025-2.webp" data-srcset="/assets/screenshots/people-wide-20261025-2-1280.webp 1280w, /assets/screenshots/people-wide-20261025-2-1920.webp 1920w, /assets/screenshots/people-wide-20261025-2-2560.webp 2560w, /assets/screenshots/people-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="艺人页" width="3840" height="2160" decoding="async"></picture>
           <picture data-k="profile"><source media="(max-width:560px)" data-srcset="/assets/screenshots/profile-compact-20261025-2-1440.webp 1440w, /assets/screenshots/profile-compact-20261025-2-1920.webp 1920w, /assets/screenshots/profile-compact-20261025-2.webp 3840w" sizes="calc(100vw - 50px)" width="3840" height="2880"><img data-src="/assets/screenshots/profile-wide-20261025-2.webp" data-srcset="/assets/screenshots/profile-wide-20261025-2-1280.webp 1280w, /assets/screenshots/profile-wide-20261025-2-1920.webp 1920w, /assets/screenshots/profile-wide-20261025-2-2560.webp 2560w, /assets/screenshots/profile-wide-20261025-2.webp 3840w" sizes="(min-width:1204px) 1134px, calc(100vw - 70px)" alt="艺人详情页" width="3840" height="2160" decoding="async"></picture>
@@ -771,12 +774,20 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
     </div>
   </section>
 
-  <section class="section" id="live">
-    <div class="wrap">
-      <p class="say lg reveal"><b><span class="nowrap">Peach 能干什么</span></b><span class="sub">订阅新作，关注创作者，分析口味，<span class="nowrap">自定义配色……</span></span></p>
-      <div class="live-grid">
-        <a class="card live reveal" href="https://demo.peach.video/performers" data-mock="feed">
-          <div class="txt"><p class="say"><b>订阅艺人</b><span class="sub">关注作品更新，管理已看与未看。</span></p></div>
+  <section class="rcf _3Yq4tG_container" id="live">
+    <div class="feature-heading _3Yq4tG_top">
+      <div class="_3Yq4tG_text"><h3><span class="nowrap">Peach 能干什么</span></h3><p>订阅新作，关注创作者，分析口味，<span class="nowrap">自定义配色……</span></p></div>
+      <div class="_3Yq4tG_categoriesContainer"><div class="feature-filters _3Yq4tG_categories" role="group" aria-label="功能分类">
+        <div class="feature-category _3Yq4tG_category _3Yq4tG_active"><button type="button" data-feature-filter="all" aria-pressed="true">全部功能</button></div>
+        <div class="feature-category _3Yq4tG_category"><button type="button" data-feature-filter="library" aria-pressed="false">订阅与关注</button></div>
+        <div class="feature-category _3Yq4tG_category"><button type="button" data-feature-filter="personal" aria-pressed="false">偏好与外观</button></div>
+      </div></div>
+    </div>
+    <div class="feature-reel-wrapper _3Yq4tG_reelWrapper">
+      <div class="feature-reel _3Yq4tG_reelContainer" id="feature-reel" role="region" aria-label="功能预览" tabindex="0">
+        <div class="_3Yq4tG_reel"><div class="live-grid _3Yq4tG_padding">
+<div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="library" style="--delay:100ms" data-first-card="true"><a class="live pFn2Lq_link" href="https://demo.peach.video/performers/135" data-mock="feed" data-category="library"><div class="feature-card pFn2Lq_card">
+          <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-person"/></svg></span><h3 class="pFn2Lq_title">订阅艺人</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">关注作品更新，管理已看与未看。</p><div class="pFn2Lq_divider"></div></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-feed">
             <div class="mk-hero"><div class="mk-ava"><img src="/assets/people/q882.webp" alt="" loading="lazy"></div><div><h4>查理·卓别林</h4><p>预置电影资料 · 4 部作品</p></div></div>
             <div class="mk-sect">作品列表<small>4 部示例电影</small></div>
@@ -786,10 +797,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               <div class="mk-f"><div class="pic"><img src="/assets/films/q669929.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>马戏团 (电影)</b><small>1928</small></div>
               <div class="mk-f"><div class="pic"><img src="/assets/films/q1151392.webp" alt="" loading="lazy"><span class="read">已看过</span><div class="mk-tools"><span class="t-skip"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg></span><span class="t-read"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span></div></div><b>威尼斯兒童賽車</b><small>1914</small></div>
             </div>
-          </div></div></div><span class="live-go ext">打开演示</span></div>
-        </a>
-        <a class="card live reveal" href="https://demo.peach.video/follow-manage?tab=add" data-mock="follow">
-          <div class="txt"><p class="say"><b>关注创作者</b><span class="sub">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></span></p></div>
+          </div></div></div><span class="live-go">打开演示</span></div>
+</div></a></div>
+<div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="library" style="--delay:180ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/subscriptions?tab=add" data-mock="follow" data-category="library"><div class="feature-card pFn2Lq_card">
+          <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-follow"/></svg></span><h3 class="pFn2Lq_title">关注创作者</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></p><div class="pFn2Lq_divider"></div></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-follow">
             <div class="mk-h"><h4>关注管理</h4></div>
             <div class="mk-stats">
@@ -814,10 +825,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
             </div>
             <div class="mk-toast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>已添加 2 个关注来源</span></div>
-          </div></div></div><span class="live-go ext">打开演示</span></div>
-        </a>
-        <a class="card live reveal" href="https://demo.peach.video/taste" data-mock="taste">
-          <div class="txt"><p class="say"><b>看看自己的口味</b><span class="sub">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></span></p></div>
+          </div></div></div><span class="live-go">打开演示</span></div>
+</div></a></div>
+<div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:260ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/taste" data-mock="taste" data-category="personal"><div class="feature-card pFn2Lq_card">
+          <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-taste"/></svg></span><h3 class="pFn2Lq_title">看看自己的口味</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></p><div class="pFn2Lq_divider"></div></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-taste">
             <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
             <div class="mk-stats">
@@ -854,10 +865,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 </div>
               </div>
             </div>
-          </div></div></div><span class="live-go ext">打开演示</span></div>
-        </a>
-        <a class="card live reveal" href="https://demo.peach.video/" data-mock="theme">
-          <div class="txt"><p class="say"><b>丰富的自定义选项</b><span class="sub">一键切换深色浅色，配色<span class="nowrap">任你选。</span></span></p></div>
+          </div></div></div><span class="live-go">打开演示</span></div>
+</div></a></div>
+<div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:340ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/settings/appearance" data-mock="theme" data-category="personal"><div class="feature-card pFn2Lq_card">
+          <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-theme"/></svg></span><h3 class="pFn2Lq_title">丰富的自定义选项</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">一键切换深色浅色，配色<span class="nowrap">任你选。</span></p><div class="pFn2Lq_divider"></div></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-theme">
             <aside class="mk-tside">
               <div class="lib"><img src="/assets/peach-logo-192.webp" alt="" width="18" height="18">Peach</div>
@@ -904,10 +915,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
               </div>
               <span class="mk-btn">详细设置</span>
             </div>
-          </div></div></div><span class="live-go ext">打开演示</span></div>
-        </a>
-        <a class="card live reveal" href="https://demo.peach.video/wall" data-mock="wall">
-          <div class="txt"><p class="say"><b>影片墙</b><span class="sub">拖动封面墙，沉浸式挑片。</span></p></div>
+          </div></div></div><span class="live-go">打开演示</span></div>
+</div></a></div>
+<div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:420ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/wall" data-mock="wall" data-category="personal"><div class="feature-card pFn2Lq_card">
+          <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-wall"/></svg></span><h3 class="pFn2Lq_title">影片墙</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">拖动封面墙，沉浸式挑片。</p><div class="pFn2Lq_divider"></div></div>
           <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
             <div class="mk-wall-world">
               <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/films/q1024861.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>卡比利亚</b><span>1914 · 示例作品</span></div></div>
@@ -939,13 +950,16 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                 <span><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M4 5h13M4 9h13M4 13h8M15 14l5 3-5 3Z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M6 4h12v16l-6-4-6 4Z"/></svg></span><span class="mk-wall-time">仅提供演示</span><span><svg viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M9 5H4v15h15v-5"/></svg></span>
               </div><div class="mk-wall-seek"><i></i></div></div>
             </div>
-          </div></div></div><span class="live-go ext">打开演示</span></div>
-        </a>
-        <div class="feature-more reveal">
-          <img src="/assets/peach-logo-192.webp" alt="" width="96" height="96" loading="lazy">
-          <p class="say"><b>还有更多</b><span class="sub">下载 Peach，慢慢发现。</span></p>
-          <a class="btn btn-primary btn-lg" href="#download">下载 Peach →</a>
-        </div>
+          </div></div></div><span class="live-go">打开演示</span></div>
+</div></a></div>
+          <a class="feature-more _3Yq4tG_browseMore" href="#download"><img src="/assets/peach-logo-192.webp" alt="" width="360" height="360" loading="lazy"><h3>还有更多</h3><p>下载 Peach，慢慢发现。</p><span class="_3Yq4tG_arrowLink">下载 Peach →</span></a>
+        </div></div>
+      </div>
+    </div>
+    <div class="feature-bottom _3Yq4tG_bottom">
+      <div class="feature-pagination _3Yq4tG_pagination" role="group" aria-label="切换功能卡片">
+        <button class="_3Yq4tG_previous" type="button" data-feature-step="-1" aria-label="上一个功能" aria-controls="feature-reel" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10.25 12.25-4.5-4.25 4.5-4.25"/></svg></button>
+        <button class="_3Yq4tG_next" type="button" data-feature-step="1" aria-label="下一个功能" aria-controls="feature-reel"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></button>
       </div>
     </div>
   </section>
@@ -1093,7 +1107,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">开发者使用，需要 Git 和 <a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。详见<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
+          <p class="note">需要 Git 和 <a class="ext" href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。详见<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 // 外语页面复用编辑核心，维护源是翻译表；页面由既有生成器写入。
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
-import {translateHtml,finishTranslation,buildLocale,type Locale,type TranslationBinding} from './build_i18n.ts';
+import {translateHtml,finishTranslation,buildLocale,sourceCopyOverrides,type Locale,type TranslationBinding} from './build_i18n.ts';
 import {bounds,textSlices,injectEditor,editHtml,type EditResult} from './edit-server.ts';
 import {serialize,currentHistory,sameRevision,saveWithHistory,travel,EditConflict} from './edit-history.ts';
 
@@ -24,11 +24,11 @@ export async function forRoute(site:string,pathname:string):Promise<LocaleContex
 
 async function document(context:LocaleContext,locale:Locale){
  const bindings:TranslationBinding[]=[],report={missing:new Set<string>(),used:new Set<string>(),bindings};
- const translated=translateHtml((await readFile(context.source,'utf8')).replaceAll('\r\n','\n'),locale,report);
+ const source=(await readFile(context.source,'utf8')).replaceAll('\r\n','\n'),translated=translateHtml(source,locale,report);
  const {from,to}=bounds(translated),slices=textSlices(translated,from,to);
  const mapped=new Map<number,TranslationBinding>();
  slices.forEach(([a,b],index)=>{const binding=bindings.find(item=>item.from<=a&&item.to>=b);if(binding)mapped.set(index,binding)});
- return {translated,html:finishTranslation(translated,locale),slices,mapped};
+ return {source,translated,html:finishTranslation(translated,locale,source,report),slices,mapped};
 }
 
 export async function page(context:LocaleContext,port:number){
@@ -46,7 +46,13 @@ function attribute(html:string,key:string,name:string){
 }
 
 async function update(context:LocaleContext,locale:Locale,kind:Exclude<Kind,'undo'|'redo'>,body:Record<string,unknown>,doc:Awaited<ReturnType<typeof document>>,edited:EditResult){
- if(kind==='copy'){locale.overrides={...locale.overrides,[body.key as string]:body.text as string};return}
+ if(kind==='copy'){
+  const key=body.key as string,source=sourceCopyOverrides(doc.source);
+  locale.overrides={...locale.overrides,[key]:body.text as string};
+  locale.overrideSources={...locale.overrideSources};
+  if(Object.hasOwn(source,key))locale.overrideSources[key]=source[key];else delete locale.overrideSources[key];
+  return;
+ }
  if(kind==='tab'){
   const source=await readFile(context.source,'utf8'),name=typeof body.title==='string'?'data-say':'data-label';
   locale.text[attribute(source,String(body.k),name)]=decode(attribute(edited.html!,String(body.k),name));return;

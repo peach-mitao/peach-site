@@ -6,12 +6,13 @@ import {createHash} from 'node:crypto';
 import {buildBehaviorUI} from './build_behavior_ui.ts';
 import {behaviorVersion} from './behavior_version.ts';
 import {buildBoardUIStyles} from './build_boardui_styles.ts';
+import {buildCredits} from './build_credits.ts';
+import {buildLocale} from './build_i18n.ts';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 export async function buildBrowser(){
   await buildBoardUIStyles();
   await buildBehaviorUI();
-  await behaviorVersion();
   async function walk(relative=''){
     for(const entry of await readdir(path.join(root,'browser',relative),{withFileTypes:true})){
       const name=path.join(relative,entry.name);
@@ -43,6 +44,12 @@ export async function buildBrowser(){
     }
   }
   await walk();
+  await buildCredits();
+  const locale=await buildLocale('en',{write:true});
+  if(locale.missing.size||locale.runtimeMissing.size||locale.stale.length)throw Error('英文尚未同步：'+[...locale.missing,...locale.runtimeMissing,...locale.stale].join('；'));
+  await behaviorVersion();
+  const version=await transform(await readFile(path.join(root,'browser/assets/behavior-version.ts'),'utf8'),{loader:'ts',target:'es2022'});
+  await writeFile(path.join(root,'site/assets/behavior-version.js'),version.code);
   await writeFile(path.join(root,'site/assets/behavior-kumo.css'),await readFile(path.join(root,'node_modules/@cloudflare/kumo/dist/styles/kumo-standalone.css')));
   const licenses=path.join(root,'site/assets/vendor/behavior');await mkdir(licenses,{recursive:true});
   for(const [name,pkg] of [['kumo','@cloudflare/kumo'],['react','react'],['react-dom','react-dom'],['phosphor','@phosphor-icons/react'],['canvas-confetti','canvas-confetti']])await writeFile(path.join(licenses,name+'-LICENSE'),await readFile(path.join(root,'node_modules',pkg,'LICENSE')));

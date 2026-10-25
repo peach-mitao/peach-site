@@ -6,6 +6,10 @@
 
 外语生成页的原位编辑由 `scripts/edit-locale.ts` 适配，复用 `edit-server.ts` 的纯 HTML 编辑变换、`build_i18n.ts` 的译文位置绑定及生成器、`edit-history.ts` 的版本校验与撤销记录。英文修改写回翻译源，保存后生成页面；中文维护源保持独立。动态控件通过翻译表中的 `overrides` 读取稳定文案键。英文首页的目录别名和文件别名使用同一维护源。
 
+素材来源页的中文说明维护在 `templates/credits.html`，署名和许可仍来自 `docs/film-sources.json`。`edit-credits.ts` 复用既有 HTML 编辑变换与历史记录，将说明写回模板并生成页面；对清单生成区域的覆盖返回冲突。模板适配只用于本地预览，不修改三端共享编辑核心或工具条。
+
+首页功能卡与导览参考 [Raycast 首页取证](reference-snapshots/raycast-home.md)。`sync_raycast_features.ts` 从锁定摘要的原站资源提取完整轨道与卡片 CSS，`home.ts` 移植公开组件的滚动、末端判断、分类底板和过渡逻辑；`peach-features.css` 只适配变量、中文和 Peach 素材、语义配色。功能轨道支持分类、前后按钮、触屏横滑与键盘操作，创作者使用 RSS 橙色。无新增依赖；首次主图不受切换动效限制，键盘选择立即响应，减少动态效果时关闭位移。
+
 依赖版本以 `package.json` 和 `package-lock.json` 为准。构建工具属于开发依赖，`jose` 用于 Worker 签名校验，Kumo、React 与 Phosphor 用于分析后台控件。页面加载由 TS 编译的 JS 和既有第三方资源，许可范围见 [NOTICE](../NOTICE.md)。
 
 | 能力 | 实现与许可 | 验证与边界 |

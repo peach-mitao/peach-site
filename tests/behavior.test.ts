@@ -7,7 +7,8 @@ import path from 'node:path';
 import sharp from 'sharp';
 import {createLocalJWKSet,generateKeyPair,exportJWK,SignJWT} from 'jose';
 import {behaviorStorage} from '../scripts/behavior_storage.ts';
-import {validateBatch,collect,report,authorized,verifyAssertion,expireBehavior,behaviorRequest,type BehaviorEnv} from '../worker/behavior.ts';
+import {validateBatch,collect,report,authorized,verifyAssertion,behaviorRequest,cachedReport,type BehaviorEnv} from '../worker/behavior.ts';
+import {archiveDatabase} from '../worker/behavior-archive.ts';
 import {pageKey,destination,type Event} from '../browser/assets/behavior-contract.ts';
 import type {Layout} from '../browser/assets/behavior-contract.ts';
 import {registrationBatches} from '../scripts/publish_behavior.ts';
@@ -33,20 +34,47 @@ test('路由和下载目的地保留功能，不携带作品身份',()=>{
 });
 test('批次校验拒绝越界与原始 URL，额外字段不落库',()=>{
  const row=event(),valid=payload([{...row,input:'private'} as Event]);assert.equal(validateBatch(valid,'site',now)?.events.length,1);assert.equal('input' in validateBatch(valid,'site',now)!.events[0]!,false);
- for(const patch of [{site:'demo'},{page:'/assets/title'},{destination:'https://secret.example'},{referrer:'example.com/private'},{target:{}},{x:2},{at:now-20*60000},{layout:'not-a-hash'}])assert.equal(validateBatch(payload([{...row,...patch} as Event]),'site',now),null);
+ for(const patch of [{site:'demo'},{page:'/assets/title'},{destination:'https://secret.example'},{referrer:'example.com/private'},{target:{}},{x:2},{at:now-20*60000},{at:now-.5},{width:1440.5},{duration:.5},{layout:'not-a-hash'}])assert.equal(validateBatch(payload([{...row,...patch} as Event]),'site',now),null);
  assert.equal(validateBatch(payload(Array.from({length:41},()=>event())),'site',now),null);
 });
-test('写入幂等、来源隔离、停用与机器人过滤均作用于真实 SQLite',async()=>{
- const {database,sqlite}=behaviorStorage(':memory:'),env={BEHAVIOR:database},row=event(),body=payload([row]);
+test('报表内存缓存按授权断言隔离，返回内容禁止客户端缓存',async()=>{
+ let loads=0;const key=id(),load=async()=>({load:++loads});
+ const own=(assertion:string)=>new Request('https://peach.video/analytics/api/report?test='+key,{headers:{'Cf-Access-Jwt-Assertion':assertion}});
+ const first=await cachedReport(own('owner-a'),{},load);assert.deepEqual(await first.json(),{load:1});assert.equal(first.headers.get('cache-control'),'private, no-store');
+ assert.deepEqual(await (await cachedReport(own('owner-a'),{},load)).json(),{load:1});
+ assert.deepEqual(await (await cachedReport(own('owner-b'),{},load)).json(),{load:2});assert.equal(loads,2);
+});
+test('Stream 写入保留完整协议，来源隔离、停用与机器人过滤均生效',async()=>{
+ const {database,sqlite}=behaviorStorage(':memory:'),received:Record<string,unknown>[]=[];
+ const env={BEHAVIOR:database,BEHAVIOR_STREAM:{async send(rows:Record<string,unknown>[]){received.push(...rows)}}},row=event(),body=payload([row]);
  try{
-  assert.equal((await collect(request(body),env)).status,204);assert.equal((await collect(request(body),env)).status,204);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,1);
+  assert.equal((await collect(request(body),env)).status,204);assert.deepEqual(received,[{session:body.session,...row}]);assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,0);
   assert.equal((await collect(request(payload([event()]),'https://evil.example'),env)).status,403);
   const ignoredHeaders:Record<string,string>[]=[{'user-agent':'Googlebot'},{cookie:'peach_analytics_off=1'}];
   for(const headers of ignoredHeaders)assert.equal((await collect(request(payload([event()]),'https://peach.video',headers),env)).status,204);
-  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,1);
+  assert.equal(received.length,1);
   assert.equal((await collect(request(payload([event()]),'https://peach.video'),{...env,BEHAVIOR_LIMIT:{async limit(){return {success:false}}}})).status,429);
   assert.equal((await collect(new Request('https://peach.video/api/behavior',{method:'POST',headers:{origin:'https://peach.video'},body:'x'.repeat(50000)}),env)).status,400);
  }finally{sqlite.close()}
+});
+test('生产采集拒绝缺失 Stream，不向 D1 回退写入；发送失败不返回成功',async()=>{
+ const {database,sqlite}=behaviorStorage(':memory:');
+ try{
+  assert.equal((await collect(request(payload([event()])),{BEHAVIOR:database})).status,503);
+  await assert.rejects(collect(request(payload([event()])),{BEHAVIOR_STREAM:{async send(){throw Error('ingestion failed')}}}),/ingestion failed/);
+  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,0);
+ }finally{sqlite.close()}
+});
+test('归档查询编码参数、去重事件并拒绝写入和错误响应',async()=>{
+ const config={BEHAVIOR_SQL_TOKEN:'test-secret',BEHAVIOR_SQL_ACCOUNT:'account',BEHAVIOR_SQL_BUCKET:'private-bucket'};
+ const calls:{url:string;query:string}[]=[];
+ const db=archiveDatabase(config,async(input,options)=>{calls.push({url:String(input),query:JSON.parse(String(options?.body)).query});assert.equal(new Headers(options?.headers).get('authorization'),'Bearer test-secret');return Response.json({success:true,result:{rows:[{events:1}]}})});
+ assert.deepEqual(await db.prepare('SELECT COUNT(*) events FROM behavior_events WHERE session=? AND at>=?').bind("x' OR 1=1 --",123).all(),{results:[{events:1}]});
+ assert.ok(calls[0].query.includes("session='x'' OR 1=1 --'"));assert.ok(calls[0].query.includes('PARTITION BY id'));assert.ok(calls[0].query.includes('at>=123'));
+ await assert.rejects(db.prepare('DELETE FROM behavior_events').all(),/只允许读取/);
+ await assert.rejects(db.prepare('SELECT * FROM behavior_events WHERE id=?').all(),/参数不足/);
+ const denied=archiveDatabase(config,async()=>Response.json({success:false,errors:[{code:40004}]},{status:400}));
+ await assert.rejects(denied.prepare('SELECT * FROM behavior_events').all(),/40004/);
 });
 test('功能点击率按页面去重；热力图必须选择具体布局',async()=>{
  const {database,sqlite}=behaviorStorage(':memory:'),env={BEHAVIOR:database},view=id();
@@ -82,30 +110,12 @@ test('Access 校验拒绝缺配置、伪造 JWT 和错误 audience',async()=>{
  assert.equal(await authorized(new Request('https://worker.example/analytics'),{BEHAVIOR_PREVIEW:'1'}),false);
  assert.equal(await authorized(new Request('http://127.0.0.1/analytics'),{BEHAVIOR_PREVIEW:'1'}),true);
 });
-test('保留期清理只删到期数据与已无引用的参考图',async()=>{
- const {database,sqlite}=behaviorStorage(':memory:'),deleted:string[][]=[];
- try{
-  sqlite.prepare('INSERT INTO behavior_layouts VALUES(?,?,?,?,?,?,?,?,?,?,?)').run('site','b'.repeat(64),'/','desktop','default','zh-CN','layouts/'+ 'b'.repeat(64)+'/c.webp',1440,1000,'[]',now-31*86400e3);
-  await expireBehavior({BEHAVIOR:database,BEHAVIOR_LAYOUTS:{async get(){return null},async delete(keys){deleted.push(keys)}}},now);
-  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_layouts').get()?.n,0);assert.equal(deleted.flat().length,1);
- }finally{sqlite.close()}
-});
 
 test('布局登记按请求体积拆批并保留全部页面，单页过大时拒绝发布',()=>{
  const layouts:Layout[]=Array.from({length:65},(_,index)=>({site:'demo',version:'a'.repeat(64),page:'/page-'+index,viewport:'desktop',state:'default',lang:'zh-CN',image:'layouts/'+ 'a'.repeat(64)+'/'+ 'b'.repeat(64)+'.webp',width:1440,height:1000,created:now,boxes:[{target:'action.run',slot:0,x:0,y:0,width:100,height:40}]}));
  const batches=registrationBatches(layouts,2400);assert.ok(batches.length>1);assert.ok(batches.every(batch=>Buffer.byteLength(JSON.stringify(batch))<=2400));assert.deepEqual(batches.flat().map(statement=>statement.params[2]),layouts.map(row=>row.page));assert.throws(()=>registrationBatches(layouts,100),/元数据过大/);
 });
 
-test('保留期清理保留仍被新布局引用的同一张参考图',async()=>{
- const {database,sqlite}=behaviorStorage(':memory:'),deleted:string[][]=[],image='layouts/'+ 'b'.repeat(64)+'/c.webp';
- try{
-  const statement=sqlite.prepare('INSERT INTO behavior_layouts VALUES(?,?,?,?,?,?,?,?,?,?,?)');
-  statement.run('site','b'.repeat(64),'/','desktop','default','zh-CN',image,1440,1000,'[]',now-31*86400e3);
-  statement.run('site','b'.repeat(64),'/en/','desktop','default','en',image,1440,1000,'[]',now);
-  await expireBehavior({BEHAVIOR:database,BEHAVIOR_LAYOUTS:{async get(){return null},async delete(keys){deleted.push(keys)}}},now);
-  assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_layouts').get()?.n,1);assert.deepEqual(deleted,[]);
- }finally{sqlite.close()}
-});
 
 test('发布产物门槛拒绝遗漏路由、草稿截图、未映射控件和内容漂移',async()=>{
  const directory=await mkdtemp(path.join(tmpdir(),'peach-behavior-')),version='a'.repeat(64),body=await sharp({create:{width:1440,height:1000,channels:3,background:'#fff'}}).webp().toBuffer(),hash=createHash('sha256').update(body).digest('hex'),image=`layouts/${version}/${hash}.webp`;

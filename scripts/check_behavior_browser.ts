@@ -46,6 +46,14 @@ try{
  const covered=await browser.newContext(),coveredPage=await covered.newPage();await coveredPage.addInitScript(()=>document.addEventListener('DOMContentLoaded',()=>{const div=document.createElement('div');div.className='cover';document.body.append(div)}));
  const before=batches.length;await coveredPage.goto(base+'/behavior-covered');await coveredPage.waitForTimeout(1300);await coveredPage.evaluate(()=>window.PeachBehavior!.flush());assert.ok(!batches.slice(before).flatMap(b=>b.events).some(e=>e.kind==='exposure'));await covered.close();console.log('PASS SDK：遮挡区域不计曝光');
 
+ const lifecycle=await browser.newContext(),lifecyclePage=await lifecycle.newPage(),lifecycleStart=batches.length;
+ await lifecyclePage.goto(base+'/behavior-lifecycle');await lifecyclePage.waitForFunction(()=>window.PeachBehavior!==undefined);
+ async function suspend(){await lifecyclePage.evaluate(async()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));dispatchEvent(new PageTransitionEvent('pagehide'));await window.PeachBehavior!.flush()})}
+ await suspend();
+ const firstLeave=batches.slice(lifecycleStart).flatMap(batch=>batch.events).filter(event=>event.kind==='leave');assert.equal(firstLeave.length,1);
+ await lifecyclePage.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'visible'});document.dispatchEvent(new Event('visibilitychange'))});await lifecyclePage.waitForTimeout(30);await suspend();
+ const resumedLeaves=batches.slice(lifecycleStart).flatMap(batch=>batch.events).filter(event=>event.kind==='leave');assert.equal(resumedLeaves.length,2);assert.equal(resumedLeaves[0].view,resumedLeaves[1].view);assert.ok(resumedLeaves[1].duration>resumedLeaves[0].duration);await lifecycle.close();console.log('PASS SDK：隐藏与离开成对触发只记一次，恢复活动后保留新的停留记录');
+
  for(const mode of ['edit','behavior-capture','optout']){
   const own=await browser.newContext();if(mode==='optout')await own.addCookies([{name:'peach_analytics_off',value:'1',url:base}]);
   const ownPage=await own.newPage(),before=batches.length;await ownPage.goto(base+'/behavior-excluded?'+(mode==='optout'?'':mode+'=1'));await ownPage.waitForTimeout(1200);await ownPage.evaluate(()=>window.PeachBehavior?.flush());assert.equal(batches.length,before);assert.equal((await own.cookies()).some(c=>c.name==='peach_visit'),false);await own.close();

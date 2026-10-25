@@ -9,7 +9,7 @@ export function startBehavior(options:StartOptions){
  if(!capture&&read(optout)==='1')return;
  let sid='',last=0,view=random(),seq=0,route='',currentPage=pageKey(options.site,location.pathname),visibleAt=document.visibilityState==='visible'?performance.now():0,activeMs=0,lastRegion='',reached=0;
  const tab=random(),queue:{session:string;event:Event}[]=[],seen=new Set<string>(),observed=new Map<Element,string>(),timers=new Map<Element,ReturnType<typeof setTimeout>>();
- let flushTimer:ReturnType<typeof setTimeout>|undefined,stopped=capture;
+ let flushTimer:ReturnType<typeof setTimeout>|undefined,stopped=capture,lastLeave='';
  const active=()=>Math.round(activeMs+(visibleAt?performance.now()-visibleAt:0));
  const state=()=>options.state?.()||'default';
  function session(){
@@ -33,8 +33,14 @@ export function startBehavior(options:StartOptions){
    view=random();seq=0;activeMs=0;visibleAt=document.visibilityState==='visible'?performance.now():0;seen.clear();
    if(kind!=='page')emit('page');
   }
+  const duration=Math.min(86400e3,active());
+  if(kind==='leave'){
+   const signature=`${view}:${state()}:${target}:${duration}`;
+   if(signature===lastLeave)return;
+   lastLeave=signature;
+  }
   if(queue.length>=120)queue.shift();
-  queue.push({session:sid,event:{id:random(),view,tab,at:Date.now(),seq:seq++,site:options.site,page:currentPage,layout:options.layout,viewport:viewport(innerWidth),width:innerWidth,height:innerHeight,lang:document.documentElement.lang==='en'?'en':'zh-CN',state:state(),kind,target,slot:0,x:-1,y:-1,px:-1,py:-1,destination:'',referrer:'',utm:'',duration:Math.min(86400e3,active()),...extra}});
+  queue.push({session:sid,event:{id:random(),view,tab,at:Date.now(),seq:seq++,site:options.site,page:currentPage,layout:options.layout,viewport:viewport(innerWidth),width:innerWidth,height:innerHeight,lang:document.documentElement.lang==='en'?'en':'zh-CN',state:state(),kind,target,slot:0,x:-1,y:-1,px:-1,py:-1,destination:'',referrer:'',utm:'',duration,...extra}});
   if(queue.length>=20)void flush();else if(!flushTimer)flushTimer=setTimeout(()=>void flush(),10000);
  }
  const observer=new IntersectionObserver(entries=>{for(const entry of entries){

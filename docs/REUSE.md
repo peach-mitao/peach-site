@@ -20,7 +20,7 @@
 | 首屏手写标题 | 原有 SVG／CSS 笔画、IntersectionObserver 与页面可见性事件，无新增依赖 | 手写与静态光束使用绘制隔离和合成提示；笔画沿用 SVG 的路径、延迟、时长与缓动，完成后移除动画。离屏、后台及往返缓存期间暂停，减少动态效果时显示完整标题；没有逐帧脚本或几何读取 |
 | 静态资源缓存 | Cloudflare Workers Assets 原生 `_headers`、ETag 与既有 Sharp，无新增依赖 | 日期截图一年不可变，捕获与编码入口按解码像素拒绝覆盖冲突；可更新页面和自有脚本保持校验。真实响应验收覆盖缓存头与 304，不使用 Worker 包装静态资源 |
 | 访问统计 | Cloudflare Web Analytics（平台自动注入）与 Workers Analytics Engine，无新增依赖 | Web Analytics 已有国家、路径、来源、设备、浏览器族与系统族，缺语言、版本号与自定义事件；只补这几项，由 `worker/` 的单一埋点入口写入。D1 要自建聚合，KV 免费档每天只能写 1,000 次，Observability 日志免费档只留 3 天，都不适合看趋势 |
-| 点击与动线 | 两站共用 TS 协议与浏览器观察器，D1、私有 R2、Cloudflare Access；`jose` 6.2.13，MIT | D1 保存可排序的匿名会话事件，R2 保存维护者构建截图，Access JWT 校验签发者、应用 AUD 与有效期。复用现有 Worker、Sharp、Playwright 和原位编辑器；不用 Analytics Engine 的抽样事件重建精确动线。来源与维护见[访问分析](ANALYTICS.md) |
+| 点击与动线 | 两站共用 TS 协议、浏览器观察器，Cloudflare Basin Pipelines／Catalog／SQL、私有 R2、D1 元数据和 Access；`jose` 6.2.13，MIT | 原生 Stream 持久接收完整事件，Parquet／Iceberg 长期保存，Basin SQL 按事件 ID 去重并重建序列；D1 仅保存布局元数据。复用 cf 1.0.0-beta.18 的官方绑定和只读 HTTP API，没有新增依赖。Analytics Engine 抽样、逐事件 D1 索引、逐批 R2 小对象和有截断上限的调用日志均不作为精确长期日志。Access JWT 校验签发者、应用 AUD 与有效期；维护见[访问分析](ANALYTICS.md) |
 | 分析面板外观 | Cloudflare Kumo 2.15.0、React / React DOM 19.3.1、Phosphor React 2.1.10，均为 MIT | 下拉与按钮复用官方组件及独立 CSS，使用小型 React 控件适配原生表单；公开官网不加载这些后台依赖。布局与尺寸见[面板样式记录](reference-snapshots/cloudflare-dashboard.md)，未复制 Cloudflare 标志或控制台脚本 |
 | 多语言页面 | 自有 `scripts/build_i18n.ts` 与 `i18n/<语言>.json`，无新增依赖 | 静态双页面，标题、描述与 `hreflang` 可被搜索引擎读取；运行时换字做不到这一点，i18next 等框架又要求把中文源改写成键名，与原位编辑冲突。生成结果随源码提交，`npm run check` 拒绝缺译、多余译文与过期页面 |
 | 独立支持页 | Peach 应用的 `web/dist/peach-pages.css`、Inter 5.3.0 与品牌标志；既有 Sharp、esbuild | 404、版权页与统计偏好复用应用的页面卡片、字体和控件 token，不加载应用数据。`support-ui-source.json` 记录来源提交及资源摘要；演示站从官网同步 404 与语言解析器。版权页使用静态中英文版本，404 与统计偏好根据语言偏好只显示一种语言 |

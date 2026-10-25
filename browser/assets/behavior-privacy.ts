@@ -10,7 +10,7 @@ document.documentElement.lang=english?'en':'zh-CN';
 if(english){
  const copy:Record<string,string>={
   'privacy-title':'Analytics preferences',
-  'privacy-collection':'Both sites use Cloudflare Web Analytics for page views and first-party analytics for clicks, visible areas and anonymous journeys. A random session cookie shared across peach.video subdomains expires after 30 minutes of inactivity. Detailed events are retained for 30 days; reference screenshots are removed when their associated data expires. Aggregate analytics are retained for three months.',
+  'privacy-collection':'Both sites use Cloudflare Web Analytics for page views and first-party analytics for clicks, visible areas and anonymous journeys. A random session cookie shared across peach.video subdomains expires after 30 minutes of inactivity. Anonymous detailed events and their reference screenshots are retained long term. Aggregate analytics are retained for three months.',
   'privacy-scope':'First-party analytics do not collect input text, search terms, movie titles, full URLs, IP addresses or full user-agent strings. No session recordings are made. We cannot observe where you go after leaving; the exit location is the last position recorded before the session ends.',
   'analytics-off':'Opt out of first-party analytics','analytics-on':'Allow first-party analytics','privacy-home':'Back to the website','privacy-demo':'Open the demo'};
  for(const [id,text]of Object.entries(copy))document.getElementById(id)!.textContent=text;

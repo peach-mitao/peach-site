@@ -54,6 +54,20 @@ try {
             assert.equal(requests.length, 1, '初次只读取首页截图');
             assert.equal(requests[0].includes('-compact-'), width <= 560, '只读取当前视口的图片');
             assert.equal(await page.locator('.feature-more').count(),1);
+            const navButtons=page.locator('.nav-end .icon-btn,.nav-end>.btn');
+            assert.equal(await navButtons.count(),3);
+            assert.equal(await page.locator('.nav-github').isVisible(),true);
+            if(width<=560){
+                for(const button of await navButtons.all()){
+                    const box=(await button.boundingBox())!;
+                    assert.equal(box.width,36);assert.equal(box.height,36);
+                    assert.ok(box.x>=0&&box.x+box.width<=width,'三个图标完整落在视口内');
+                }
+                await page.locator('.lang-menu button').click();
+                const menu=(await page.locator('.lang-list').boundingBox())!;
+                assert.ok(menu.x>=0&&menu.x+menu.width<=width,'语言弹层完整落在视口内');
+                await page.keyboard.press('Escape');
+            }
             assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'), '#download');
             assert.equal(await page.locator('.package-option:visible').count(), 2);
             const downloads = await page.locator('.windows-download .package-option a').evaluateAll(ns => ns.map(n => ({ text: n.textContent.trim(), href: (n as HTMLAnchorElement).href })));
@@ -101,6 +115,27 @@ try {
                 await page.setViewportSize({ width: 390, height: 844 });
                 await page.waitForFunction(() => { const img = (document.querySelector('#screen picture.on img') as HTMLElement); return (img as HTMLImageElement).currentSrc.includes('-compact-') && Math.abs((img as HTMLImageElement).naturalWidth / (img as HTMLImageElement).naturalHeight - 4 / 3) < .01; });
                 await page.locator('#screen picture.on img').evaluate(img => (img as HTMLImageElement).decode());
+            }
+            if(width<720){
+                await page.evaluate(()=>scrollTo({top:document.querySelector('.feature-reel-wrapper')!.getBoundingClientRect().top+scrollY-180,behavior:'instant'}));
+                const cardBox=(await page.locator('.feature-card').first().boundingBox())!;
+                assert.ok(cardBox.height<440,'手机功能卡保持紧凑');
+                const position=()=>page.locator('.feature-pagination').evaluate(el=>el.getBoundingClientRect().top);
+                await page.evaluate(()=>scrollBy({top:100,behavior:'instant'}));
+                await page.waitForFunction(()=>Math.abs(document.querySelector('.feature-pagination')!.getBoundingClientRect().top-100)<1);
+                assert.ok(Math.abs(await position()-100)<1,'切换按钮停在顶栏下方');
+                for(const button of await page.locator('.feature-pagination button').all()){
+                    const target=await button.evaluate(el=>{
+                        const box=el.getBoundingClientRect(),notice=document.querySelector('.site-notice')!.getBoundingClientRect();
+                        return {width:box.width,height:box.height,bottom:box.bottom,noticeTop:notice.top,hit:el.contains(document.elementFromPoint(box.left+box.width/2,box.top+box.height/2))};
+                    });
+                    assert.equal(target.width,44);assert.equal(target.height,44);assert.equal(target.hit,true,'按钮没有被浮层遮挡');assert.ok(target.bottom<target.noticeTop);
+                }
+                const scroll=()=>page.locator('.feature-reel').evaluate(el=>el.scrollLeft),start=await scroll();
+                await page.locator('[data-feature-step="1"]').click();
+                await page.waitForFunction(start=>document.querySelector('.feature-reel')!.scrollLeft>start+10,start);
+                const moved=await scroll();await page.locator('[data-feature-step="-1"]').click();
+                await page.waitForFunction(moved=>document.querySelector('.feature-reel')!.scrollLeft<moved-10,moved);
             }
             await page.locator('.hero .cta-download .btn-primary').click();
             assert.equal(new URL(page.url()).hash, '#download');

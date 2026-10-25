@@ -29,4 +29,19 @@
 .feature-pagination button{border-bottom:0}
 .feature-filters.is-instant .feature-filter-indicator{transition:none}
 .feature-exit{pointer-events:none}
+@media(max-width:719px){
+  .rcf{padding:72px 0;scroll-margin-top:28px;overflow:clip}
+  .feature-heading{order:0;gap:24px}
+  .feature-bottom{order:1;position:sticky;top:100px;z-index:14;margin-top:16px;pointer-events:none}
+  .feature-pagination{gap:8px;pointer-events:auto}
+  .feature-pagination button{width:44px;height:44px;padding:0}
+  .feature-reel-wrapper{order:2}
+  .feature-reel ._3Yq4tG_reel{padding:8px 0 16px}
+  .live-screen{aspect-ratio:8/5}
+  .feature-more{justify-content:center;gap:12px;padding:24px 20px}
+  .feature-more>img{width:120px;height:120px;padding:0;flex:none}
+  .feature-more>h3{margin:12px 0 0;font-size:22px}
+  .feature-more>p{margin:0;padding:0;line-height:1.5}
+  .feature-more>._3Yq4tG_arrowLink{margin-top:8px;padding-bottom:0}
+}
 @media(prefers-reduced-motion:reduce){._3Yq4tG_extensionCardWrapper{animation:none;opacity:1;transform:none}._3Yq4tG_activeBackdrop{transition:none}._3Yq4tG_reelExitActive{transition:none;transform:none}.feature-reel{scroll-behavior:auto}}

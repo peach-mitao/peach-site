@@ -146,6 +146,9 @@ try {
                     assert.deepEqual(await page.locator('[data-download-caption]').allTextContents(), [expectedCaption, expectedCaption]);
                     const expected = scenario.system === 'docker' ? '部署 Docker 版' : scenario.system === 'other' ? '下载 Peach' : `下载 ${scenario.system === 'macos' ? 'macOS' : 'Windows'} 版`;
                     assert.deepEqual(await primary.locator('span').allTextContents(), [scenario.system === 'docker' ? '部署' : '下载', expected, expected]);
+                    assert.equal(await page.locator('.nav-github').isVisible(),true,'各平台保留 GitHub 入口');
+                    assert.equal(await page.locator('.nav [data-primary-download] span').isVisible(),width>560,'手机平台按钮仅显示图标');
+                    assert.equal(await page.locator('.nav [data-primary-download]').getAttribute('aria-label'),expected,'图标入口保留完整操作名称');
                     for (const link of await primary.all()) {
                         assert.ok((await link.getAttribute('href'))!.endsWith(scenario.file));
                         assert.equal(await link.locator('use').getAttribute('href'), scenario.icon);

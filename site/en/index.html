@@ -80,7 +80,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .nav-links a{padding:8px 12px;border-radius:8px;transition:color .15s,background .15s}
 .nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.04)}
 .nav-end{display:flex;align-items:center;gap:8px;justify-self:end}
-/* 语言菜单：地球仪按钮展开，当前语言带勾；手机顶栏放不下 GitHub 时保留语言入口。 */
+/* 语言菜单：地球仪按钮展开，当前语言带勾。 */
 .lang-menu{position:relative}
 .btn.icon-btn{width:36px;padding:0}
 .lang-list{position:absolute;left:0;top:calc(100% + 8px);z-index:20;min-width:156px;margin:0;padding:6px;list-style:none;border-radius:12px;border:1px solid var(--hair-3);
@@ -582,11 +582,13 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   body:has(.site-notice){padding-bottom:132px}
   .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
   .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
-  .nav-end .btn-quiet span,.nav-end .nav-github{display:none}
+  .nav-end>.btn>span{display:none}
   .code pre{padding:12px;font-size:12px}
-  .nav-end .btn-quiet{width:36px;padding:0}
-  /* 手机按「其他平台」显示通用文字，不会换字，顶栏按钮按实际文字收窄。 */
-  .nav [data-primary-download]{min-width:0}
+  /* 手机顶栏显示语言、GitHub 与当前平台三个等宽图标。 */
+  .nav .nav-end>.btn,.nav .nav-end .icon-btn{width:36px;min-width:36px;height:36px;padding:0;flex:none}
+  .nav-end{position:relative}
+  .nav-end .lang-menu{position:static}
+  .nav-end .lang-list{left:auto;right:0}
   .hero{padding:160px 0 72px}
   .hero .say{font-size:17px;line-height:1.65;max-width:21em}
   .caption-break{display:block}
@@ -715,8 +717,8 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <li><a href="/en/" hreflang="en" lang="en">English</a></li>
         </ul>
       </div>
-      <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
-      <a class="btn btn-primary" href="#download" data-primary-download><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
+      <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
+      <a class="btn btn-primary" href="#download" data-primary-download aria-label="Download"><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
     </div>
   </div>
 </header>

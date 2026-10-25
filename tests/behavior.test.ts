@@ -76,6 +76,21 @@ test('归档查询编码参数并拒绝写入和错误响应',async()=>{
  const denied=archiveDatabase(config,async()=>Response.json({success:false,errors:[{code:40004}]},{status:400}));
  await assert.rejects(denied.prepare('SELECT * FROM behavior_events').all(),/40004/);
 });
+test('分区下界保留迟到记录与时钟偏差，三类报表与事件时间查询一致',async()=>{
+ const {database,sqlite}=behaviorStorage(':memory:'),session=id(),view=id(),cutoff=now-86400e3;
+ sqlite.exec('ALTER TABLE behavior_events ADD COLUMN __ingest_ts TEXT');
+ try{
+  const rows=[event({session,view,at:cutoff+120000,kind:'page'} as Partial<Event>),event({view,at:cutoff+130000,kind:'exposure',target:'download.primary'}),event({view,at:cutoff+140000,kind:'click',target:'download.primary'}),event({at:now-3600000,site:'demo',page:'/',kind:'page'}),event({at:now-3500000,site:'demo',kind:'click',target:'navigation.works'}),event({at:now-3400000,site:'demo',kind:'navigate',destination:'download'}),event({at:cutoff-86400e3,kind:'page'})];
+  await insert({BEHAVIOR:database},rows,session);
+  const set=sqlite.prepare('UPDATE behavior_events SET __ingest_ts=? WHERE id=?');for(const row of rows)set.run(new Date(row.at===cutoff+120000?cutoff-180000:now-1000).toISOString(),row.id);
+  let queries=0;
+  const archived=archiveDatabase({BEHAVIOR_SQL_TOKEN:'local',BEHAVIOR_SQL_ACCOUNT:'local',BEHAVIOR_SQL_BUCKET:'local'},async(_url,options)=>{queries++;const query=JSON.parse(String(options?.body)).query.replaceAll('peach.behavior_events','behavior_events');return Response.json({success:true,result:{rows:sqlite.prepare(query).all()}})});
+  for(const site of ['site','demo'])for(const section of ['heatmap','journey','visits']){
+   const url=new URL(`https://peach.video/analytics/api/report?site=${site}&section=${section}&days=1`),expected=await report(database,url,now),actual=await report(archived,url,now,database);assert.deepEqual(actual,JSON.parse(JSON.stringify(expected)));
+  }
+  assert.equal(queries,20);
+ }finally{sqlite.close()}
+});
 test('功能点击率按页面去重；热力图必须选择具体布局',async()=>{
  const {database,sqlite}=behaviorStorage(':memory:'),env={BEHAVIOR:database},view=id();
  try{

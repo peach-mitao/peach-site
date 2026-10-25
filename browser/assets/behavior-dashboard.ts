@@ -1,7 +1,7 @@
 import type {Layout,Box} from './behavior-contract.ts';
 import {enhanceSelects} from './behavior-controls.ts';
 type Row=Record<string,string|number|null>;
-interface Report {summary:Row;targets:Row[];points:Row[];paths:Row[];exits:Row[];sessions:Row[];sources:Row[];pages:Row[];layouts:Omit<Layout,'boxes'>[];funnel:Row}
+interface Report {summary:Row;targets:Row[];points:Row[];paths:Row[];exits:Row[];sessions:Row[];sources:Row[];pages:Row[];layouts:Omit<Layout,'boxes'>[];funnel:Row;generatedAt?:number}
 const $=<T extends HTMLElement=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const form=$<HTMLFormElement>('#filters'),status=$('#status'),layout=$<HTMLSelectElement>('#layout');
 const refreshControls=enhanceSelects();
@@ -39,7 +39,7 @@ async function load(){
   const paths=$('#paths');paths.replaceChildren();if(!result.paths.length)empty(paths);else for(const row of result.paths){const item=document.createElement('div');item.className='panel';const route=document.createElement('span'),count=document.createElement('strong');route.textContent=`${row.node} → ${row.next}`;count.textContent=` ${number(row.count)} 次`;item.append(route,count);paths.append(item)}
   table($('#sessions'),['开始','页面','事件','会话'],result.sessions.map(row=>{const button=document.createElement('button');button.textContent=String(row.session).slice(0,8);button.addEventListener('click',()=>void session(String(row.session),button));return [time(row.start),number(row.pages),number(row.events),button]}));
   if(!$('#session-detail').children.length)empty($('#session-detail'),'选择一个会话','查看两站内按时间排列的操作。');
-  status.textContent=`更新于 ${new Date().toLocaleTimeString('zh-CN')} · 最近 ${filters.get('days')} 天${Number(result.summary.unmapped)?' · '+number(result.summary.unmapped)+' 次未映射点击':''}`;
+  status.textContent=`更新于 ${new Date(result.generatedAt||Date.now()).toLocaleTimeString('zh-CN')} · 最近 ${filters.get('days')} 天${Number(result.summary.unmapped)?' · '+number(result.summary.unmapped)+' 次未映射点击':''}`;
   await heatmap();
  }catch(error){if(token===generation){status.textContent=String((error as Error).message);status.classList.add('error')}}finally{if(token===generation)form.removeAttribute('aria-busy')}
 }

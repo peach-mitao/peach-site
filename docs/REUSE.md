@@ -1,5 +1,7 @@
 # 复用与实现边界
 
+报表结果复用使用 Cloudflare R2 原生条件写和已有私有参考图桶，无新增依赖或服务。只缓存完成的 JSON，以授权断言及筛选散列隔离，短租约限制并发生成；缓存不可用时拒绝扫描。事件查询沿用 Basin SQL 原生日期分区、列裁剪与精确去重，不采用近似计数，也不向 D1 写入逐事件索引。接口、保留期限和故障行为见[访问分析](ANALYTICS.md)。
+
 文案工具条唯一实现在 `browser/assets/edit-toolbar.ts`，按钮使用 `browser/vendor/boardui/` 的固定来源组件，浮动栏几何复用应用 SelectionDock。`browser/edit-client.ts` 只适配官网源码保存与撤销。构建生成 `site/assets/edit-toolbar.js`，演示站通过其 `edit:ui:sync` 入口同步同一产物并校验来源摘要。样式隔离在 Shadow DOM 内；说明收在支持悬停、焦点和点击的帮助提示中。改动工具条时分别预览官网和演示站，不以交互核心相同推断工具条一致。
 
 外语生成页的原位编辑由 `scripts/edit-locale.ts` 适配，复用 `edit-server.ts` 的纯 HTML 编辑变换、`build_i18n.ts` 的译文位置绑定及生成器、`edit-history.ts` 的版本校验与撤销记录。英文修改写回翻译源，保存后生成页面；中文维护源保持独立。动态控件通过翻译表中的 `overrides` 读取稳定文案键。英文首页的目录别名和文件别名使用同一维护源。

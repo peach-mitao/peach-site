@@ -16,8 +16,12 @@ export function archiveDatabase(env:ArchiveConfig,request:typeof fetch=fetch):Da
    let index=0;
    // 查询模板由服务端维护；所有外部值仅通过 SQL 字面量编码进入参数位置。
    const source=sql.replaceAll(/\bbehavior_events\b/g,'peach.behavior_events');
-   const query=source.replaceAll('?',()=>{if(index>=values.length)throw Error('查询参数不足');return literal(values[index++])});
+   const cutoffs:number[]=[];
+   const bound=source.replaceAll('?',(_match,offset:number)=>{if(index>=values.length)throw Error('查询参数不足');const value=values[index++];if(/\bat>=\s*$/.test(source.slice(0,offset))&&typeof value==='number')cutoffs.push(value);return literal(value)});
    if(index!==values.length)throw Error('查询参数过多');
+   // 采集仅允许事件时间领先接收时间五分钟；历史导入的入库时间晚于事件时间。
+   // 在原始表扫描内应用对应入库时间下界，保留迟到数据并利用原生日期分区。
+   const query=cutoffs.length?bound.replaceAll(/\bFROM peach\.behavior_events(?:\s+(e)\b)?/g,(_all,alias)=>`FROM (SELECT * FROM peach.behavior_events WHERE __ingest_ts>='${new Date(Math.min(...cutoffs)-300000).toISOString()}') AS ${alias||'behavior_events'}`):bound;
    const response=await request(endpoint,{method:'POST',headers:{authorization:'Bearer '+env.BEHAVIOR_SQL_TOKEN,'content-type':'application/json'},body:JSON.stringify({query}),signal:AbortSignal.timeout(60000)});
    const data=await response.json() as {success?:boolean;result?:{rows?:T[]};errors?:{code?:number}[]};
    if(!response.ok||!data.success||!Array.isArray(data.result?.rows))throw Error('日志查询失败：'+response.status+' / '+(data.errors?.map(error=>error.code).join(',')||'invalid_response'));

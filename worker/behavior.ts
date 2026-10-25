@@ -3,9 +3,10 @@ import {ID,pageKey,type Event,type Batch,type Site} from '../browser/assets/beha
 import {BOT} from './events.ts';
 import {dashboardHTML,privacyHTML} from './behavior-ui.ts';
 import {archiveDatabase,type ArchiveConfig} from './behavior-archive.ts';
+import {createReportCache,type ReportBucket} from './report-cache.ts';
 export interface Statement {bind(...values:unknown[]):Statement;all<T=Record<string,unknown>>():Promise<{results:T[]}>;first<T=Record<string,unknown>>():Promise<T|null>;run():Promise<unknown>}
 export interface Database {prepare(sql:string):Statement;batch(statements:Statement[]):Promise<unknown[]>}
-interface Bucket {get(key:string):Promise<{body:ReadableStream;httpMetadata?:{contentType?:string}}|null>;delete(keys:string[]):Promise<unknown>}
+interface Bucket extends ReportBucket {get(key:string):Promise<{body:ReadableStream;etag?:string;httpMetadata?:{contentType?:string}}|null>;delete(keys:string[]):Promise<unknown>}
 export interface BehaviorEnv extends ArchiveConfig {BEHAVIOR?:Database;BEHAVIOR_STREAM?:{send(records:Record<string,unknown>[]):Promise<void>};BEHAVIOR_LAYOUTS?:Bucket;BEHAVIOR_LIMIT?:{limit(options:{key:string}):Promise<{success:boolean}>};ACCESS_TEAM?:string;ACCESS_AUD?:string;ACCESS_EMAIL?:string;CF_DASHBOARD_URL?:string;BEHAVIOR_PREVIEW?:string}
 const fields=['id','view','tab','at','seq','site','page','layout','viewport','width','height','lang','state','kind','target','slot','x','y','px','py','destination','referrer','utm','duration'] as const;
 const kinds=new Set(['page','exposure','click','navigate','scroll','leave','unmapped']);
@@ -15,20 +16,11 @@ const local=(url:URL)=>['localhost','127.0.0.1','[::1]'].includes(url.hostname);
 const preview=(url:URL,env:BehaviorEnv)=>local(url)&&env.BEHAVIOR_PREVIEW==='1';
 const json=(value:unknown,status=200,headers:Record<string,string>={})=>Response.json(value,{status,headers:{...noStore,...headers}});
 async function analyticsQuery(load:()=>Promise<Response>){try{return await load()}catch(error){console.error('行为日志查询失败',error instanceof Error?error.message:'unknown');return json({error:'archive_unavailable'},503,{'retry-after':'300'})}}
-const reports=new Map<string,{body:string;expires:number}>();
+const completedReport=createReportCache();
 export async function cachedReport(request:Request,env:BehaviorEnv,load:()=>Promise<unknown>){
  const url=new URL(request.url);
  if(preview(url,env))return json(await load());
- const assertion=request.headers.get('Cf-Access-Jwt-Assertion')||'';
- const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(assertion));
- url.searchParams.sort();
- const key=Array.from(new Uint8Array(digest),byte=>byte.toString(16).padStart(2,'0')).join('')+url.pathname+url.search;
- const now=Date.now();for(const [key,row] of reports)if(row.expires<=now)reports.delete(key);
- const stored=reports.get(key);if(stored)return new Response(stored.body,{headers:{...noStore,'content-type':'application/json'}});
- const body=JSON.stringify(await load());
- // 只缓存已完成的字符串；不共享请求 Promise、Response 或连接对象。
- if(body.length<=500000){if(reports.size>=20)reports.delete(reports.keys().next().value!);reports.set(key,{body,expires:now+300000})}
- return new Response(body,{headers:{...noStore,'content-type':'application/json'}});
+ return completedReport(request,env.BEHAVIOR_LAYOUTS,load);
 }
 const text=(v:unknown)=>typeof v==='string'?v:'';
 const bounded=(v:unknown,min:number,max:number)=>typeof v==='number'&&Number.isFinite(v)&&v>=min&&v<=max;
@@ -111,7 +103,7 @@ export async function report(db:Database,url:URL,now=Date.now(),metadata:Databas
   all(`SELECT target,COUNT(DISTINCT CASE WHEN kind='click' THEN id END) clicks,COUNT(DISTINCT CASE WHEN kind IN ('click','exposure') THEN view END) exposures,COUNT(DISTINCT CASE WHEN kind='click' THEN view END) clicked_views FROM behavior_events WHERE ${where.sql} AND kind IN ('click','exposure') AND target<>'' GROUP BY target ORDER BY clicks DESC LIMIT 300`,where.values,heat),
   all(`SELECT target,slot,ROUND(x*10)/10.0 x,ROUND(y*10)/10.0 y,COUNT(DISTINCT id) hits FROM behavior_events WHERE ${where.sql} AND kind='click' AND x>=0 GROUP BY target,slot,ROUND(x*10),ROUND(y*10) ORDER BY hits DESC LIMIT 3000`,where.values,heat&&exact),
   all(`WITH cohort AS (SELECT DISTINCT session FROM behavior_events WHERE ${where.sql}),steps AS (SELECT session,site||':'||page node,LEAD(site||':'||page) OVER(PARTITION BY session ORDER BY at,seq,id) next FROM behavior_events WHERE at>=? AND kind='page' AND session IN(SELECT session FROM cohort)) SELECT node,next,COUNT(*) count FROM steps WHERE next IS NOT NULL AND node<>next GROUP BY node,next ORDER BY count DESC LIMIT 60`,[...where.values,now-filter.days*86400e3],journey),
-  all(`WITH last AS (SELECT e.*,ROW_NUMBER() OVER(PARTITION BY e.session ORDER BY at DESC,seq DESC,id DESC) rank FROM behavior_events e WHERE at>=?) SELECT page,target,COUNT(*) count FROM last WHERE rank=1 AND at<? AND ${where.sql} GROUP BY page,target ORDER BY count DESC LIMIT 30`,[now-filter.days*86400e3,now-30*60e3,...where.values],journey),
+  all(`WITH last AS (SELECT session,at,site,page,target,layout,viewport,state,lang,ROW_NUMBER() OVER(PARTITION BY session ORDER BY at DESC,seq DESC,id DESC) rank FROM behavior_events WHERE at>=?) SELECT page,target,COUNT(*) count FROM last WHERE rank=1 AND at<? AND ${where.sql} GROUP BY page,target ORDER BY count DESC LIMIT 30`,[now-filter.days*86400e3,now-30*60e3,...where.values],journey),
   all(`WITH cohort AS(SELECT DISTINCT session FROM behavior_events WHERE ${where.sql}) SELECT session,MIN(at) start,MAX(at) last,COUNT(DISTINCT view) pages,COUNT(DISTINCT id) events FROM behavior_events WHERE at>=? AND session IN(SELECT session FROM cohort) GROUP BY session ORDER BY last DESC LIMIT 60`,[...where.values,now-filter.days*86400e3],visits),
   heat&&!filter.layout?metadata.prepare('SELECT site,version,page,viewport,state,lang,image,width,height,created FROM behavior_layouts WHERE site=? ORDER BY created DESC LIMIT 1000').bind(filter.site).all().then(r=>r.results):[],
   all(`WITH cohort AS(SELECT DISTINCT session FROM behavior_events WHERE ${where.sql}),selected AS(SELECT session,at,site,kind,destination FROM behavior_events WHERE at>=? AND kind IN('page','click','navigate') AND session IN(SELECT session FROM cohort)),home AS(SELECT *,MIN(CASE WHEN site='site' AND kind='page' THEN at END) OVER(PARTITION BY session) home_at FROM selected),demo AS(SELECT *,MIN(CASE WHEN site='demo' AND kind='page' AND at>=home_at THEN at END) OVER(PARTITION BY session) demo_at FROM home),explore AS(SELECT *,MIN(CASE WHEN site='demo' AND kind='click' AND at>=demo_at THEN at END) OVER(PARTITION BY session) explore_at FROM demo),funnel AS(SELECT session,MIN(home_at) home,MIN(demo_at) demo,MIN(explore_at) explore,MIN(CASE WHEN kind='navigate' AND destination='download' AND at>=explore_at THEN at END) download FROM explore GROUP BY session) SELECT COUNT(home) home,COUNT(demo) demo,COUNT(explore) explore,COUNT(download) download FROM funnel`,[...where.values,now-filter.days*86400e3],journey),
@@ -135,7 +127,7 @@ export async function behaviorRequest(request:Request,env:BehaviorEnv):Promise<R
  const events=preview(url,env)?env.BEHAVIOR:archiveDatabase(env);
  if(url.pathname==='/analytics/api/report'){
   if(!['heatmap','journey','visits'].includes(url.searchParams.get('section')||'heatmap')||!['site','demo'].includes(url.searchParams.get('site')||'site'))return json({error:'filter'},400);
-  return analyticsQuery(()=>cachedReport(request,env,()=>report(events,url,Date.now(),env.BEHAVIOR)));
+  return analyticsQuery(()=>cachedReport(request,env,async()=>{const generatedAt=Date.now();return {...await report(events,url,generatedAt,env.BEHAVIOR),generatedAt}}));
  }
  if(url.pathname==='/analytics/api/session'){
   const id=url.searchParams.get('id')||'';if(!ID.test(id))return json({error:'session'},400);

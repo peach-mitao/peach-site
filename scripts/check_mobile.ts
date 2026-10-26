@@ -120,10 +120,9 @@ try {
                 await page.evaluate(()=>scrollTo({top:document.querySelector('.feature-reel-wrapper')!.getBoundingClientRect().top+scrollY-180,behavior:'instant'}));
                 const cardBox=(await page.locator('.feature-card').first().boundingBox())!;
                 assert.ok(cardBox.height<440,'手机功能卡保持紧凑');
-                const position=()=>page.locator('.feature-pagination').evaluate(el=>el.getBoundingClientRect().top);
-                await page.evaluate(()=>scrollBy({top:100,behavior:'instant'}));
-                await page.waitForFunction(()=>Math.abs(document.querySelector('.feature-pagination')!.getBoundingClientRect().top-100)<1);
-                assert.ok(Math.abs(await position()-100)<1,'切换按钮停在顶栏下方');
+                await page.locator('.feature-pagination').scrollIntoViewIfNeeded();
+                const position=await page.locator('.feature-pagination').evaluate(el=>({top:el.getBoundingClientRect().top,cardBottom:document.querySelector('.feature-reel-wrapper')!.getBoundingClientRect().bottom}));
+                assert.ok(position.top>=position.cardBottom,'切换按钮位于卡片下方');
                 for(const button of await page.locator('.feature-pagination button').all()){
                     const target=await button.evaluate(el=>{
                         const box=el.getBoundingClientRect(),notice=document.querySelector('.site-notice')!.getBoundingClientRect();

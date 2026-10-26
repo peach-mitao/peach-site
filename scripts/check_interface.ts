@@ -33,15 +33,17 @@ try {
                 await next.click();
                 await page.waitForFunction(()=>document.querySelector('.dock button[data-k="people"]')?.getAttribute('aria-selected')==='true');
                 const transitions=await page.locator('.tour').evaluate(el=>el.getAnimations({subtree:true}).map(a=>({target:(a.effect as KeyframeEffect)?.target instanceof Element?((a.effect as KeyframeEffect).target as Element).className:'',property:(a as CSSTransition).transitionProperty})));
-                assert.ok(transitions.some(a=>a.target==='dock-indicator'&&a.property==='transform'),'选中底板平移');
+                assert.ok(transitions.some(a=>a.target.includes('utU0aa_active')&&a.property==='transform'),'选中按钮放大并上移');
                 await page.waitForFunction(()=>{const frame=document.getElementById('screen')!;return frame.scrollLeft>0});
                 await page.waitForFunction(()=>{const frame=document.getElementById('screen')!;return Math.abs(frame.scrollLeft-frame.clientWidth)<1});
-                await page.waitForFunction(()=>document.querySelector('.dock-indicator')!.getAnimations().length===0);
-                const aligned=await page.locator('.dock-indicator').evaluate(el=>{const selected=document.querySelector('.dock [aria-selected="true"]')!,a=el.getBoundingClientRect(),b=selected.getBoundingClientRect();return Math.abs(a.left-b.left)+Math.abs(a.top-b.top)+Math.abs(a.width-b.width)});
-                assert.ok(aligned<1,'选中底板与标签重合');
+                await page.waitForFunction(()=>document.querySelector('.dock [aria-selected="true"]')!.getAnimations().length===0);
+                const aligned=await next.evaluate(el=>{const selected=el as HTMLElement,box=el.getBoundingClientRect(),label=document.getElementById('dock-label')!.getBoundingClientRect();return {scale:box.width/selected.offsetWidth,gap:box.top-label.bottom,center:Math.abs(box.left+box.width/2-label.left-label.width/2),icon:getComputedStyle(el.querySelector('svg')!).width}});
+                assert.ok(Math.abs(aligned.scale-1.25)<.01,'选中按钮放大到 1.25 倍');
+                assert.ok(Math.abs(aligned.gap-10)<1&&aligned.center<1,'标题跟随选中按钮并留 10px 间距');
+                assert.equal(aligned.icon,'24px','图标保持可读尺寸');
                 await next.press('End');
                 await page.waitForFunction(()=>document.querySelector('.dock button[data-k="stats"]')?.getAttribute('aria-selected')==='true');
-                assert.equal(await page.locator('.dock-indicator').evaluate(el=>el.getAnimations().length),0,'键盘选择立即响应');
+                assert.equal(await page.locator('.dock [aria-selected="true"]').evaluate(el=>el.getAnimations().length),0,'键盘选择立即响应');
                 const faq = page.locator('#faq details').first();
                 await faq.locator('summary').click();
                 await page.waitForFunction(() => (document.querySelector('#faq details') as HTMLElement).getAnimations().length === 0);
@@ -85,6 +87,29 @@ try {
                 await page.close();
             }
         }
+    for(const width of [260,320])for(const language of ['zh-CN','en']){
+        const narrow=await browser.newPage({viewport:{width,height:844},locale:language});
+        try{
+            await narrow.route('**/releases.json',r=>r.fulfill({json:[]}));
+            await narrow.route('https://api.github.com/**',r=>r.fulfill({json:[]}));
+            await narrow.route('https://img.shields.io/**',r=>r.fulfill({json:{message:'v1.2.3'}}));
+            await narrow.goto(new URL(language==='en'?'/en/':'/',base).href,{waitUntil:'networkidle'});
+            await narrow.locator('[data-platform-option="docker"]').click();
+            await narrow.waitForFunction(()=>{const group=document.querySelector('.platform-options')!.getBoundingClientRect(),item=document.querySelector('[data-platform-option="docker"]')!.getBoundingClientRect();return item.left>=group.left&&item.right<=group.right});
+            const platform=await narrow.locator('.platform-options').evaluate(el=>{const b=el.getBoundingClientRect();return {scroll:el.scrollWidth,client:el.clientWidth,left:b.left,right:b.right,width:document.documentElement.clientWidth}});
+            assert.ok(platform.scroll>platform.client&&platform.left>=0&&platform.right<=platform.width,'平台选项在框内横向滚动');
+            await narrow.locator('.dock button[data-k="stats"]').click();
+            await narrow.waitForFunction(()=>document.querySelector('.dock [data-k="stats"]')?.getAttribute('aria-selected')==='true');
+            await narrow.waitForFunction(()=>{const group=document.querySelector('.dock-items')!.getBoundingClientRect(),item=document.querySelector('.dock [aria-selected="true"]')!.getBoundingClientRect();return item.left>=group.left&&item.right<=group.right});
+            assert.ok(await narrow.locator('.dock-items').evaluate(el=>el.scrollWidth>el.clientWidth),'导览保留按钮尺寸并在框内滚动');
+            await narrow.locator('.lang-menu button').click();
+            const menu=await narrow.locator('.lang-list').evaluate(el=>{const b=el.getBoundingClientRect();return {left:b.left,right:b.right,width:document.documentElement.clientWidth}});
+            assert.ok(menu.left>=0&&menu.right<=menu.width,'语言菜单不超出窄屏');
+            await narrow.keyboard.press('Escape');
+            assert.equal(await narrow.locator('.lang-list').isVisible(),false);
+            console.log(`PASS 窄屏 ${language} ${width}: 平台与导览容器滚动、选中项可见、语言菜单`);
+        }finally{await narrow.close()}
+    }
     const page = await browser.newPage({ viewport: { width: 390, height: 844 }, locale: 'zh-CN', reducedMotion: 'reduce' });
     try {
         await page.route('**/releases.json',r=>r.fulfill({json:[]}));
@@ -93,7 +118,7 @@ try {
         await page.goto(base, { waitUntil: 'networkidle' });
         await page.locator('.dock button[data-k="people"]').click();
         await page.waitForFunction(()=>document.querySelector('.dock button[data-k="people"]')?.getAttribute('aria-selected')==='true');
-        assert.equal(await page.locator('.dock-indicator').evaluate(el=>el.getAnimations().length),0);
+        assert.equal(await page.locator('.dock [aria-selected="true"]').evaluate(el=>el.getAnimations().length),0);
         assert.equal(await page.locator('#screen picture.on').evaluate(el=>getComputedStyle(el).transform),'none');
         await page.locator('.live[data-mock="feed"]').scrollIntoViewIfNeeded();
         assert.equal(await page.locator('.mk-cursor').count(), 0, '减少动态效果保留静态画面');

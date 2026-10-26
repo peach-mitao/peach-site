@@ -87,10 +87,10 @@ interface TabEdit {
 
 // 导览区的六个标签：按钮上的 data-say / data-label 是真相，首页那个还同时写在 #stage-say 和 #dock-label 里
 function editTab(html: string, body: TabEdit) {
-  const tag = new RegExp(`<button role="tab" aria-selected="(true|false)" data-k="${body.k.replace(/\W/g, "")}"(?:[^>"']|"[^"]*"|'[^']*')*>`).exec(html);
-  if (!tag) return { error: "找不到这个标签页" };
-  let t = tag[0];
-  const selected = tag[1] === "true";
+  const entry = [...html.matchAll(/<button\b(?:[^>"']|"[^"]*"|'[^']*')*>/g)].map(match=>({tag:match[0],attributes:new Map([...match[0].matchAll(/\s([\w:-]+)=(?:"([^"]*)"|'([^']*)')/g)].map(attribute=>[attribute[1],attribute[2]??attribute[3]]))})).find(row=>row.attributes.get('role')==='tab'&&row.attributes.get('data-k')===body.k);
+  if (!entry) return { error: "找不到这个标签页" };
+  let t = entry.tag;
+  const selected = entry.attributes.get('aria-selected') === "true";
   if (typeof body.title === 'string') {
     const title = body.title;
     const old = `data-say='${attrSq(say(body.oldTitle, body.oldSub))}'`;
@@ -103,7 +103,7 @@ function editTab(html: string, body: TabEdit) {
     t = t.replace(old, `data-label="${attrDq(body.label)}"`).replace(/aria-label="[^"]*"/, `aria-label="${attrDq(body.label)}"`);
     if (selected) html = html.replace(/(<div [^>]*id="dock-label"[^>]*>)[\s\S]*?(<\/div>)/, (m, a, b) => a + esc(body.label) + b);
   }
-  return { html: html.replace(tag[0], t) };
+  return { html: html.replace(entry.tag, t) };
 }
 
 // 按已有标签边界定位整段，正文仍只接受纯文字，标签与属性由源文件保留。

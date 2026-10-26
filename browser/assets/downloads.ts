@@ -3,6 +3,7 @@ type DownloadMap=Partial<Record<string,DownloadEntry>>;
 interface Release {tag_name:string;published_at:string;draft?:boolean;assets?:{name:string;state?:string}[]}
 import { renderCopy } from './copy.ts';
 import { t } from './i18n.ts';
+import {revealHorizontal} from './horizontal-controls.ts';
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const releasesApi = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
 const downloadsBase = 'https://downloads.peach.video';
@@ -72,6 +73,17 @@ function start() {
     const state: {platform:string;architecture:string|null;manual:boolean;downloads:DownloadMap;localMac:DownloadEntry|null;dockerVersion:string|null;releasesSettled:boolean;dockerSettled:boolean} = { platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
         manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null, releasesSettled: false, dockerSettled: false };
     let releaseRequest:Promise<void>|null=null,lastReleaseCheck=0;
+    const platformOptions=document.querySelector<HTMLElement>('.platform-options')!;
+    const platformIndicator=document.createElement('span');platformIndicator.className='platform-indicator';platformIndicator.setAttribute('aria-hidden','true');platformOptions.prepend(platformIndicator);
+    const placePlatform=()=>{
+        const selected=platformOptions.querySelector<HTMLElement>('[aria-pressed="true"]')!;
+        const width=platformOptions.scrollWidth,left=selected.offsetLeft;
+        platformIndicator.style.width=width+'px';platformIndicator.style.height=selected.offsetHeight+'px';
+        platformIndicator.style.clipPath=`inset(0 ${width-left-selected.offsetWidth}px 0 ${left}px round 8px)`;
+        platformOptions.classList.add('has-indicator');
+    };
+    new ResizeObserver(()=>{placePlatform();revealHorizontal(platformOptions,platformOptions.querySelector<HTMLElement>('[aria-pressed="true"]')!,true)}).observe(platformOptions);
+    let panelMotion:Animation|null=null;
     function render() {
         const mac = state.downloads.macos || state.localMac;
         const ready = state.platform === 'macos' ? mac : state.downloads.windows;
@@ -98,6 +110,7 @@ function start() {
         (document.querySelectorAll('[data-platform-option]') as NodeListOf<HTMLElement>).forEach(button => {
             button.setAttribute('aria-pressed', String(button.dataset.platformOption === panel));
         });
+        placePlatform();
         (document.querySelector('[data-source-panel]') as HTMLElement).hidden = panel === 'docker';
         for (const [platform, entry] of Object.entries({ ...state.downloads, ...(mac ? { macos: mac } : {}) })) {
             (document.querySelector(`[data-release-version="${platform}"]`) as HTMLElement).textContent = `v${entry.version} · ${entry.local ? t('本地测试包') : t('测试版')}`;
@@ -128,10 +141,18 @@ function start() {
             root.classList.remove('dl-meta-pending');
         }
     }
-    (document.querySelectorAll('[data-platform-option]') as NodeListOf<HTMLElement>).forEach(button => button.addEventListener('click', () => {
+    (document.querySelectorAll('[data-platform-option]') as NodeListOf<HTMLElement>).forEach(button => button.addEventListener('click', event => {
+        if(state.platform===button.dataset.platformOption)return;
+        const instant=event.detail===0||matchMedia('(prefers-reduced-motion: reduce)').matches;
+        platformOptions.classList.toggle('is-instant',instant);
+        const content=document.querySelector<HTMLElement>('.dl')!,style=getComputedStyle(content);
+        const from=panelMotion?{opacity:style.opacity,transform:style.transform}:{opacity:'0',transform:'translateY(4px)'};
+        panelMotion?.cancel();panelMotion=null;
         state.platform = button.dataset.platformOption!;
         state.manual = true;
         render();
+        revealHorizontal(platformOptions,button,instant);
+        if(!instant){panelMotion=content.animate([from,{opacity:'1',transform:'none'}],{duration:200,easing:getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim()});panelMotion.onfinish=()=>{panelMotion=null}}
     }));
     // Mac 包未公证，下载开始的同时弹出打开步骤；不阻止链接的默认下载。
     const macHelp = (document.querySelector('[data-mac-help-dialog]') as HTMLDialogElement);

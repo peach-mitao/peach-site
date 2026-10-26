@@ -1,23 +1,38 @@
 interface MockContext {$:(selector:string)=>HTMLElement;$$:(selector:string)=>HTMLElement[];sleep(ms:number):Promise<void>;down(on:boolean):void;move(el:HTMLElement,fx?:number,fy?:number,fixed?:number):Promise<void>;click(el:HTMLElement,fx?:number,fy?:number):Promise<void>;type(el:HTMLElement,text:string):Promise<void>;count(el:HTMLElement,to:number,ms?:number):Promise<void>;key(label:string,el:HTMLElement):void;remove(el:HTMLElement):Promise<void>}
+import {revealHorizontal} from './horizontal-controls.ts';
 const t=(text:string)=>window.PEACH_I18N?.[text]??text;
 const shots=[...(document.querySelectorAll('#screen picture') as NodeListOf<HTMLElement>)];
 const tabs=[...(document.querySelectorAll('.dock button') as NodeListOf<HTMLElement>)];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');
 const dock=document.querySelector<HTMLElement>('.dock')!,tour=document.querySelector<HTMLElement>('.tour')!;
+const dockItems=document.querySelector<HTMLElement>('.dock-items')!;
 const screen=document.getElementById('screen')!;
 const scrollShot=(index:number,instant:boolean)=>{
   const target=shots[index].getBoundingClientRect(),viewport=screen.getBoundingClientRect();
   screen.scrollTo({left:target.left+screen.scrollLeft-viewport.left-screen.clientLeft,behavior:instant?'instant':'smooth'});
 };
 new ResizeObserver(()=>scrollShot(tabs.findIndex(tab=>tab.getAttribute('aria-selected')==='true'),true)).observe(screen);
-const indicator=document.createElement('span');indicator.className='dock-indicator';indicator.setAttribute('aria-hidden','true');dock.prepend(indicator);
-const placeIndicator=(tab:HTMLElement)=>{
-  indicator.style.width=tab.offsetWidth+'px';indicator.style.height=tab.offsetHeight+'px';
-  indicator.style.transform=`translate3d(${tab.offsetLeft}px,${tab.offsetTop}px,0)`;
+// 原站 tooltip 位于选中按钮上方 10px，随按钮的缩放与布局过渡更新位置。
+const placeLabel=()=>{
+  const selected=tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!;
+  const target=selected.getBoundingClientRect(),container=dock.getBoundingClientRect();
+  const width=label!.offsetWidth;
+  const visible=dockItems.getBoundingClientRect();
+  label!.style.visibility=target.right<=visible.left||target.left>=visible.right?'hidden':'visible';
+  const left=Math.max(8,Math.min(document.documentElement.clientWidth-width-8,target.left+(target.width-width)/2));
+  label!.style.transform=`translate3d(${left-container.left-dock.clientLeft}px,${target.top-container.top-dock.clientTop-label!.offsetHeight-10}px,0)`;
 };
-placeIndicator(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!);
-requestAnimationFrame(()=>dock.classList.add('has-indicator'));
-new ResizeObserver(()=>placeIndicator(tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!)).observe(dock);
+let labelFrame=0;
+const followLabel=()=>{
+  cancelAnimationFrame(labelFrame);
+  const finish=performance.now()+220;
+  const update=()=>{placeLabel();if(performance.now()<finish)labelFrame=requestAnimationFrame(update)};
+  update();
+};
+requestAnimationFrame(placeLabel);
+new ResizeObserver(()=>{revealHorizontal(dockItems,tabs.find(tab=>tab.getAttribute('aria-selected')==='true')!,true);followLabel()}).observe(dockItems);
+dockItems.addEventListener('scroll',followLabel,{passive:true});
+document.fonts.ready.then(followLabel);
 const loadShot=(tab: HTMLElement)=>{
   const picture=shots.find(shot=>shot.dataset.k===tab.dataset.k);
   const source=(picture!.querySelector('source') as HTMLSourceElement),img=(picture!.querySelector('img') as HTMLImageElement);
@@ -27,23 +42,32 @@ const loadShot=(tab: HTMLElement)=>{
   if(img.dataset.src&&!img.hasAttribute('src'))img.src=img.dataset.src;
   return img;
 };
-let shotRequest=0;
+let shotRequest=0,restoreTransition:(()=>void)|null=null;
 tabs.forEach(tab=>tab.addEventListener('click',async event=>{
-  const request=++shotRequest,img=loadShot(tab);
-  try{await img.decode()}catch{return}
+  const request=++shotRequest,selectedIndex=tabs.indexOf(tab);
+  const currentIndex=tabs.findIndex(item=>item.getAttribute('aria-selected')==='true');
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches,instant=reduced||event.detail===0;
+  try{await loadShot(tab).decode()}catch{return}
   if(request!==shotRequest)return;
+  restoreTransition?.();
+  if(!instant&&currentIndex!==selectedIndex){
+    // 滚动期间只排列已解码的当前图和目标图，不经过未加载画面。
+    shots.forEach((shot,index)=>{shot.hidden=index!==currentIndex&&index!==selectedIndex});
+    scrollShot(currentIndex,true);
+    const restore=()=>{screen.removeEventListener('scrollend',restore);restoreTransition=null;shots.forEach(shot=>{shot.hidden=false});scrollShot(selectedIndex,true)};
+    restoreTransition=restore;screen.addEventListener('scrollend',restore,{once:true});
+  }
   tour.classList.toggle('is-instant',event.detail===0);
-  tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
-  const selectedIndex=tabs.indexOf(tab),reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  tabs.forEach(t=>{t.setAttribute('aria-selected',String(t===tab));t.classList.toggle('utU0aa_active',t===tab)});
   shots.forEach((shot,index)=>shot.classList.toggle('on',index===selectedIndex));
-  scrollShot(selectedIndex,reduced||event.detail===0);
-  placeIndicator(tab);
+  scrollShot(selectedIndex,instant);
   label!.textContent=tab.dataset.label!;
+  revealHorizontal(dockItems,tab,instant);
+  followLabel();
   say!.innerHTML=tab.dataset.say!;
 }));
-tabs.forEach(tab=>tab.addEventListener('mouseenter',()=>{label!.textContent=tab.dataset.label!;loadShot(tab)}));
+tabs.forEach(tab=>tab.addEventListener('mouseenter',()=>loadShot(tab)));
 tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));
-(document.querySelector('.dock') as HTMLElement).addEventListener('mouseleave',()=>{label!.textContent=tabs.find(t=>t.getAttribute('aria-selected')==='true')!.dataset.label!});
 // 移植原站模块 926753 的滚动、边界与分类底板逻辑；静态页面适配见参考记录。
 {
   const reel=document.querySelector<HTMLElement>('.feature-reel')!;
@@ -78,6 +102,7 @@ tabs.forEach(tab=>tab.addEventListener('focus',()=>loadShot(tab)));
       requestAnimationFrame(()=>outgoing.classList.add('_3Yq4tG_reelExitActive'));setTimeout(()=>outgoing.remove(),300);
     }
     filterGroup.classList.toggle('is-instant',event.detail===0);
+    revealHorizontal(filterGroup.parentElement!,button.parentElement!,instant);
     filters.forEach(filter=>{filter.setAttribute('aria-pressed',String(filter===button));filter.parentElement!.classList.toggle('_3Yq4tG_active',filter===button)});
     placeFilter();
     let index=0;cards.forEach(card=>{card.hidden=button.dataset.featureFilter!=='all'&&card.dataset.category!==button.dataset.featureFilter;if(!card.hidden)card.style.setProperty('--delay',100+80*index+++'ms')});
@@ -164,10 +189,21 @@ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)(document.querySelect
 // 语言菜单：点地球仪展开，点别处或按 Esc 收起。
 {
   const menu=(document.querySelector('.lang-menu') as HTMLElement),button=(menu.querySelector('button') as HTMLButtonElement),list=(menu.querySelector('ul') as HTMLElement);
-  const toggle=(open:boolean)=>{button.setAttribute('aria-expanded',String(open));list.hidden=!open};
-  button.addEventListener('click',()=>toggle(Boolean(list.hidden)));
+  let motion:Animation|null=null;
+  const toggle=(open:boolean,instant=false)=>{
+    if((button.getAttribute('aria-expanded')==='true')===open)return;
+    const hidden=list.hidden,current=hidden?null:getComputedStyle(list);
+    const from={opacity:current?.opacity??'0',transform:current?.transform??'translateY(-4px) scale(.95)'};
+    motion?.cancel();button.setAttribute('aria-expanded',String(open));list.hidden=false;list.inert=!open;
+    const trigger=button.getBoundingClientRect(),panel=list.getBoundingClientRect();
+    list.style.transformOrigin=`${trigger.left+trigger.width/2-panel.left}px 0`;
+    if(instant||matchMedia('(prefers-reduced-motion: reduce)').matches){list.hidden=!open;return}
+    const animation=list.animate([from,{opacity:open?'1':'0',transform:open?'none':'translateY(-4px) scale(.95)'}],{duration:200,easing:getComputedStyle(document.documentElement).getPropertyValue('--ease-out').trim(),fill:'both'});
+    motion=animation;animation.onfinish=()=>{if(motion!==animation)return;list.hidden=!open;animation.cancel();motion=null};
+  };
+  button.addEventListener('click',event=>toggle(button.getAttribute('aria-expanded')!=='true',event.detail===0));
   document.addEventListener('click',e=>{if(!menu.contains(e.target as Node|null))toggle(false)});
-  menu.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){toggle(false);button.focus()}});
+  menu.addEventListener('keydown',e=>{if(e.key==='Escape'&&!list.hidden){toggle(false,true);button.focus()}});
 }
 
 // 资料条：每行复制一份首尾相接。

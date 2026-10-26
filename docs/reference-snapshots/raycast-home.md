@@ -33,7 +33,7 @@ Peach 的差异集中在 `peach-features.css`：连接实际读到的原站变�
 
 导览采用 [1-qssuozz0_ir.js](https://www.raycast.com/_next/static/immutable/chunks/1-qssuozz0_ir.js) 中模块 `916355` 的横向 `scrollTo` 路径，该资源 SHA-256 为 `34887c3f280121484a57b221b15809ccaa5afa40ae675f51cfde8b78db35ec98`。目标位置由子项与轨道的矩形、当前 `scrollLeft` 算出，窗口变化时立即重新对齐。
 
-轨道 CSS 来自 [0m6-h7j26kp-g.css](https://www.raycast.com/_next/static/immutable/chunks/0m6-h7j26kp-g.css)，SHA-256 为 `59b146eac5081b9c77f72a406ed9d6b256570e548dbd3ebc9787ab5d2aeffa08`。同步入口原样提取 `utU0aa_showcaseReel`、Dock 和 tooltip 模块。Peach 将五个演示改为六张完整应用截图，保留自身画框比例，在画框内为 Dock 单独留位，避免覆盖截图。首次主图直接显示，切换只等待目标图解码；横向滚动期间临时排列当前图和目标图，结束后恢复完整轨道，避免经过未加载画面或等待无关图片。键盘或减少动态效果时立即对齐，不采用原站自动轮换。
+轨道 CSS 来自 [0m6-h7j26kp-g.css](https://www.raycast.com/_next/static/immutable/chunks/0m6-h7j26kp-g.css)，SHA-256 为 `59b146eac5081b9c77f72a406ed9d6b256570e548dbd3ebc9787ab5d2aeffa08`。同步入口原样提取 `utU0aa_showcaseReel`、Dock 和 tooltip 模块。Peach 将五个演示改为六张完整应用截图，保留自身画框比例，在画框内为 Dock 单独留位，避免覆盖截图。首次主图直接显示，切换只等待目标图解码；横向滚动期间临时排列当前图和目标图，只在目标图对齐后恢复完整轨道，避免经过未加载画面、等待无关图片或因重排产生的滚动结束事件提前收尾。键盘或减少动态效果时立即对齐，不采用原站自动轮换。
 
 原站 Dock 普通按钮为 54 × 54px，选中态使用 `scale(1.25) translateY(-5px)`、两侧各 6px 外边距、16px 圆角和径向高光。标题由模块 `916355` 的 Floating UI 配置定位在选中按钮上方 10px。Peach 沿用提取的选中样式，以既有 DOM 适配跟随位置；不再绘制横移底板，也不在悬停时改成其他按钮的标题。六个入口保留 54 × 54px 按钮和 24px 图标，窄屏在 Dock 内横向滚动，选中项进入可见范围；标题位于滚动裁剪区外。说明在画框下方居中，最大宽度 467px。
 

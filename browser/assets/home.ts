@@ -54,8 +54,13 @@ tabs.forEach(tab=>tab.addEventListener('click',async event=>{
     // 滚动期间只排列已解码的当前图和目标图，不经过未加载画面。
     shots.forEach((shot,index)=>{shot.hidden=index!==currentIndex&&index!==selectedIndex});
     scrollShot(currentIndex,true);
-    const restore=()=>{screen.removeEventListener('scrollend',restore);restoreTransition=null;shots.forEach(shot=>{shot.hidden=false});scrollShot(selectedIndex,true)};
-    restoreTransition=restore;screen.addEventListener('scrollend',restore,{once:true});
+    const restore=()=>{screen.removeEventListener('scrollend',finish);restoreTransition=null;shots.forEach(shot=>{shot.hidden=false});scrollShot(selectedIndex,true)};
+    const finish=()=>{
+      const target=shots[selectedIndex].getBoundingClientRect(),viewport=screen.getBoundingClientRect();
+      // 重排也会产生 scrollend；只有目标图片对齐后才恢复完整轨道。
+      if(Math.abs(target.left-viewport.left-screen.clientLeft)<1)restore();
+    };
+    restoreTransition=restore;screen.addEventListener('scrollend',finish);
   }
   tour.classList.toggle('is-instant',event.detail===0);
   tabs.forEach(t=>{t.setAttribute('aria-selected',String(t===tab));t.classList.toggle('utU0aa_active',t===tab)});

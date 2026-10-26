@@ -44,6 +44,26 @@ try {
                 await next.press('End');
                 await page.waitForFunction(()=>document.querySelector('.dock button[data-k="stats"]')?.getAttribute('aria-selected')==='true');
                 assert.equal(await page.locator('.dock [aria-selected="true"]').evaluate(el=>el.getAnimations().length),0,'键盘选择立即响应');
+                for(const key of ['home','people','profile','play','follow','stats','follow','play','profile','people','home','stats','profile']){
+                    const frames=page.evaluate(key=>new Promise<{image:boolean;button:boolean}>(resolve=>{
+                        const started=performance.now(),motion={image:false,button:false};
+                        const frame=()=>{
+                            const screen=document.getElementById('screen')!,shot=screen.querySelector<HTMLElement>('picture.on')!,button=document.querySelector<HTMLElement>('.dock [aria-selected="true"]')!;
+                            if(shot.dataset.k===key){
+                                const distance=Math.abs(shot.getBoundingClientRect().left-screen.getBoundingClientRect().left-screen.clientLeft),scale=button.getBoundingClientRect().width/button.offsetWidth;
+                                motion.image ||= distance>1&&distance<screen.clientWidth-1;
+                                motion.button ||= scale>1.01&&scale<1.24;
+                                if(distance<1&&button.getAnimations().length===0){resolve(motion);return}
+                            }
+                            if(performance.now()-started>2000){resolve(motion);return}
+                            requestAnimationFrame(frame);
+                        };requestAnimationFrame(frame);
+                    }),key);
+                    await page.locator(`.dock button[data-k="${key}"]`).click();
+                    const motion=await frames;
+                    assert.ok(motion.image,`${language} ${width} 切换到 ${key} 时图片有连续位移`);
+                    assert.ok(motion.button,`${language} ${width} 切换到 ${key} 时按钮有连续放大`);
+                }
                 const faq = page.locator('#faq details').first();
                 await faq.locator('summary').click();
                 await page.waitForFunction(() => (document.querySelector('#faq details') as HTMLElement).getAnimations().length === 0);

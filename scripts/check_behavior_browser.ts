@@ -48,7 +48,11 @@ try{
 
  const lifecycle=await browser.newContext(),lifecyclePage=await lifecycle.newPage(),lifecycleStart=batches.length;
  await lifecyclePage.goto(base+'/behavior-lifecycle');await lifecyclePage.waitForFunction(()=>window.PeachBehavior!==undefined);
- async function suspend(){await lifecyclePage.evaluate(async()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));dispatchEvent(new PageTransitionEvent('pagehide'));await window.PeachBehavior!.flush()})}
+ async function suspend(){
+  const sent=lifecyclePage.waitForResponse(response=>response.url()===base+'/record'&&(response.request().postDataJSON() as Batch).events.some(event=>event.kind==='leave'));
+  await lifecyclePage.evaluate(async()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange'));dispatchEvent(new PageTransitionEvent('pagehide'));await window.PeachBehavior!.flush()});
+  await sent;
+ }
  await suspend();
  const firstLeave=batches.slice(lifecycleStart).flatMap(batch=>batch.events).filter(event=>event.kind==='leave');assert.equal(firstLeave.length,1);
  await lifecyclePage.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,value:'visible'});document.dispatchEvent(new Event('visibilitychange'))});await lifecyclePage.waitForTimeout(30);await suspend();

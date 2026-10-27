@@ -68,7 +68,7 @@ npm run test:browser
 npm run check:deploy
 ```
 
-CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不访问真实 GitHub API，也不要求下载媒体。电影素材与导览完整性由下述发布验收覆盖。Node 直接运行可擦除类型的 TS；`tsconfig.json` 与 `tsconfig.browser.json` 分别严格检查 Node／Worker 和浏览器代码。检查入口拒绝在维护源码目录新增 `.js` 或 `.mjs`。
+CI 使用合成 Release 响应验证下载、平台选择与异常恢复，不访问真实 GitHub API，也不要求下载媒体。浏览器测试为素材清单内的导览截图提供可解码的合成 SVG，验证切换、解码等待与动画；真实图片和素材完整性由下述发布验收覆盖。Node 直接运行可擦除类型的 TS；`tsconfig.json` 与 `tsconfig.browser.json` 分别严格检查 Node／Worker 和浏览器代码。检查入口拒绝在维护源码目录新增 `.js` 或 `.mjs`。
 
 `npm run browser:build` 通过 esbuild 将 `browser/assets/`、`browser/copyright/` 和编辑适配器编译到对应的浏览器 JS 路径，生成素材来源页与英文页，最后计算布局指纹。缺译、过期译文或动态文案缺少对应原文绑定时拒绝完成构建。构建、预览、检查、测试与 npm 部署入口自动准备这些文件；直接调用 cf 前须先生成浏览器产物。编译副本不进 Git。第三方库与按来源锁定的共享编辑核心保持 JS 产物，不在本站维护副本实现。
 

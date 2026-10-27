@@ -20,7 +20,7 @@
 <p class="support-top"><a href="/en/">← Peach website</a><a href="/copyright/" lang="zh-CN">中文</a></p>
 <header class="flex flex-col gap-1"><img src="/assets/support-ui/logo.png" alt="" width="40" height="40" decoding="async" class="mb-4 size-10"><h1 id="copyright-title">Copyright notice / DMCA</h1></header>
 <p class="intro">If you are a rights holder or an authorized representative and believe that content shown on <strong>peach.video</strong> or <strong>demo.peach.video</strong> infringes your copyright, please provide the information below. We review each notice and promptly remove or disable access to content when a notice is valid.</p>
-<p id="contact" hidden>Send notices to: <a id="email"></a>. You can also email the information below directly.</p>
+<p id="contact">Send notices to: <a id="email" href="mailto:dmca@peach.video">dmca@peach.video</a>. You can also email the information below directly.</p>
 <form id="copyright-form">
 <label>Name, or organization and contact person<input name="claimant" autocomplete="name" maxlength="160" required></label>
 <label>Contact email<input name="reply" type="email" autocomplete="email" maxlength="254" required></label>
@@ -31,8 +31,7 @@
 <label class="check"><input name="accuracy" type="checkbox" required><span>I state that the information in this notice is accurate and, under penalty of perjury, that I am the owner of, or authorized to act on behalf of the owner of, an exclusive right that is allegedly infringed.</span></label>
 <label>Electronic signature<input name="signature" maxlength="160" required placeholder="Your full name"></label>
 <p class="subtle">This form only prepares an email in your browser; nothing is sent or stored automatically. Do not include passwords, identity documents or unrelated personal data. Contact details are used to verify rights and reply to your notice.</p>
-<button id="prepare" type="submit" disabled>Prepare notice email</button>
-<p id="configuration" role="status">The notice address is being configured.</p>
+<button id="prepare" type="submit" disabled aria-busy="true">Prepare notice email</button>
 </form>
 <section class="result" id="result" hidden aria-labelledby="result-title"><h2 id="result-title">Email prepared, not sent yet</h2><p>Review it in your email app before sending. If you haven't set up an email app, copy the text and send it to the address above.</p><label>Notice text<textarea id="notice" readonly></textarea></label><div class="actions"><a class="action" id="compose">Open email app</a><button id="copy" type="button">Copy text</button></div><p id="copy-status" role="status"></p></section>
 <section class="support-section" aria-labelledby="handling-title"><h2 id="handling-title">Review and follow-up</h2><p>If information is missing, we may ask for more detail on location or rights. If you believe content was misidentified, explain why at the same address and include supporting evidence. For trademark, likeness, privacy or other rights issues, use the same address and state the type of issue.</p>

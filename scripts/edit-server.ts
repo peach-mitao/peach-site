@@ -34,7 +34,7 @@ export function textSlices(html: string, from: number, to: number) {
     }
     const name = (/^<([A-Za-z][\w-]*)/.exec(html.slice(i, i + 40)) || [])[1]?.toLowerCase();
     i = j + 1;
-    if (name === "script" || name === "style") {
+    if (name === "script" || name === "style" || name === "template") {
       i = html.toLowerCase().indexOf(`</${name}`, i);
       if (i < 0) throw Error('页面标签未闭合');
     }

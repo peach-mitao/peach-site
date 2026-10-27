@@ -153,7 +153,6 @@
     "填写你的全名": "Your full name",
     "表单只在当前浏览器中整理邮件，不自动发送或保存输入。请勿附上密码、身份证件或无关个人资料；联系信息用于核对权利与回复投诉。": "This form only prepares an email in your browser; nothing is sent or stored automatically. Do not include passwords, identity documents or unrelated personal data. Contact details are used to verify rights and reply to your notice.",
     "准备投诉邮件": "Prepare notice email",
-    "投诉接收地址正在配置。": "The notice address is being configured.",
     "邮件已整理，尚未发送": "Email prepared, not sent yet",
     "在邮件客户端检查后发送。如果没有配置邮件客户端，可复制正文并发送至上面的接收邮箱。": "Review it in your email app before sending. If you haven't set up an email app, copy the text and send it to the address above.",
     "投诉正文": "Notice text",

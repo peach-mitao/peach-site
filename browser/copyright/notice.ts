@@ -1,14 +1,11 @@
 import { t } from '../assets/i18n.ts';
 // 站点所有者指定的投诉地址；本页仅准备邮件，不代发。
-const recipient = 'dmca@peach.video';
+const recipient = document.querySelector<HTMLAnchorElement>('#email')!.getAttribute('href')!.slice('mailto:'.length);
 const form = (document.querySelector('#copyright-form') as HTMLFormElement);
 if (recipient) {
-    const email = (document.querySelector('#email') as HTMLAnchorElement);
-    email.textContent = recipient;
-    email.href = `mailto:${recipient}`;
-    (document.querySelector('#contact') as HTMLElement).hidden = false;
-    (document.querySelector('#configuration') as HTMLElement).hidden = true;
-    (document.querySelector('#prepare') as HTMLButtonElement).disabled = false;
+    const prepare=document.querySelector<HTMLButtonElement>('#prepare')!;
+    prepare.disabled=false;
+    prepare.removeAttribute('aria-busy');
 }
 form.addEventListener('submit', event => {
     event.preventDefault();

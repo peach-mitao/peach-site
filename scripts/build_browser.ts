@@ -35,7 +35,7 @@ export async function buildBrowser(){
         await build({entryPoints:[file],outfile:out,bundle:true,format:'esm',platform:'browser',target:'es2022',charset:'utf8',minify:true,define:{'process.env.NODE_ENV':'"production"'}});
         continue;
       }
-      if(['locale.ts','page-support.ts'].includes(entry.name)){
+      if(['locale.ts','page-support.ts','privacy-bootstrap.ts'].includes(entry.name)){
         await build({entryPoints:[file],outfile:out,bundle:true,format:'iife',platform:'browser',target:'es2022',charset:'utf8'});continue;
       }
       const result=await transform(await readFile(file,'utf8'),{loader:'ts',target:'es2022',charset:'utf8',sourcefile:file});

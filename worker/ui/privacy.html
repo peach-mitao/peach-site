@@ -5,21 +5,21 @@
 <meta name="robots" content="noindex,nofollow"><meta name="color-scheme" content="light dark">
 <title>统计偏好 · Peach</title>
 <script src="/assets/page-support.js"></script>
+<script src="/assets/privacy-bootstrap.js"></script>
 <link rel="stylesheet" href="/assets/support-ui/inter/index.css">
 <link rel="stylesheet" href="/assets/support-ui/peach-pages.css">
 <link rel="stylesheet" href="/assets/support.css">
 <link rel="stylesheet" href="/assets/boardui.css">
 </head>
-<body data-copy-overrides="{&quot;privacy.analytics.off.zh&quot;:&quot;统计已停用&quot;,&quot;privacy.action.on.zh&quot;:&quot;允许统计&quot;,&quot;privacy.analytics.allowed.zh&quot;:&quot;统计已允许&quot;,&quot;privacy.action.off.zh&quot;:&quot;停用统计&quot;}" class="peach-react">
+<body data-support-page="privacy" data-copy-overrides="{&quot;privacy.analytics.off.zh&quot;:&quot;统计已停用&quot;,&quot;privacy.action.on.zh&quot;:&quot;允许统计&quot;,&quot;privacy.analytics.allowed.zh&quot;:&quot;统计已允许&quot;,&quot;privacy.action.off.zh&quot;:&quot;停用统计&quot;}" class="peach-react">
 <main class="flex justify-center px-6 py-12 max-sm:px-4 max-sm:py-6">
 <article class="support-document flex w-full flex-col gap-6 rounded-3xl border border-separator-border bg-background-secondary-default p-8 max-sm:p-5" aria-labelledby="privacy-title">
 <header class="flex flex-col gap-1"><img src="/assets/support-ui/logo.png" alt="" width="40" height="40" class="mb-4 size-10"><h1 id="privacy-title">统计偏好</h1></header>
 <p id="privacy-collection">Peach 官网和演示站使用 Cloudflare Web Analytics 统计页面访问，分析按钮点击、可见区域和匿名访问动线。为关联两站内的同次访问，会使用共享于 peach.video 子域名的随机会话 Cookie；连续 30 分钟没有活动后失效。匿名行为明细和对应页面参考截图长期保留。汇总统计保留三个月。</p>
 <p id="privacy-scope">统计不记录输入框内容、搜索词、影片标题、完整访问网址、IP 或完整浏览器标识，不录制页面与操作视频。关闭页面后的去向无法观察；离开位置依据会话结束前最后记录的位置判断。</p>
-<div id="privacy-controls">
-<div class="support-preference"><p id="preference" role="status" data-copy-key="privacy.analytics.allowed.zh" data-copy-default="自有统计已允许">自有统计已允许</p><div class="actions"><button id="analytics-off" type="button" data-copy-interact data-copy-key="privacy.action.off.zh">停用自有统计</button><button id="analytics-on" type="button" data-copy-interact data-copy-key="privacy.action.on.zh" hidden>允许自有统计</button></div></div>
-<nav class="support-top"><a id="privacy-home" href="/">返回官网</a><a id="privacy-demo" href="https://demo.peach.video/">打开演示站</a></nav>
-</div>
+<div id="privacy-controls" class="boardui-root"><!--PRIVACY_CONTROLS--></div>
 </article></main>
+<!--PRIVACY_TEMPLATES-->
+<script>document.dispatchEvent(new Event('peach:support-ready'))</script>
 <script type="module" src="/assets/behavior-privacy.js"></script>
 </body></html>

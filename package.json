@@ -44,6 +44,8 @@
     "verify:region": "node scripts/check_region.ts",
     "verify:download-cache": "node scripts/check_download_cache.ts",
     "verify:preferences": "node scripts/check_preferences.ts",
+    "preverify:first-paint": "npm run browser:build",
+    "verify:first-paint": "node scripts/check_first_paint.ts",
     "verify:cache": "node scripts/check_cache.ts",
     "analytics": "node scripts/analytics_report.ts",
     "capture:desktop": "node scripts/capture_compact_desktop.ts && node scripts/optimize_compact_desktop.ts",

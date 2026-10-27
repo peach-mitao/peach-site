@@ -30,6 +30,7 @@ interface PreviewOptions {
   publicReleases?: boolean;
   dynamic?:(req:http.IncomingMessage,res:http.ServerResponse)=>Promise<boolean>;
   editIndex?:(req:http.IncomingMessage)=>string|undefined;
+  editView?:(req:http.IncomingMessage)=>edit.SourceView|undefined;
 }
 
 export async function createPreviewServer(options: PreviewOptions = {}) {
@@ -84,7 +85,7 @@ export async function createPreviewServer(options: PreviewOptions = {}) {
         let refererPath='/';try{refererPath=new URL(req.headers.referer||'http://localhost/').pathname}catch{}
         const localeContext=await localeEdit.forRoute(root,refererPath);
         const creditsContext=localeContext?null:await creditsEdit.context(root,refererPath);
-        const result = localeContext?await localeEdit.post(localeContext,kind,input):await edit.post(creditsContext?.file??options.editIndex?.(req)??editableSource(req),kind,input,creditsContext?.view);
+        const result = localeContext?await localeEdit.post(localeContext,kind,input):await edit.post(creditsContext?.file??options.editIndex?.(req)??editableSource(req),kind,input,creditsContext?.view??options.editView?.(req));
         res.writeHead(result.status, {'Content-Type': 'application/json; charset=utf-8'}).end(JSON.stringify(result.json));
         return;
       }

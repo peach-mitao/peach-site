@@ -16,7 +16,7 @@ try {
     server.listen(0, '127.0.0.1');
     await once(server, 'listening');
     const { port } = server.address() as import('node:net').AddressInfo;
-    for (const [file, args] of [['check_locale.ts', [`http://127.0.0.1:${port}/`]], ['check_support.ts', [`http://127.0.0.1:${port}/`]], ['check_downloads.ts', [`http://127.0.0.1:${port}/`]], ['check_download_cache.ts', []], ['check_preferences.ts', []], ['check_analytics.ts', [`http://127.0.0.1:${port}/`]], ['check_interface.ts', [`http://127.0.0.1:${port}/`]], ['check_edit.ts', []]] as const) {
+    for (const [file, args] of [['check_locale.ts', [`http://127.0.0.1:${port}/`]], ['check_support.ts', [`http://127.0.0.1:${port}/`]], ['check_downloads.ts', [`http://127.0.0.1:${port}/`]], ['check_download_cache.ts', []], ['check_preferences.ts', []], ['check_analytics.ts', [`http://127.0.0.1:${port}/`]], ['check_interface.ts', [`http://127.0.0.1:${port}/`]], ['check_first_paint.ts', []], ['check_edit.ts', []]] as const) {
         const child = spawn(process.execPath, [fileURLToPath(new URL(file, import.meta.url)), ...args], { stdio: 'inherit' });
         const [code] = await once(child, 'exit');
         if (code !== 0) {

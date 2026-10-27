@@ -17,6 +17,7 @@
 .support-document .check input{width:16px;height:16px;margin-top:3px;accent-color:var(--color-text-primary)}
 .support-document button:not(.boardui-root *),.support-document .action{display:inline-flex;align-items:center;justify-content:center;justify-self:start;min-height:36px;max-width:100%;padding:8px 12px;border:0;border-radius:10px;background:var(--gradient-button-primary-default);color:var(--color-text-white);font:500 14px/20px var(--font-sans);cursor:pointer;text-decoration:none;text-align:center}
 .support-document button:not(.boardui-root *):disabled{background:var(--color-background-tertiary-default);color:var(--color-text-disabled);cursor:not-allowed}
+.support-document button:not(.boardui-root *)[aria-busy=true]{background:var(--gradient-button-primary-default);color:var(--color-text-white);cursor:wait}
 .support-document .actions{display:flex;gap:8px;flex-wrap:wrap}
 .support-document .subtle{font-size:12px;line-height:18px}
 .support-document > header{gap:12px}

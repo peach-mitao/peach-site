@@ -125,10 +125,10 @@ try {
                 assert.ok(position.top>=position.cardBottom,'切换按钮位于卡片下方');
                 for(const button of await page.locator('.feature-pagination button').all()){
                     const target=await button.evaluate(el=>{
-                        const box=el.getBoundingClientRect(),notice=document.querySelector('.site-notice')!.getBoundingClientRect();
-                        return {width:box.width,height:box.height,bottom:box.bottom,noticeTop:notice.top,hit:el.contains(document.elementFromPoint(box.left+box.width/2,box.top+box.height/2))};
+                        const box=el.getBoundingClientRect();
+                        return {width:box.width,height:box.height,bottom:box.bottom,viewportHeight:innerHeight,hit:el.contains(document.elementFromPoint(box.left+box.width/2,box.top+box.height/2))};
                     });
-                    assert.equal(target.width,44);assert.equal(target.height,44);assert.equal(target.hit,true,'按钮没有被浮层遮挡');assert.ok(target.bottom<target.noticeTop);
+                    assert.equal(target.width,44);assert.equal(target.height,44);assert.equal(target.hit,true,'按钮没有被浮层遮挡');assert.ok(target.bottom<target.viewportHeight);
                 }
                 const scroll=()=>page.locator('.feature-reel').evaluate(el=>el.scrollLeft),start=await scroll();
                 await page.locator('[data-feature-step="1"]').click();

@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {chromium} from 'playwright';
 import {createPreviewServer} from './serve.ts';
 let version='1.2.3',available=true;const requests:string[]=[];
-const release=(value:string)=>({tag_name:'v'+value,published_at:`2026-01-${value.split('.').at(-1)!.padStart(2,'0')}T00:00:00Z`,assets:[`Peach-${value}-windows-x64-setup.exe`,`Peach-${value}-windows-x64.zip`].map(name=>({name,state:'uploaded'}))});
+const release=(value:string)=>({tag_name:'v'+value,published_at:`2026-01-${value.split('.').at(-1)!.padStart(2,'0')}T00:00:00Z`,assets:[`Peach-${value}-windows-x64-setup.exe`,`Peach-${value}-windows-x64.zip`].map(name=>({name,state:'uploaded',size:123,digest:'sha256:'+'a'.repeat(64)}))});
 const html=(await readFile(new URL('../site/index.html',import.meta.url),'utf8')).replace('<head>','<head><meta name="peach-public-downloads" content="/cache-index.json">');
 const server=await createPreviewServer({async dynamic(req,res){
  const url=new URL(req.url||'/','http://localhost');
@@ -24,7 +24,7 @@ try{
    const url=typeof input==='string'?input:input instanceof Request?input.url:input.toString();
    if(url.startsWith('https://api.github.com/repos/peach-mitao/peach/releases')){
     const v=(window as Window&{testGitHubVersion?:string}).testGitHubVersion;
-    return Promise.resolve(Response.json(v?[{tag_name:'v'+v,published_at:`2026-01-${v.split('.').at(-1)!.padStart(2,'0')}T00:00:00Z`,assets:[`Peach-${v}-windows-x64-setup.exe`,`Peach-${v}-windows-x64.zip`].map(name=>({name,state:'uploaded'}))}]:[]));
+    return Promise.resolve(Response.json(v?[{tag_name:'v'+v,published_at:`2026-01-${v.split('.').at(-1)!.padStart(2,'0')}T00:00:00Z`,assets:[`Peach-${v}-windows-x64-setup.exe`,`Peach-${v}-windows-x64.zip`].map(name=>({name,state:'uploaded',size:123,digest:'sha256:'+'a'.repeat(64)}))}]:[]));
    }
    if(url.startsWith('https://img.shields.io/'))return Promise.resolve(Response.json({message:'v1.2.3'}));
    return native(input,options);
@@ -39,7 +39,9 @@ try{
  available=false;await page.evaluate(()=>{(window as Window&{testGitHubVersion?:string}).testGitHubVersion='1.2.6';dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))});
  await page.waitForFunction(()=>document.querySelector<HTMLAnchorElement>('[data-download="setup"]')?.href.includes('github.com')===true);
  version='1.2.6';available=true;await page.evaluate(()=>dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true})));
- await page.waitForFunction(()=>document.querySelector<HTMLAnchorElement>('[data-download="setup"]')?.href==='https://downloads.peach.video/v1.2.6/Peach-1.2.6-windows-x64-setup.exe');
+ await page.waitForFunction(()=>document.querySelector<HTMLElement>('[data-backup-slot="setup"]')?.hidden===false);
+ assert.equal(await href(),'https://github.com/peach-mitao/peach/releases/download/v1.2.6/Peach-1.2.6-windows-x64-setup.exe');
+ assert.equal(await page.locator('[data-backup-download="setup"]').getAttribute('href'),'https://downloads.peach.video/v1.2.6/Peach-1.2.6-windows-x64-setup.exe');
  assert.match(await page.locator('[data-release-version="windows"]').innerText(),/1\.2\.6/);await context.close();
- console.log('PASS: 四小时旧HTTP缓存、返回页面刷新、并发合并、GitHub回退与同版本R2恢复直连');
+ console.log('PASS: 四小时旧HTTP缓存、返回页面刷新、并发合并、GitHub 主入口与同版本 R2 备用入口恢复');
 }finally{await browser.close();server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()))}

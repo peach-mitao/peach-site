@@ -1,6 +1,6 @@
-interface DownloadEntry {version:string;publishedAt?:string;local:boolean;files:Record<string,{name:string;href:string}>}
+interface DownloadEntry {version:string;publishedAt?:string;local:boolean;source?:string;files:Record<string,{name:string;href:string;size?:number;digest?:string}>}
 type DownloadMap=Partial<Record<string,DownloadEntry>>;
-interface Release {tag_name:string;published_at:string;draft?:boolean;assets?:{name:string;state?:string}[]}
+interface Release {tag_name:string;published_at:string;draft?:boolean;assets?:{name:string;state?:string;size?:number;digest?:string}[]}
 import { renderCopy } from './copy.ts';
 import { t } from './i18n.ts';
 import {revealHorizontal} from './horizontal-controls.ts';
@@ -61,7 +61,11 @@ export function downloadsFor(releases: Release[], source = 'github') {
         })) {
             if (result[platform] || !Object.values(names).every(name => release.assets?.some((asset) => asset.name === name && asset.state === 'uploaded')))
                 continue;
-            result[platform] = { version, publishedAt: release.published_at, local: false, files: Object.fromEntries(Object.entries(names).map(([key, name]) => [key, { name, href: `${source === 'r2' ? downloadsBase : releasesUrl + '/download'}/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}` }])) };
+            result[platform] = { version, publishedAt: release.published_at, local: false, source, files: Object.fromEntries(Object.entries(names).map(([key, name]) => {
+                const asset = release.assets!.find(asset => asset.name === name && asset.state === 'uploaded')!;
+                return [key, { name, size: asset.size, digest: asset.digest,
+                    href: `${source === 'r2' ? downloadsBase : releasesUrl + '/download'}/${encodeURIComponent(release.tag_name)}/${encodeURIComponent(name)}` }];
+            })) };
         }
     }
     return result;
@@ -70,8 +74,8 @@ function start() {
     const params = new URLSearchParams(location.search);
     const chosenPlatform = ['windows', 'macos', 'docker'].includes(params.get('platform')||'') ? params.get('platform') : null;
     const chosenArchitecture = ['arm64', 'x86_64'].includes(params.get('arch')||'') ? params.get('arch') : null;
-    const state: {platform:string;architecture:string|null;manual:boolean;downloads:DownloadMap;localMac:DownloadEntry|null;dockerVersion:string|null;releasesSettled:boolean;dockerSettled:boolean} = { platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
-        manual: !!chosenPlatform, downloads: {}, localMac: null, dockerVersion: null, releasesSettled: false, dockerSettled: false };
+    const state: {platform:string;architecture:string|null;manual:boolean;downloads:DownloadMap;providers:Record<string,DownloadMap>;localMac:DownloadEntry|null;dockerVersion:string|null;releasesSettled:boolean;dockerSettled:boolean} = { platform: chosenPlatform || platformFor(navigator), architecture: chosenArchitecture,
+        manual: !!chosenPlatform, downloads: {}, providers: { github: {}, r2: {} }, localMac: null, dockerVersion: null, releasesSettled: false, dockerSettled: false };
     let releaseRequest:Promise<void>|null=null,lastReleaseCheck=0;
     const platformOptions=document.querySelector<HTMLElement>('.platform-options')!;
     const platformIndicator=document.createElement('span');platformIndicator.className='platform-indicator';platformIndicator.setAttribute('aria-hidden','true');platformOptions.prepend(platformIndicator);
@@ -112,6 +116,7 @@ function start() {
         });
         placePlatform();
         (document.querySelector('[data-source-panel]') as HTMLElement).hidden = panel === 'docker';
+        document.querySelectorAll<HTMLElement>('[data-backup-slot]').forEach(slot => { slot.hidden = true });
         for (const [platform, entry] of Object.entries({ ...state.downloads, ...(mac ? { macos: mac } : {}) })) {
             (document.querySelector(`[data-release-version="${platform}"]`) as HTMLElement).textContent = `v${entry.version} · ${entry.local ? t('本地测试包') : t('测试版')}`;
             for (const [kind, asset] of Object.entries(entry.files)) {
@@ -123,6 +128,16 @@ function start() {
                 link.removeAttribute('aria-disabled');
                 renderCopy((link.querySelector('span') as HTMLElement), `download.package.${kind}.ready`, { setup: t('下载安装版'), portable: t('下载免安装版'),
                     'macos-arm64': t('下载 Apple Silicon 版'), 'macos-x86_64': t('下载 Intel 版') }[kind]!);
+                const mirror = state.providers[entry.source === 'github' ? 'r2' : 'github']?.[platform];
+                const backup = mirror?.version === entry.version ? mirror.files[kind] : undefined;
+                const slot = document.querySelector<HTMLElement>(`[data-backup-slot="${kind}"]`);
+                if (!entry.local && slot && backup && backup.name === asset.name && Number.isSafeInteger(asset.size) && asset.size! > 0
+                    && backup.size === asset.size && /^sha256:[0-9a-f]{64}$/.test(asset.digest || '') && backup.digest === asset.digest) {
+                    const alternate = slot.querySelector<HTMLAnchorElement>('a')!;
+                    alternate.href = backup.href;
+                    alternate.title = backup.name;
+                    slot.hidden = false;
+                }
             }
         }
         const macStatus = mac
@@ -131,7 +146,7 @@ function start() {
         renderCopy((document.querySelector('[data-macos-status]') as HTMLElement), `download.macos-status.${mac ? mac.local ? 'local' : 'ready' : 'pending'}`, macStatus);
         const command = panel === 'macos' ? 'uv sync --locked --python 3.14 --extra macos\n./.venv/bin/peach-tray'
             : 'uv sync --locked --python 3.14\n& .\\.venv\\Scripts\\peach-tray.exe';
-        renderCopy((document.querySelector('#src') as HTMLElement), `download.source.${panel}`, 'git clone https://gitgud.io/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
+        renderCopy((document.querySelector('#src') as HTMLElement), `download.source.${panel}`, 'git clone https://github.com/peach-mitao/peach.git peach-app\ncd peach-app\n' + command);
         renderCopy((document.querySelector('[data-source-shell]') as HTMLElement), `download.shell.${panel}`, panel === 'macos' ? 'zsh' : 'PowerShell');
         // 首屏文字定稿后再显示：按钮随首次渲染，版本行等到当前平台取得版本或发行清单查完。
         const root = document.documentElement;
@@ -163,14 +178,15 @@ function start() {
         if (state.platform === 'macos' && /\.dmg$/i.test(link.pathname))
             showMacHelp();
     }));
-    (document.querySelectorAll('[data-download]') as NodeListOf<HTMLElement>).forEach(link => link.addEventListener('click', event => {
+    (document.querySelectorAll('[data-download], [data-backup-download]') as NodeListOf<HTMLElement>).forEach(link => link.addEventListener('click', event => {
         if (link.getAttribute('aria-disabled') === 'true') {
             event.preventDefault();
             return;
         }
-        if (link.dataset.download!.startsWith('macos-')) {
+        const kind = link.dataset.download || link.dataset.backupDownload!;
+        if (kind.startsWith('macos-')) {
             state.platform = 'macos';
-            state.architecture = link.dataset.download!.slice(6);
+            state.architecture = kind.slice(6);
             state.manual = true;
             render();
             showMacHelp();
@@ -211,7 +227,7 @@ function start() {
             catch { /* 本地包不可用时仍展示公开发布状态。 */ }
         }
         const publicIndex = (document.querySelector('meta[name="peach-public-downloads"]') as HTMLMetaElement)?.content || downloadsApi;
-        for (const [endpoint, source] of [[publicIndex, 'r2'], [releasesApi, 'github']] as const) {
+        for (const [endpoint, source] of [[releasesApi, 'github'], [publicIndex, 'r2']] as const) {
             try {
                 const response = await fetch(endpoint, { cache:'no-store', headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) });
                 if (!response.ok)
@@ -219,9 +235,10 @@ function start() {
                 const downloads = downloadsFor(await response.json(), source);
                 if (!Object.keys(downloads).length)
                     continue;
+                state.providers[source] = downloads;
                 for (const [platform, entry] of Object.entries(downloads)) {
                     const current = state.downloads[platform];
-                    if (entry&&(!current || (source==='r2'&&entry.version===current.version) || (entry.version !== current.version && Date.parse(entry.publishedAt||'') > Date.parse(current.publishedAt||'')))) {
+                    if (entry&&(!current || (source==='github'&&entry.version===current.version) || (entry.version !== current.version && Date.parse(entry.publishedAt||'') > Date.parse(current.publishedAt||'')))) {
                         state.downloads[platform] = entry;
                     }
                 }
@@ -237,7 +254,7 @@ function start() {
     void refreshDownloads(true);
     addEventListener('pageshow',event=>{if(event.persisted)void refreshDownloads(true)});
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')void refreshDownloads()});
-    for(const name of ['pointerover','focusin'])document.addEventListener(name,event=>{if(event.target instanceof Element&&event.target.closest('[data-primary-download],[data-download],[data-platform-option]'))void refreshDownloads()});
+    for(const name of ['pointerover','focusin'])document.addEventListener(name,event=>{if(event.target instanceof Element&&event.target.closest('[data-primary-download],[data-download],[data-backup-download],[data-platform-option]'))void refreshDownloads()});
 }
 if (typeof document !== 'undefined')
     start();

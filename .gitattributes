@@ -8,3 +8,6 @@ site/assets/support-ui/*-LICENSE.txt text eol=lf
 site/assets/support-ui/inter/*.css text eol=lf
 site/assets/support-ui/inter/*.md text eol=lf
 site/assets/support-ui/inter/LICENSE text eol=lf
+browser/assets/boardui.ts text eol=lf
+browser/assets/edit-toolbar.ts text eol=lf
+browser/vendor/boardui/** text eol=lf

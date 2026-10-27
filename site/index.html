@@ -92,15 +92,6 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
   -webkit-mask:var(--check) center/contain no-repeat;mask:var(--check) center/contain no-repeat;
   --check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
 
-/* 临时公告：悬浮在视口底部，页尾留出同等空间。 */
-body:has(.site-notice){padding-bottom:96px}
-.site-notice{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:16;padding:0 24px;pointer-events:none;color:var(--ink-2);font-size:13px;line-height:1.6}
-.site-notice .wrap{width:fit-content;max-width:960px;margin:0 auto;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:4px 16px;padding:12px 20px;border-radius:14px;pointer-events:auto;
-  background:linear-gradient(137deg,rgba(17,18,20,.82) 4.87%,rgba(12,13,15,.94) 75.88%);border:1px solid var(--hair-3);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.15),0 12px 32px rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.site-notice p{margin:0}
-.site-notice a{color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
-
 /* 按钮：主动作是浅灰反相，阴影叠层照 Raycast */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:0;
   font:500 14px/1 var(--font);white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
@@ -576,9 +567,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 @media (max-width:560px){
   .wrap,.nav{padding:0 14px}
-  body:has(.site-notice){padding-bottom:132px}
-  .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
-  .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
   .nav-end>.btn>span{display:none}
   .code pre{padding:12px;font-size:12px}
   /* 手机顶栏显示语言、GitHub 与当前平台三个等宽图标。 */
@@ -1062,35 +1050,35 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <div class="platform-packages">
           <div class="package-option" data-package="exe">
             <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>下载安装版</span></a>
-            <p>双击安装（.exe）</p>
+            <p>双击安装（.exe）<span data-backup-slot="setup" hidden> · <a class="ext" href="#download" data-backup-download="setup" data-copy-draft>备用下载</a></span></p>
           </div>
           <div class="package-option" data-package="zip">
             <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>下载免安装版</span></a>
-            <p>解压后打开 Peach.exe（.zip）</p>
+            <p>解压后打开 Peach.exe（.zip）<span data-backup-slot="portable" hidden> · <a class="ext" href="#download" data-backup-download="portable" data-copy-draft>备用下载</a></span></p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。<a class="ext" href="https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft 官方说明</a> <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/releases">全部版本</a></p>
+          <p class="note" style="margin-top:22px">Windows 测试包尚未签名。如果出现「Windows 已保护你的电脑」，选择「更多信息 → 仍要运行」。<a class="ext" href="https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft 官方说明</a> <a class="ext" href="https://github.com/peach-mitao/peach/releases">全部版本</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">测试版</span></h3>
           <div class="platform-packages">
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple Silicon 版准备中</span></a>
-            <p>M 系列芯片 · macOS 15 或更新版本</p>
+            <p>M 系列芯片 · macOS 15 或更新版本<span data-backup-slot="macos-arm64" hidden> · <a class="ext" href="#download" data-backup-download="macos-arm64" data-copy-draft>备用下载</a></span></p>
           </div>
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel 版准备中</span></a>
-            <p>Intel 处理器 · macOS 14 或更新版本</p>
+            <p>Intel 处理器 · macOS 14 或更新版本<span data-backup-slot="macos-x86_64" hidden> · <a class="ext" href="#download" data-backup-download="macos-x86_64" data-copy-draft>备用下载</a></span></p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
+          <p class="note" style="margin-top:22px">打开 DMG 文件，将 Peach.app 拖入「应用程序」文件夹。<a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
           <p class="note" style="margin-top:10px"><span data-macos-status>Mac 测试包尚未公开发布。</span> <button class="text-action" type="button" data-mac-help data-copy-interact>查看打开步骤</button></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
           <p>在你自己的服务器或 NAS 上运行</p>
           <div class="platform-packages" style="margin-top:22px">
-            <div class="package-option"><a class="btn btn-primary" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
+            <div class="package-option"><a class="btn btn-primary" href="https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md">查看部署指南</a><p>使用 Docker Compose 部署</p></div>
             <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">打开镜像仓库</a><p><code>longmeidao/peach</code></p></div>
           </div>
           <p class="note" style="margin-top:22px">默认情况下，配置与数据库保存在 <code>/data</code>，媒体单独挂载到 <code>/media</code>。</p>
@@ -1100,12 +1088,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>从源码运行</h3>
           <div class="code">
             <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src" data-copy-interact>复制</button></div>
-<pre id="src"><span>git clone https://gitgud.io/peach-mitao/peach.git peach-app
+<pre id="src"><span>git clone https://github.com/peach-mitao/peach.git peach-app
 </span><span>cd peach-app
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">需要 Git 和 <a class="ext" href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。详见<a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">运行与配置</a>。</p>
+          <p class="note">需要 <a class="ext" href="https://git-scm.com/install/" data-copy-draft>Git</a> 和 <a class="ext" href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>。详见<a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md" data-copy-draft>运行与配置</a>。</p>
         </div>
       </div>
     </div>
@@ -1115,11 +1103,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>常见问题</b><span class="sub"><span>没找到答案？</span> 在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a>、<a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 联系开发者</span></p>
+        <p class="say lg"><b>常见问题</b><span class="sub"><span>没找到答案？</span> <a class="contact" href="https://github.com/peach-mitao/peach/issues/new/choose" target="_blank" rel="noopener noreferrer" data-copy-draft>在 GitHub 提交问题</a></span></p>
       </div>
       <div class="faq reveal">
         <details><summary>Peach 会改我的文件吗？</summary><p>扫描、补全资料不修改原文件。手动整理会改名或移动；清空回收站会删除文件，资源同步中的清理会删除空目录，均需确认。</p></details>
-        <details><summary>Peach 支持哪些网盘？</summary><p>通过 CloudDrive2 等工具挂载为本地目录的网盘，详见<a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">网盘挂载</a>。云下载按对应网盘当前支持情况开放；登录令牌保存在本机。</p></details>
+        <details><summary>Peach 支持哪些网盘？</summary><p>通过 CloudDrive2 等工具挂载为本地目录的网盘，详见<a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/CLOUDDRIVE.md">网盘挂载</a>。云下载按对应网盘当前支持情况开放；登录令牌保存在本机。</p></details>
         <details><summary>其他设备如何使用 Peach？</summary><p>首次设置时允许同一局域网的设备访问，其他设备（如手机）连接同一网络，打开设置页给出的地址，并设置访问密码。</p></details>
         <details><summary>Peach 的数据存在哪？</summary><p>本机的 <code>peach-data</code> 文件夹。Windows 版默认位于 <code>%LOCALAPPDATA%\Peach\peach-data</code>，macOS 版默认位于 <code>~/Library/Application Support/Peach/peach-data</code>。</p></details>
         <details><summary>Peach 支持哪些语言？</summary><p>Peach 目前仅支持中文界面，英文等更多语言正在支持中，欢迎联系开发者参与翻译。</p></details>
@@ -1168,13 +1156,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   </section>
 </main>
 
-<aside class="site-notice" aria-label="临时公告">
-  <div class="wrap">
-    <p>开发者的 GitHub 账号暂时被封禁，请从官网下载最新版软件；需求和问题请在 <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> 或 <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> 反馈。</p>
-    <a href="#download">下载最新版 →</a>
-  </div>
-</aside>
-
 <dialog class="sheet" data-mac-help-dialog aria-labelledby="mac-help-title">
   <h3 id="mac-help-title"><svg aria-hidden="true"><use href="#i-apple"/></svg>在 Mac 上打开 Peach</h3>
   <ol class="steps">
@@ -1189,7 +1170,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   </ol>
   <p class="note">测试包尚未经过 Apple 公证。从网上下载的 App 带有隔离标记，macOS 会提示「Peach 已损坏，无法打开」。这条命令只移除 Peach 的隔离标记；安装新版本后需要再运行一次。</p>
   <form class="sheet-actions" method="dialog">
-    <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
+    <p class="note"><a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">安装与运行说明</a></p>
     <button class="btn btn-primary" data-copy-interact>知道了</button>
   </form>
 </dialog>

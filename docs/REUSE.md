@@ -20,7 +20,7 @@
 | 本地预览与媒体范围 | Node HTTP、文件流与现有文字编辑模块 | 保留同源编辑和本地下载清单；验证 HEAD、Range、畸形路径、编辑冲突与输入错误；本地服务不进入部署目录 |
 | 原位文字编辑 | Peach 主仓库 `frontend/src/copy-editor-core.js`，AGPL-3.0-only | 应用、官网和演示站使用相同核心；保存由各端适配。来源提交与 SHA-256 记录在 `copy-editor-source.json`，检查入口拒绝副本漂移 |
 | 官网保存撤销 | 既有官网保存适配、Node fs 原子替换、SHA-256 与本机 JSON 日志，无新增依赖 | 工具条属于各端适配，未修改共享核心。浏览器原生撤销只管理未保存输入，通用编辑器历史库不能恢复源码标签、动态覆盖与节点索引；本地保存接口按源文版本记录完整快照，以可恢复事务持久化，拒绝过期撤销与跨站写入 |
-| 下载版本说明 | 现有 R2／GitHub 发行解析与 Shields Docker 版本 JSON 接口 | 安装包和镜像各取实际版本；可变清单使用原生 Fetch 的 `no-store`，页面恢复及过期交互重新核对，合并进行中的请求。同版本优先 R2；真实浏览器 HTTP 缓存回归覆盖旧清单、来源回退与恢复。沿用静态官网，无新增运行时依赖 |
+| 下载版本说明 | 现有 GitHub／R2 发行解析与 Shields Docker 版本 JSON 接口 | 安装包和镜像各取实际版本；可变清单使用原生 Fetch 的 `no-store`，页面恢复及过期交互重新核对，合并进行中的请求。同版本优先 GitHub，大小与 SHA-256 一致时展示备用下载；真实浏览器 HTTP 缓存回归覆盖旧清单、来源回退与恢复。沿用静态官网，无新增运行时依赖 |
 | 图片与浏览器验收 | 既有 Sharp 与 Playwright | 无损 WebP 编解码测试、合成 Release 响应、手机与桌面下载验证；固定版本见依赖清单 |
 | 离屏动效卡 | 浏览器原生 `content-visibility`、ResizeObserver 与现有 IntersectionObserver，无新增依赖 | 固定比例画框保留占位，缩放读取观察结果，首次可见才创建播放脚本；验证滚动、窗口缩放、暂停与减少动态效果。不支持内容可见性的浏览器正常布局。属性行为见 [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/content-visibility) |
 | 首屏手写标题 | 原有 SVG／CSS 笔画、IntersectionObserver 与页面可见性事件，无新增依赖 | 手写与静态光束使用绘制隔离和合成提示；笔画沿用 SVG 的路径、延迟、时长与缓动，完成后移除动画。离屏、后台及往返缓存期间暂停，减少动态效果时显示完整标题；没有逐帧脚本或几何读取 |

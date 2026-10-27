@@ -93,15 +93,6 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
   -webkit-mask:var(--check) center/contain no-repeat;mask:var(--check) center/contain no-repeat;
   --check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")}
 
-/* 临时公告：悬浮在视口底部，页尾留出同等空间。 */
-body:has(.site-notice){padding-bottom:96px}
-.site-notice{position:fixed;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:16;padding:0 24px;pointer-events:none;color:var(--ink-2);font-size:13px;line-height:1.6}
-.site-notice .wrap{width:fit-content;max-width:960px;margin:0 auto;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:4px 16px;padding:12px 20px;border-radius:14px;pointer-events:auto;
-  background:linear-gradient(137deg,rgba(17,18,20,.82) 4.87%,rgba(12,13,15,.94) 75.88%);border:1px solid var(--hair-3);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.15),0 12px 32px rgba(0,0,0,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.site-notice p{margin:0}
-.site-notice a{color:var(--ink);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
-
 /* 按钮：主动作是浅灰反相，阴影叠层照 Raycast */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:0;
   font:500 14px/1 var(--font);white-space:nowrap;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s}
@@ -577,9 +568,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 }
 @media (max-width:560px){
   .wrap,.nav{padding:0 14px}
-  body:has(.site-notice){padding-bottom:132px}
-  .site-notice{padding:0 12px;bottom:calc(12px + env(safe-area-inset-bottom))}
-  .site-notice .wrap{padding:10px 14px;justify-content:flex-start;gap:4px 12px}
   .nav-end>.btn>span{display:none}
   .code pre{padding:12px;font-size:12px}
   /* 手机顶栏显示语言、GitHub 与当前平台三个等宽图标。 */
@@ -1064,35 +1052,35 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <div class="platform-packages">
           <div class="package-option" data-package="exe">
             <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="setup"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Installer</span></a>
-            <p>Double-click to install (.exe)</p>
+            <p>Double-click to install (.exe)<span data-backup-slot="setup" hidden> · <a class="ext" href="#download" data-backup-download="setup">Backup download</a></span></p>
           </div>
           <div class="package-option" data-package="zip">
             <a class="btn btn-primary" href="https://github.com/peach-mitao/peach/releases" data-download="portable"><svg aria-hidden="true"><use href="#i-windows"/></svg><span>Portable</span></a>
-            <p>Extract, then open Peach.exe (.zip)</p>
+            <p>Extract, then open Peach.exe (.zip)<span data-backup-slot="portable" hidden> · <a class="ext" href="#download" data-backup-download="portable">Backup download</a></span></p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">Windows test builds are unsigned. If you see “Windows protected your PC”, select “More info”, then “Run anyway”. <a class="ext" href="https://support.microsoft.com/en-us/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft Support</a> <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/releases">All releases</a></p>
+          <p class="note" style="margin-top:22px">Windows test builds are unsigned. If you see “Windows protected your PC”, select “More info”, then “Run anyway”. <a class="ext" href="https://support.microsoft.com/en-us/windows/security/windows-security/app-browser-control-in-the-windows-security-app">Microsoft Support</a> <a class="ext" href="https://github.com/peach-mitao/peach/releases">All releases</a></p>
         </div>
         <div class="panel macos-download" data-download-panel="macos" hidden>
           <h3><svg aria-hidden="true"><use href="#i-apple"/></svg>macOS<span class="download-version" data-release-version="macos">Beta</span></h3>
           <div class="platform-packages">
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-arm64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Apple silicon</span></a>
-            <p>M-series chips · macOS 15 or later</p>
+            <p>M-series chips · macOS 15 or later<span data-backup-slot="macos-arm64" hidden> · <a class="ext" href="#download" data-backup-download="macos-arm64">Backup download</a></span></p>
           </div>
           <div class="package-option">
             <a class="btn btn-primary" href="#download" data-download="macos-x86_64" aria-disabled="true"><svg aria-hidden="true"><use href="#i-apple"/></svg><span>Intel</span></a>
-            <p>Intel processors · macOS 14 or later</p>
+            <p>Intel processors · macOS 14 or later<span data-backup-slot="macos-x86_64" hidden> · <a class="ext" href="#download" data-backup-download="macos-x86_64">Backup download</a></span></p>
           </div>
           </div>
-          <p class="note" style="margin-top:22px">Open the DMG and drag Peach.app into the Applications folder. <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Installation and setup guide</a></p>
+          <p class="note" style="margin-top:22px">Open the DMG and drag Peach.app into the Applications folder. <a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">Installation and setup guide</a></p>
           <p class="note" style="margin-top:10px"><span data-macos-status>Mac test builds are not yet publicly available.</span> <button class="text-action" type="button" data-mac-help data-copy-interact>How to open</button></p>
         </div>
         <div class="panel docker-download" data-download-panel="docker" hidden>
           <h3><svg aria-hidden="true"><use href="#i-docker"/></svg>Docker<span class="download-version">VPS / NAS</span></h3>
           <p>Run it on your own server or NAS</p>
           <div class="platform-packages" style="margin-top:22px">
-            <div class="package-option"><a class="btn btn-primary" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/DOCKER.md">Deployment guide</a><p>Deploy with Docker Compose</p></div>
+            <div class="package-option"><a class="btn btn-primary" href="https://github.com/peach-mitao/peach/blob/master/docs/DOCKER.md">Deployment guide</a><p>Deploy with Docker Compose</p></div>
             <div class="package-option"><a class="btn btn-quiet" href="https://hub.docker.com/r/longmeidao/peach">Open on Docker Hub</a><p><code>longmeidao/peach</code></p></div>
           </div>
           <p class="note" style="margin-top:22px">By default, configuration and the database are stored in <code>/data</code>, and media is mounted separately at <code>/media</code>.</p>
@@ -1102,12 +1090,12 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg>Run from source</h3>
           <div class="code">
             <div class="code-bar"><span class="mono" data-source-shell>PowerShell</span><button class="copybtn" type="button" data-copy="src" data-copy-interact>Copy</button></div>
-<pre id="src"><span>git clone https://gitgud.io/peach-mitao/peach.git peach-app
+<pre id="src"><span>git clone https://github.com/peach-mitao/peach.git peach-app
 </span><span>cd peach-app
 </span><span>uv sync --locked --python 3.14
 </span><span>&amp; .\.venv\Scripts\peach-tray.exe</span></pre>
           </div>
-          <p class="note">Requires Git and <a class="ext" href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">setup and configuration</a>.</p>
+          <p class="note">Requires <a class="ext" href="https://git-scm.com/install/">Git</a> and <a class="ext" href="https://docs.astral.sh/uv/getting-started/installation/">uv</a>. See <a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">setup and configuration</a>.</p>
         </div>
       </div>
     </div>
@@ -1117,11 +1105,11 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>FAQ</b><span class="sub"><span>Can't find an answer?</span> Contact the developer on <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a> </span></p>
+        <p class="say lg"><b>FAQ</b><span class="sub"><span>Can't find an answer?</span> <a class="contact" href="https://github.com/peach-mitao/peach/issues/new/choose" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a></span></p>
       </div>
       <div class="faq reveal">
         <details><summary>Will Peach change my files?</summary><p>Scanning and filling in metadata leave your original files unchanged. Manual organization renames or moves files; emptying the trash deletes files, and cleanup during resource sync removes empty folders. These file changes require confirmation.</p></details>
-        <details><summary>Which cloud drives does Peach support?</summary><p>Drives mounted as local folders through tools such as CloudDrive2; see <a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/CLOUDDRIVE.md">cloud drive mounts</a>. Cloud downloads depend on what each provider currently supports; sign-in tokens are stored locally.</p></details>
+        <details><summary>Which cloud drives does Peach support?</summary><p>Drives mounted as local folders through tools such as CloudDrive2; see <a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/CLOUDDRIVE.md">cloud drive mounts</a>. Cloud downloads depend on what each provider currently supports; sign-in tokens are stored locally.</p></details>
         <details><summary>How do I use Peach on other devices?</summary><p>During initial setup, allow access from devices on the same local network. Connect your other device, such as a phone, to that network, open the address shown in Settings and set an access password.</p></details>
         <details><summary>Where does Peach store its data?</summary><p>In the local <code>peach-data</code> folder. The default location on Windows is <code>%LOCALAPPDATA%\Peach\peach-data</code>, and on macOS it is <code>~/Library/Application Support/Peach/peach-data</code>.</p></details>
         <details><summary>Which languages does Peach support?</summary><p>Peach's interface is currently available only in Chinese. Support for English and other languages is in progress. Contact the developer if you would like to help with translation.</p></details>
@@ -1170,13 +1158,6 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   </section>
 </main>
 
-<aside class="site-notice" aria-label="Notice">
-  <div class="wrap">
-    <p>Developer's GitHub account is suspended. Feedback through <a class="contact" href="https://x.com/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-x"/></svg>X</a> or <a class="contact" href="https://t.me/longmeidao" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-telegram"/></svg>Telegram</a>.</p>
-    <a href="#download">Download latest version→</a>
-  </div>
-</aside>
-
 <dialog class="sheet" data-mac-help-dialog aria-labelledby="mac-help-title">
   <h3 id="mac-help-title"><svg aria-hidden="true"><use href="#i-apple"/></svg>Open Peach on your Mac</h3>
   <ol class="steps">
@@ -1191,7 +1172,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   </ol>
   <p class="note">Test builds are not notarized by Apple yet. Apps downloaded from the internet carry a quarantine attribute, so macOS reports “Peach” is damaged and can’t be opened. This command removes the quarantine attribute from Peach only; run it again after installing a new version.</p>
   <form class="sheet-actions" method="dialog">
-    <p class="note"><a class="ext" href="https://gitgud.io/peach-mitao/peach/-/blob/master/docs/OPERATIONS.md">Installation and setup guide</a></p>
+    <p class="note"><a class="ext" href="https://github.com/peach-mitao/peach/blob/master/docs/OPERATIONS.md">Installation and setup guide</a></p>
     <button class="btn btn-primary" data-copy-interact>Got it</button>
   </form>
 </dialog>

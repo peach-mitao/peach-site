@@ -6,25 +6,60 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      runtime: ${{ steps.plan.outputs.runtime }}
+      base: ${{ steps.plan.outputs.base }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - id: plan
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/ci_plan.ts --base "$BASE_SHA" --event "$EVENT_NAME"
   syntax:
+    needs: plan
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-          cache: npm
+      - name: 文档格式与比较基线
+        if: needs.plan.outputs.runtime == 'false'
+        shell: bash
+        env:
+          BASE_SHA: ${{ needs.plan.outputs.base }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: node scripts/ci_plan.ts --base "$BASE_SHA" --event "$EVENT_NAME" --verify-docs
       - run: npm ci
-      - run: npm run check
-      - run: npm test
-      - run: npm run check:deploy
+        if: needs.plan.outputs.runtime == 'true'
+      - name: 构建浏览器产物并生成 Worker 类型
+        if: needs.plan.outputs.runtime == 'true'
+        run: npm run browser:build && npx --no-install cf workers types
+      - run: npm --ignore-scripts run check
+        if: needs.plan.outputs.runtime == 'true'
+      - run: npm --ignore-scripts test
+        if: needs.plan.outputs.runtime == 'true'
+      - run: npm --ignore-scripts run check:deploy
+        if: needs.plan.outputs.runtime == 'true'
       - run: npx --no-install playwright install --with-deps chromium
-        if: runner.os == 'Linux'
-      - run: npm run test:browser
-        if: runner.os == 'Linux'
-      - run: npm run test:behavior
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && needs.plan.outputs.runtime == 'true'
+      - run: npm --ignore-scripts run test:browser
+        if: runner.os == 'Linux' && needs.plan.outputs.runtime == 'true'
+      - run: npm --ignore-scripts run test:behavior
+        if: runner.os == 'Linux' && needs.plan.outputs.runtime == 'true'

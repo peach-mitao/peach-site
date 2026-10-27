@@ -166,17 +166,21 @@ Docker 与 Windows、macOS 共用平台选择入口；Linux 桌面默认显示 D
 
 关注内容列表使用 `/follow?media=images`，与添加关注的入口分开；官网导览中的关注截图从该列表取得。旧的 `/follow-manage` 不作为公开入口。
 
-素材应先取得并核对来源、许可与哈希，再用 `npm run deploy` 发布页面。`site/.assetsignore` 排除原型与历史素材，本地编辑服务位于发布目录之外。
+素材应先取得并核对来源、许可与哈希。`npm run deploy:plan` 构建一次浏览器资源，验证部署构建和参考图，生成包含提交、输入摘要、对象数量及字节数的私有回执。参考图需要更新时，传入 `-- --preview <本地预览地址>`，从同一构建重新采样；缺失或指纹不符时停止。
+
+取得相应写入和部署授权后，`npm run deploy` 顺序执行参考图上传及回读、D1 登记及回读、同一预构建产物部署和公网页面资源验证。上传前和部署前核对输入未变，任一阶段失败即停止并记录准确阶段；历史参考图与访客事件保留。回执在 `evidence/delivery/`，预演为 `planned`，只有线上验证通过才为 `completed`。`site/.assetsignore` 排除原型与历史素材，本地编辑服务位于发布目录之外。
 
 Workers 静态资源请求免费且不限量；R2 不收公网出口流量费，存储与对象操作按服务额度计费。CDN 命中不代表客户端免于再次请求：浏览器或图片代理是否复用响应，还取决于对外的 `Cache-Control`。分析访客时使用官网页面访问或埋点；图片代理、视频 Range、发行包下载、演示站 API 与健康检查分别统计，不能用整个域名区域的 HTTP 请求数代表访客数。R2 自定义域名仍属于所在区域，迁移资源后需要按主机或路径筛选统计。
 
 发布后用 `npm run verify -- https://peach.video/ --http-only` 校验公网页面、文件哈希和历史素材的 404。省略 `--http-only` 增加桌面与手机的六页界面导览、三条资料条、五张功能卡和投诉页检查。公网请求保持严格 TLS 校验。
 
-本项目使用固定版本的 `cf` 与 [`cloudflare.config.ts`](https://developers.cloudflare.com/cf/projects/cloudflare-config/)，官网域名、Worker 名称和可观测性在此维护。`wrangler.config.ts` 仅维护打包器设置、素材目录和本地监听地址；Wrangler 是 cf 调用的打包依赖。`.cloudflare/` 保存生成类型和 Build Output，不进 Git。`npm run build` 执行 `cf build`，`npm run deploy` 执行 `cf deploy`。配置由官方 `cf migrate` 转换；这套配置仍为公开测试版，升级须核对构建和本地行为。
+本项目使用固定版本的 `cf` 与 [`cloudflare.config.ts`](https://developers.cloudflare.com/cf/projects/cloudflare-config/)，官网域名、Worker 名称和可观测性在此维护。`wrangler.config.ts` 仅维护打包器设置、素材目录和本地监听地址；Wrangler 是 cf 调用的打包依赖。`.cloudflare/` 保存生成类型和 Build Output，不进 Git。`npm run build` 执行 `cf build`，交付入口通过 `cf deploy --dry-run` 验证构建、`cf deploy --prebuilt` 上传同一份产物。配置由官方 `cf migrate` 转换；这套配置仍为公开测试版，升级须核对构建和本地行为。
 
 站点有一个 Worker（`worker/index.ts`），`assets.runWorkerFirst` 匹配 `/api/*`、`/analytics*`、`/privacy/analytics*`、`/unavailable*` 与 `/credits/ip-data`。静态资源直出不计 Worker 调用；动态接口按实际调用计量。未匹配页面返回 `site/404.html`，发布包必须包含该页。生产 `workers.dev` 入口关闭，避免绕过区域规则；开发服务默认使用本地模拟绑定。
 
 Dependabot 分别对普通小版本更新与安全更新分组，大版本单独审阅；`@types/node` 保持 Node 24 运行基线，只自动更新同一大版本。CI 在 Windows 和 Linux 运行安装、类型与语法检查、行为测试和 cf 构建，Linux 另跑 Chromium 下载流程测试。依赖版本只在 `package.json` 与锁文件维护，素材清单的内容哈希不随工具版本机械改变。素材许可见 [NOTICE](../NOTICE.md)。
+
+CI 的普通文档改动只验证格式和比较基线，保留两平台结果；未知输入、混合代码和手动运行执行完整验证。每个运行时任务先构建一次浏览器资源并生成 Worker 类型，后续步骤复用产物；本地独立命令仍自动构建所需资源。
 
 ## 加载与渲染性能
 

@@ -70,7 +70,7 @@ export async function collect(request:Request,env:BehaviorEnv){
  if(site!=='site'&&site!=='demo')return json({error:'site'},400,cors);
  const batch=validateBatch(input,site);
  if(!batch)return json({error:'invalid_batch'},400,cors);
- if(env.BEHAVIOR_STREAM)await env.BEHAVIOR_STREAM.send(batch.events.map(event=>({session:batch.session,...event})));
+ if(env.BEHAVIOR_STREAM){try{await env.BEHAVIOR_STREAM.send(batch.events.map(event=>({session:batch.session,...event})))}catch(error){console.error('行为事件写入失败',error instanceof Error?error.message:'unknown');return json({error:'ingest_unavailable'},503,cors)}}
  else {
   const statements=batch.events.map(event=>env.BEHAVIOR!.prepare(`INSERT OR IGNORE INTO behavior_events(session,${fields.join(',')}) VALUES(${new Array(fields.length+1).fill('?').join(',')})`).bind(batch.session,...fields.map(field=>event[field])));
   await env.BEHAVIOR!.batch(statements);

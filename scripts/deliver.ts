@@ -44,6 +44,15 @@ async function run(args:string[]){
   child.on('error',reject);child.on('close',code=>code===0?resolve():reject(Error(`交付子进程退出码：${code}`)));
  });
 }
+// 截图、影片、人物与字体不进 Git；缺失的文件会随部署从线上删除，因此在构建前按清单拒绝。
+export async function checkAssets(site:string,files:{path:string;bytes:number;sha256:string}[]){
+ const problems:string[]=[];
+ for(const item of files){
+  let body:Buffer;try{body=await readFile(path.join(site,item.path))}catch{problems.push('缺失 '+item.path);continue}
+  if(body.length!==item.bytes||createHash('sha256').update(body).digest('hex')!==item.sha256)problems.push('不符 '+item.path);
+ }
+ if(problems.length)throw Error(`公开素材与 assets-manifest.json 不一致（${problems.length} 个），先运行 npm run assets:fetch：\n`+problems.slice(0,10).join('\n'));
+}
 async function inputFingerprint(){
  const files=new Set(execFileSync('git',['ls-files','--cached','--others','--exclude-standard','-z'],{cwd:root,encoding:'utf8'}).split('\0').filter(Boolean));
  async function walk(directory:string){for(const row of await readdir(path.join(root,directory),{withFileTypes:true})){
@@ -62,6 +71,7 @@ if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1]
  let version='';
  await deliver(Boolean(values.apply),{
   async prepare(){
+   await checkAssets(path.join(root,'site'),JSON.parse(await readFile(path.join(root,'assets-manifest.json'),'utf8')).files);
    await buildBrowser();await run([path.join(root,'node_modules/cf/bin/cf'),'deploy','--dry-run']);
    version=await behaviorVersion();
    if(values.preview)await captureBehavior(values.preview,siteScenes,directory);

@@ -61,7 +61,8 @@ test('生产采集拒绝缺失 Stream，不向 D1 回退写入；发送失败不
  const {database,sqlite}=behaviorStorage(':memory:');
  try{
   assert.equal((await collect(request(payload([event()])),{BEHAVIOR:database})).status,503);
-  await assert.rejects(collect(request(payload([event()])),{BEHAVIOR_STREAM:{async send(){throw Error('ingestion failed')}}}),/ingestion failed/);
+  const failed=await collect(request(payload([event()])),{BEHAVIOR_STREAM:{async send(){throw Error('ingestion failed')}}});
+  assert.equal(failed.status,503);assert.deepEqual(await failed.json(),{error:'ingest_unavailable'});assert.equal(failed.headers.get('access-control-allow-origin'),'https://peach.video');
   assert.equal(sqlite.prepare('SELECT COUNT(*) n FROM behavior_events').get()?.n,0);
  }finally{sqlite.close()}
 });

@@ -1,6 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {deliver,type DeliveryReceipt,type DeliveryActions} from '../scripts/deliver.ts';
+import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
+import {deliver,checkAssets,type DeliveryReceipt,type DeliveryActions} from '../scripts/deliver.ts';
 
 function fixture(){
  const calls:string[]=[],records:DeliveryReceipt[]=[];
@@ -33,4 +37,14 @@ test('只有发布与线上验收都成功才登记完成',async()=>{
  const failure=fixture();failure.actions.verify=async()=>{throw Error('resource digest mismatch')};
  await assert.rejects(deliver(true,failure.actions,failure.persist),/digest mismatch/);
  assert.equal(failure.records.at(-1)!.state,'failed');
+});
+test('公开素材缺失或哈希不符时拒绝进入构建与部署',async()=>{
+ const site=await mkdtemp(path.join(tmpdir(),'peach-assets-'));
+ try{
+  const body=Buffer.from('shot'),item=(name:string,bytes=body)=>({path:'assets/screenshots/'+name,bytes:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
+  await mkdir(path.join(site,'assets/screenshots'),{recursive:true});
+  await writeFile(path.join(site,'assets/screenshots/home.webp'),body);await writeFile(path.join(site,'assets/screenshots/stale.webp'),'old');
+  await checkAssets(site,[item('home.webp')]);
+  await assert.rejects(checkAssets(site,[item('home.webp'),item('missing.webp'),item('stale.webp')]),error=>/（2 个）/.test(String(error))&&/缺失 assets\/screenshots\/missing\.webp/.test(String(error))&&/不符 assets\/screenshots\/stale\.webp/.test(String(error)));
+ }finally{await rm(site,{recursive:true,force:true})}
 });

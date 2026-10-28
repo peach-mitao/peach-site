@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Peach 应用问题与建议 / Peach app bugs and ideas
+    url: https://github.com/peach-mitao/peach/issues/new/choose
+    about: 应用本身的缺陷与功能建议请到主仓库反馈。 / Report app bugs and feature requests in the app repository.
+  - name: 安全漏洞 / Security vulnerability
+    url: https://github.com/peach-mitao/peach-site/security/advisories/new
+    about: 私下报告漏洞，不要公开利用细节。 / Report vulnerabilities privately.

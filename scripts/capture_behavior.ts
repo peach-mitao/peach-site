@@ -20,9 +20,9 @@ export async function captureBehavior(base:string,routes:(string|CaptureScene)[]
    const route=typeof scene==='string'?scene:scene.route;
    const url=new URL(route,base);if(url.origin!==origin.origin)throw Error('参考路由必须属于当前预览');url.searchParams.set('behavior-capture','1');
    await page.goto(url.href,{waitUntil:'networkidle'});await page.waitForFunction(()=>window.PeachBehavior!==undefined);
-   await page.waitForFunction(options.ready||(()=>![...document.querySelectorAll<HTMLElement>('[data-skeleton]')].some(el=>el.checkVisibility()&&el.getBoundingClientRect().height>0)));
+   await page.waitForFunction(options.ready||(()=>![...document.querySelectorAll<HTMLElement>('[data-skeleton]')].some(el=>el.checkVisibility({visibilityProperty:true})&&el.getBoundingClientRect().height>0)));
    if(typeof scene!=='string')for(const selector of scene.click||[])await page.locator(selector).first().click();
-   await page.waitForFunction(()=>{const scope=document.querySelector('dialog[open],[aria-modal="true"],[data-immerse]:not([hidden])')||document;return ![...scope.querySelectorAll<HTMLElement>('[data-skeleton],[aria-busy="true"]')].some(el=>{const box=el.getBoundingClientRect();return el.checkVisibility()&&box.top<16000&&box.bottom>0})});
+   await page.waitForFunction(()=>{const scope=document.querySelector('dialog[open],[aria-modal="true"],[data-immerse]:not([hidden])')||document;return ![...scope.querySelectorAll<HTMLElement>('[data-skeleton],[aria-busy="true"]')].some(el=>{const box=el.getBoundingClientRect();return el.checkVisibility({visibilityProperty:true})&&box.top<16000&&box.bottom>0})});
    await page.evaluate(async()=>{await document.fonts.ready;if(window.PeachBehavior!.context().site==='site'){const height=document.documentElement.scrollHeight;for(let y=0;y<Math.min(height,16000);y+=innerHeight){scrollTo(0,y);await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()))}}scrollTo(0,0);await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));window.PeachBehavior!.mark()});
    const snapshot=await page.evaluate(selector=>{
     window.PeachBehavior!.mark();

@@ -28,7 +28,7 @@ Workers Issues 保持启用，错误日志完整保留；`observability.logs.inv
 
 ## 环境与检查
 
-使用 Node.js 24.12 或更新的受支持 LTS。以下命令均在本仓库根目录执行。
+使用 Node.js 24.22 或更新的受支持 LTS，满足 cf 的运行要求。以下命令均在本仓库根目录执行。
 
 按锁文件安装依赖：
 

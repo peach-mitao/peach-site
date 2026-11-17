@@ -67,15 +67,15 @@
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "cf": "1.0.0-beta.32",
+    "cf": "1.0.0-rc.1",
     "esbuild": "0.28.2",
     "playwright": "1.65.1",
     "sharp": "0.35.5",
     "typescript": "7.0.2",
-    "wrangler": "4.162.0"
+    "wrangler": "4.164.0"
   },
   "dependencies": {
-    "@cloudflare/kumo": "2.18.1",
+    "@cloudflare/kumo": "2.19.0",
     "@phosphor-icons/react": "2.1.10",
     "canvas-confetti": "1.9.4",
     "jose": "6.2.17",

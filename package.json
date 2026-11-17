@@ -69,16 +69,16 @@
     "@types/react-dom": "19.3.0",
     "cf": "1.0.0-beta.26",
     "esbuild": "0.28.2",
-    "playwright": "1.65.0",
+    "playwright": "1.65.1",
     "sharp": "0.35.5",
     "typescript": "7.0.2",
-    "wrangler": "4.158.0"
+    "wrangler": "4.162.0"
   },
   "dependencies": {
-    "@cloudflare/kumo": "2.17.0",
+    "@cloudflare/kumo": "2.18.1",
     "@phosphor-icons/react": "2.1.10",
     "canvas-confetti": "1.9.4",
-    "jose": "6.2.15",
+    "jose": "6.2.17",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "tailwind-merge": "3.7.0"

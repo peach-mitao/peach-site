@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => ({
 			SITE_EVENTS: bindings.analyticsEngineDataset({ name: "peach_site_events" }),
 			EVENT_LIMIT: bindings.rateLimit({namespace:"10424",simple:{limit:120,period:60}}),
 			BEHAVIOR: bindings.d1({id:"11f04f71-9abb-4073-8fec-116078742e97",name:"peach-behavior-metadata"}),
-			BEHAVIOR_STREAM: bindings.pipeline({name:"80ff58a7cee6406591723c0fb136c3c6"}),
+			BEHAVIOR_STREAM: bindings.pipeline({streamId:"80ff58a7cee6406591723c0fb136c3c6"}),
 			BEHAVIOR_SQL_TOKEN: bindings.secret(),
 			BEHAVIOR_SQL_ACCOUNT: bindings.text("0c8cf6b7df91a11710bc0b030666b4f0"),
 			BEHAVIOR_SQL_BUCKET: bindings.text("peach-behavior-log"),

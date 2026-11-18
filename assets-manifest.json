@@ -1164,36 +1164,6 @@
       "sha256": "1723065f31ef76232c6aac37e461495082581c67f24ae2aa343f4d4b1c170d9c"
     },
     {
-      "path": "assets/screenshots/people-wide-20261118-2560.webp",
-      "bytes": 1186150,
-      "sha256": "7f2837b304046b0f3800898df8405cdc7797f984ad6347a36a414e149dc96526"
-    },
-    {
-      "path": "assets/screenshots/profile-wide-20261118-2560.webp",
-      "bytes": 1140724,
-      "sha256": "6082ecf9ec291ab65c59a5965a850782d8321cf858ee81adfc22fc9cb2c8b5b2"
-    },
-    {
-      "path": "assets/screenshots/play-wide-20261118-2560.webp",
-      "bytes": 1359358,
-      "sha256": "11fa64cc1dbe61edf466bc4b528738715199c7c13b5932cffeae8278c27ac847"
-    },
-    {
-      "path": "assets/screenshots/follow-wide-20261118-2560.webp",
-      "bytes": 2547970,
-      "sha256": "0f093917dd95ac77b733134b24764c22e92eb176f54b599e8fcd83227d2ce193"
-    },
-    {
-      "path": "assets/screenshots/stats-wide-20261118-2560.webp",
-      "bytes": 383010,
-      "sha256": "8bdaf015d0327c85c28a43a6256d277cedd9b4e3590785f97ca9651c82dbf129"
-    },
-    {
-      "path": "assets/screenshots/home-wide-20261118-2560.webp",
-      "bytes": 1704202,
-      "sha256": "15b88c766b1712e3e5eaa22aa71eaa48abae073ad3fb710c3818f623ef334ef3"
-    },
-    {
       "path": "assets/screenshots/home-wide-20261118-2-en.png",
       "bytes": 4255898,
       "sha256": "37ee794631fa71f8423ab5350bdc9cf0512899e0e30dce699a120f76c4807cb0"

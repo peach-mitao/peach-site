@@ -7,10 +7,14 @@ const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
 const out = new URL('../evidence/mobile/', import.meta.url);
 await mkdir(out, { recursive: true });
 const manifest = JSON.parse(await readFile(new URL('../assets-manifest.json', import.meta.url), 'utf8'));
-const html = await readFile(new URL('../site/index.html', import.meta.url), 'utf8');
-const referenced = [...new Set(html.match(/assets\/screenshots\/[\w-]+-(?:wide|compact)-20261025(?:-\d+)*\.webp/g))];
+const screenshotPaths = /assets\/screenshots\/[\w-]+-(?:wide|compact)-20\d{6}(?:-\d+)?(?:-en)?(?:-\d+)?\.webp/g;
+const [chinese, english] = await Promise.all(['index.html', 'en/index.html'].map(async name =>
+    [...new Set((await readFile(new URL('../site/' + name, import.meta.url), 'utf8')).match(screenshotPaths))]));
+assert.equal(chinese.length, 42, '中文导览包含六页两套截图及响应式候选');
+assert.equal(english.length, 42, '英文导览包含六页两套截图及响应式候选');
+assert.ok(english.every(path => /-en(?:-\d+)?\.webp$/.test(path) && !chinese.includes(path)), '英文导览使用单独拍摄的英文截图');
+const referenced = [...chinese, ...english];
 const published = manifest.files.filter((file: { path: string; }) => referenced.includes(file.path));
-assert.equal(referenced.length, 42, '六页两套真实应用截图包含4K原图和响应式候选');
 assert.equal(published.length, referenced.length, '页面引用的截图均登记哈希');
 for (const file of published) {
     const response = await fetch(new URL(file.path, base));
@@ -21,12 +25,12 @@ for (const file of published) {
 }
 const browser = await chromium.launch({ channel: 'chrome' }), report: Record<string,any>[] = [];
 try {
-    for (const width of [390, 1440]) {
+    for (const language of ['zh-CN', 'en']) for (const width of [390, 1440]) {
         const page = await browser.newPage({ viewport: { width, height: 844 }, javaScriptEnabled: false });
         try {
             const pictures: string[] = [];
             page.on('request', request => { if (request.url().includes('/screenshots/')) pictures.push(request.url()); });
-            await page.goto(base, { waitUntil: 'load' });
+            await page.goto(new URL(language === 'en' ? 'en/' : './', base).href, { waitUntil: 'load' });
             const shot = await page.locator('#screen picture.on img').evaluate(img => {
                 let opacity = 1;
                 for (let node: Element | null = img; node; node = node.parentElement) opacity *= Number(getComputedStyle(node).opacity);
@@ -36,7 +40,8 @@ try {
             assert.equal(shot.decoded, true);
             assert.equal(pictures.length, 1, '响应式预加载与实际主图共用一次下载');
             assert.equal(shot.src.includes('-compact-'), width <= 560);
-            report.push({ width, javascript: false, shot, pictureRequests: pictures.length });
+            assert.equal(/-en(?:-\d+)?\.webp$/.test(shot.src), language === 'en');
+            report.push({ width, language, javascript: false, shot, pictureRequests: pictures.length });
         } finally { await page.close(); }
     }
     for (const width of [320, 390, 560, 561, 1440] as const) {
@@ -70,7 +75,8 @@ try {
             }
             assert.equal(await page.locator('.hero .cta-download .btn-primary').getAttribute('href'), '#download');
             assert.equal(await page.locator('.package-option:visible').count(), 2);
-            const downloads = await page.locator('.windows-download .package-option a').evaluateAll(ns => ns.map(n => ({ text: n.textContent.trim(), href: (n as HTMLAnchorElement).href })));
+            const downloads = await page.locator('.windows-download .package-option a[data-download]').evaluateAll(ns => ns.map(n => ({ text: n.textContent.trim(), href: (n as HTMLAnchorElement).href })));
+            assert.equal(downloads.length, 2);
             for (const [index, download] of downloads.entries()) {
                 if (download.href === 'https://github.com/peach-mitao/peach/releases') {
                     assert.equal(download.text, index === 0 ? '下载安装版' : '下载免安装版');
@@ -142,7 +148,8 @@ try {
             if (width === 390) {
                 let releaseImage!:()=>void;
                 const imageGate = new Promise<void>(resolve => { releaseImage = resolve; });
-                await page.route('**/people-compact-20261025-2*.webp', async (route) => { await imageGate; await route.continue(); });
+                const peopleImage = '**/people-compact-*.webp';
+                await page.route(peopleImage, async (route) => { await imageGate; await route.continue(); });
                 try {
                     await page.reload({ waitUntil: 'networkidle' });
                     await page.locator('.dock button[data-k="people"]').click();
@@ -155,7 +162,7 @@ try {
                 }
                 finally {
                     releaseImage();
-                    await page.unroute('**/people-compact-20261025-2*.webp');
+                    await page.unroute(peopleImage);
                 }
             }
             assert.deepEqual(errors, []);

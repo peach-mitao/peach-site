@@ -14,7 +14,8 @@ const source=await readFile(new URL('../site/index.html',import.meta.url));
 const hash=(bytes:Buffer)=>createHash('sha256').update(bytes).digest('hex');
 const withoutBeacon=(bytes:Buffer)=>Buffer.from(bytes.toString('utf8').replace(/<script type="module" src="https:\/\/static\.cloudflareinsights\.com\/beacon\.min\.js\/[^"\r\n]+"[^>]*><\/script>\r?\n/g,''));
 const report:Record<string,any>={base,checkedAt:new Date().toISOString(),sourceHash:hash(source),assets:[],viewports:[]};
-const currentScreenshot=/^assets\/screenshots\/(?:(?:home|people|profile|play|follow)-(?:wide|compact)-20261025-2|stats-(?:wide|compact)-20261025-3)(?:-\d+)?\.(?:png|webp)$/;
+const {files:assetEntries}=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8')) as {files:{path:string}[]};
+const publishedAssets=new Set(assetEntries.map(entry=>entry.path));
 function request(path:string):Promise<HTTPResult>{
  const url=new URL(path,base);
  return new Promise((resolve,reject)=>{
@@ -32,7 +33,7 @@ async function files(dir:URL,prefix=''):Promise<string[]>{
 }
 function excluded(path:string){
  return /^(?:_proto|assets\/(?:dark|shots|entities|marks|mock|stickers))\//.test(path)
- ||path.startsWith('assets/screenshots/')&&!currentScreenshot.test(path)
+ ||path.startsWith('assets/screenshots/')&&!publishedAssets.has(path)
  ||['index-v1.html','hello-preview.html','.assetsignore','_redirects','_headers','404.html','unavailable.html','assets/sleeve.jpg','assets/intro-poster.jpg','assets/peach-intro-1080p.mp4'].includes(path)
  ||/^assets\/vendor\/sticker-forge\/.*\.d\.ts$/.test(path);
 }
@@ -56,7 +57,7 @@ try{
   assert.equal(home.body.includes(Buffer.from('/__edit.js')),false);
  }
  const manifest=JSON.parse(await readFile(new URL('../assets-manifest.json',import.meta.url),'utf8'));
- for(const file of manifest.files.filter((item:{path:string})=>/^assets\/(?:films|people)\//.test(item.path)||currentScreenshot.test(item.path))){
+ for(const file of manifest.files.filter((item:{path:string})=>/^assets\/(?:films|people|screenshots)\//.test(item.path))){
   const response=await request('/'+file.path);assert.equal(response.status,200,file.path);
   assert.equal(response.body.length,file.bytes,file.path);assert.equal(hash(response.body),file.sha256,file.path);
   report.assets.push({path:file.path,bytes:file.bytes,sha256:file.sha256});

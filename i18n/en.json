@@ -17,7 +17,48 @@
       "/privacy/analytics?lang=zh": "/privacy/analytics?lang=en",
       "https://support.microsoft.com/zh-cn/windows/security/windows-security/app-browser-control-in-the-windows-security-app": "https://support.microsoft.com/en-us/windows/security/windows-security/app-browser-control-in-the-windows-security-app",
       "/credits/": "/en/credits/",
-      "/en/credits/": "/credits/"
+      "/en/credits/": "/credits/",
+      "/assets/screenshots/home-compact-20261118-1440.webp": "/assets/screenshots/home-compact-20261118-en-1440.webp",
+      "/assets/screenshots/home-wide-20261118-1280.webp": "/assets/screenshots/home-wide-20261118-en-1280.webp",
+      "https://demo.peach.video": "https://demo.peach.video?lang=en",
+      "https://demo.peach.video/performers/135": "https://demo.peach.video/performers/135?lang=en",
+      "https://demo.peach.video/subscriptions?tab=add": "https://demo.peach.video/subscriptions?tab=add&amp;lang=en",
+      "https://demo.peach.video/taste": "https://demo.peach.video/taste?lang=en",
+      "https://demo.peach.video/settings/appearance": "https://demo.peach.video/settings/appearance?lang=en",
+      "https://demo.peach.video/wall": "https://demo.peach.video/wall?lang=en"
+    },
+    "content": {
+      "/assets/screenshots/home-wide-20261118-1280.webp": "/assets/screenshots/home-wide-20261118-en-1280.webp"
+    },
+    "imagesrcset": {
+      "/assets/screenshots/home-compact-20261118-1440.webp 1440w, /assets/screenshots/home-compact-20261118-1920.webp 1920w, /assets/screenshots/home-compact-20261118.webp 3840w": "/assets/screenshots/home-compact-20261118-en-1440.webp 1440w, /assets/screenshots/home-compact-20261118-en-1920.webp 1920w, /assets/screenshots/home-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/home-wide-20261118-1280.webp 1280w, /assets/screenshots/home-wide-20261118-1920.webp 1920w, /assets/screenshots/home-wide-20261118-2560.webp 2560w, /assets/screenshots/home-wide-20261118.webp 3840w": "/assets/screenshots/home-wide-20261118-en-1280.webp 1280w, /assets/screenshots/home-wide-20261118-en-1920.webp 1920w, /assets/screenshots/home-wide-20261118-en-2560.webp 2560w, /assets/screenshots/home-wide-20261118-en.webp 3840w"
+    },
+    "srcset": {
+      "/assets/screenshots/home-compact-20261118-1440.webp 1440w, /assets/screenshots/home-compact-20261118-1920.webp 1920w, /assets/screenshots/home-compact-20261118.webp 3840w": "/assets/screenshots/home-compact-20261118-en-1440.webp 1440w, /assets/screenshots/home-compact-20261118-en-1920.webp 1920w, /assets/screenshots/home-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/home-wide-20261118-1280.webp 1280w, /assets/screenshots/home-wide-20261118-1920.webp 1920w, /assets/screenshots/home-wide-20261118-2560.webp 2560w, /assets/screenshots/home-wide-20261118.webp 3840w": "/assets/screenshots/home-wide-20261118-en-1280.webp 1280w, /assets/screenshots/home-wide-20261118-en-1920.webp 1920w, /assets/screenshots/home-wide-20261118-en-2560.webp 2560w, /assets/screenshots/home-wide-20261118-en.webp 3840w"
+    },
+    "src": {
+      "/assets/screenshots/home-wide-20261118.webp": "/assets/screenshots/home-wide-20261118-en.webp"
+    },
+    "data-srcset": {
+      "/assets/screenshots/people-compact-20261118-1440.webp 1440w, /assets/screenshots/people-compact-20261118-1920.webp 1920w, /assets/screenshots/people-compact-20261118.webp 3840w": "/assets/screenshots/people-compact-20261118-en-1440.webp 1440w, /assets/screenshots/people-compact-20261118-en-1920.webp 1920w, /assets/screenshots/people-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/people-wide-20261118-1280.webp 1280w, /assets/screenshots/people-wide-20261118-1920.webp 1920w, /assets/screenshots/people-wide-20261118-2560.webp 2560w, /assets/screenshots/people-wide-20261118.webp 3840w": "/assets/screenshots/people-wide-20261118-en-1280.webp 1280w, /assets/screenshots/people-wide-20261118-en-1920.webp 1920w, /assets/screenshots/people-wide-20261118-en-2560.webp 2560w, /assets/screenshots/people-wide-20261118-en.webp 3840w",
+      "/assets/screenshots/profile-compact-20261118-1440.webp 1440w, /assets/screenshots/profile-compact-20261118-1920.webp 1920w, /assets/screenshots/profile-compact-20261118.webp 3840w": "/assets/screenshots/profile-compact-20261118-en-1440.webp 1440w, /assets/screenshots/profile-compact-20261118-en-1920.webp 1920w, /assets/screenshots/profile-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/profile-wide-20261118-1280.webp 1280w, /assets/screenshots/profile-wide-20261118-1920.webp 1920w, /assets/screenshots/profile-wide-20261118-2560.webp 2560w, /assets/screenshots/profile-wide-20261118.webp 3840w": "/assets/screenshots/profile-wide-20261118-en-1280.webp 1280w, /assets/screenshots/profile-wide-20261118-en-1920.webp 1920w, /assets/screenshots/profile-wide-20261118-en-2560.webp 2560w, /assets/screenshots/profile-wide-20261118-en.webp 3840w",
+      "/assets/screenshots/play-compact-20261118-1440.webp 1440w, /assets/screenshots/play-compact-20261118-1920.webp 1920w, /assets/screenshots/play-compact-20261118.webp 3840w": "/assets/screenshots/play-compact-20261118-en-1440.webp 1440w, /assets/screenshots/play-compact-20261118-en-1920.webp 1920w, /assets/screenshots/play-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/play-wide-20261118-1280.webp 1280w, /assets/screenshots/play-wide-20261118-1920.webp 1920w, /assets/screenshots/play-wide-20261118-2560.webp 2560w, /assets/screenshots/play-wide-20261118.webp 3840w": "/assets/screenshots/play-wide-20261118-en-1280.webp 1280w, /assets/screenshots/play-wide-20261118-en-1920.webp 1920w, /assets/screenshots/play-wide-20261118-en-2560.webp 2560w, /assets/screenshots/play-wide-20261118-en.webp 3840w",
+      "/assets/screenshots/follow-compact-20261118-1440.webp 1440w, /assets/screenshots/follow-compact-20261118-1920.webp 1920w, /assets/screenshots/follow-compact-20261118.webp 3840w": "/assets/screenshots/follow-compact-20261118-en-1440.webp 1440w, /assets/screenshots/follow-compact-20261118-en-1920.webp 1920w, /assets/screenshots/follow-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/follow-wide-20261118-1280.webp 1280w, /assets/screenshots/follow-wide-20261118-1920.webp 1920w, /assets/screenshots/follow-wide-20261118-2560.webp 2560w, /assets/screenshots/follow-wide-20261118.webp 3840w": "/assets/screenshots/follow-wide-20261118-en-1280.webp 1280w, /assets/screenshots/follow-wide-20261118-en-1920.webp 1920w, /assets/screenshots/follow-wide-20261118-en-2560.webp 2560w, /assets/screenshots/follow-wide-20261118-en.webp 3840w",
+      "/assets/screenshots/stats-compact-20261118-1440.webp 1440w, /assets/screenshots/stats-compact-20261118-1920.webp 1920w, /assets/screenshots/stats-compact-20261118.webp 3840w": "/assets/screenshots/stats-compact-20261118-en-1440.webp 1440w, /assets/screenshots/stats-compact-20261118-en-1920.webp 1920w, /assets/screenshots/stats-compact-20261118-en.webp 3840w",
+      "/assets/screenshots/stats-wide-20261118-1280.webp 1280w, /assets/screenshots/stats-wide-20261118-1920.webp 1920w, /assets/screenshots/stats-wide-20261118-2560.webp 2560w, /assets/screenshots/stats-wide-20261118.webp 3840w": "/assets/screenshots/stats-wide-20261118-en-1280.webp 1280w, /assets/screenshots/stats-wide-20261118-en-1920.webp 1920w, /assets/screenshots/stats-wide-20261118-en-2560.webp 2560w, /assets/screenshots/stats-wide-20261118-en.webp 3840w"
+    },
+    "data-src": {
+      "/assets/screenshots/people-wide-20261118.webp": "/assets/screenshots/people-wide-20261118-en.webp",
+      "/assets/screenshots/profile-wide-20261118.webp": "/assets/screenshots/profile-wide-20261118-en.webp",
+      "/assets/screenshots/play-wide-20261118.webp": "/assets/screenshots/play-wide-20261118-en.webp",
+      "/assets/screenshots/follow-wide-20261118.webp": "/assets/screenshots/follow-wide-20261118-en.webp",
+      "/assets/screenshots/stats-wide-20261118.webp": "/assets/screenshots/stats-wide-20261118-en.webp"
     }
   },
   "text": {

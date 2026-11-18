@@ -6,6 +6,9 @@ import sharp, { type Sharp } from 'sharp';
 import { writeImmutableImage } from './immutable_image.ts';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0, 10).replaceAll('-', '');
 assert.match(captureDate, /^\d{8}(?:-\d+)?$/);
+const captureLanguage = process.env.PEACH_CAPTURE_LANGUAGE || 'zh-CN';
+assert.ok(['zh-CN', 'en'].includes(captureLanguage), '截图语言须为 zh-CN 或 en');
+const captureStamp = captureLanguage === 'en' ? `${captureDate}-en` : captureDate;
 // 4K 原图之外按显示尺寸缩小的候选宽度：桌面图最宽显示 1134 CSS 像素；
 // 手机看的是 4:3 完整桌面图，最小一档约为常见手机设备像素的 1.4 倍，留出双指放大的余量。
 export const VARIANT_WIDTHS = { wide: [1280, 1920, 2560], compact: [1440, 1920] };
@@ -39,7 +42,7 @@ async function register(path: string) {
 }
 for (const variant of ['wide', 'compact'] as const) {
     for (const name of ['home', 'people', 'profile', 'play', 'follow', 'stats'].filter(name => !process.argv[2] || process.argv[2].split(',').includes(name))) {
-        const stem = `assets/screenshots/${name}-${variant}-${captureDate}`;
+        const stem = `assets/screenshots/${name}-${variant}-${captureStamp}`;
         const png = file(stem + '.png');
         const meta = await sharp(png).metadata();
         assert.deepEqual([meta.width, meta.height], variant === 'wide' ? [3840, 2160] : [3840, 2880], name + ' 4K ' + variant);
@@ -54,7 +57,7 @@ for (const variant of ['wide', 'compact'] as const) {
     }
 }
 await writeFile(manifestUrl, JSON.stringify(manifest, null, 2) + '\n');
-const reportUrl = new URL('../evidence/mobile/encoding.json', import.meta.url);
+const reportUrl = new URL(captureLanguage === 'en' ? '../evidence/mobile/encoding-en.json' : '../evidence/mobile/encoding.json', import.meta.url);
 await mkdir(new URL('./', reportUrl), { recursive: true });
 let previous = [];
 try {

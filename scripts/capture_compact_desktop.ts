@@ -7,6 +7,9 @@ import { writeImmutableImage } from './immutable_image.ts';
 const base = process.argv[2] ?? 'https://demo.peach.video/';
 const captureDate = process.env.PEACH_CAPTURE_DATE || new Date().toISOString().slice(0, 10).replaceAll('-', '');
 assert.match(captureDate, /^\d{8}(?:-\d+)?$/);
+const captureLanguage = process.env.PEACH_CAPTURE_LANGUAGE || 'zh-CN';
+assert.ok(['zh-CN', 'en'].includes(captureLanguage), '截图语言须为 zh-CN 或 en');
+const captureStamp = captureLanguage === 'en' ? `${captureDate}-en` : captureDate;
 const out = new URL('../site/assets/screenshots/', import.meta.url);
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch({ channel: 'chrome' });
@@ -15,19 +18,20 @@ try {
     const people = await (await fetch(new URL('/api/index?kind=performers', base))).json() as { items: { k: string; entity_id: number }[] };
     const profile = people.items.find(row => /卓别林|Chaplin/i.test(row.k)) || people.items[0];
     assert.ok(profile?.entity_id, '人物截图身份未取得');
-    const shots = [['home', '/?sort=release&jav=1'], ['people', '/performers'], ['profile', '/performers/' + profile.entity_id], ['play', '/assets/1'], ['follow', '/follow?media=images'], ['stats', '/stats']];
+    const shots = [['home', '/?sort=release'], ['people', '/performers'], ['profile', '/performers/' + profile.entity_id], ['play', '/assets/1'], ['follow', '/follow?media=images'], ['stats', '/stats']];
     for (const variant of ([{ name: 'wide', width: 1920, height: 1080, scale: 2, pixels: [3840, 2160] }, { name: 'compact', width: 1280, height: 960, scale: 3, pixels: [3840, 2880] }] as const).filter(variant => !process.env.PEACH_CAPTURE_VARIANT || process.env.PEACH_CAPTURE_VARIANT === variant.name)) {
         for (const [name, route] of shots.filter(([name]) => !process.argv[3] || process.argv[3].split(',').includes(name))) {
-            const context = await browser.newContext({ viewport: { width: variant.width, height: variant.height }, deviceScaleFactor: variant.scale, colorScheme: 'dark', locale: 'zh-CN', reducedMotion: 'reduce' });
-            await context.addInitScript(() => {
+            const context = await browser.newContext({ viewport: { width: variant.width, height: variant.height }, deviceScaleFactor: variant.scale, colorScheme: 'dark', locale: captureLanguage, reducedMotion: 'reduce' });
+            await context.addInitScript(language => {
                 // 界面取景使用桌面 2 倍像素密度，导出分辨率由浏览器截图密度控制。
                 Object.defineProperty(window, 'devicePixelRatio', { get: () => 2 });
-                localStorage.setItem('peach.settings.v1', JSON.stringify({ theme: 'dark', homeLayout: 'big', detailAutoplay: false }));
-            });
+                localStorage.setItem('peach.settings.v1', JSON.stringify({ theme: 'dark', homeLayout: 'big', detailAutoplay: false, interfaceLanguage: language, performerNameLanguage: language }));
+            }, captureLanguage);
             const page = await context.newPage(), errors: string[] = [];
             page.on('pageerror', error => errors.push((error instanceof Error ? error.message : String(error))));
             try {
                 await page.goto(new URL(route, base).href, { waitUntil: 'networkidle' });
+                await page.waitForFunction(language => document.documentElement.lang === language, captureLanguage);
                 await page.addStyleTag({ content: '[data-demo-notice]{display:none!important}' });
                 await page.waitForTimeout(1500);
                 const images = await page.evaluate(async () => {
@@ -55,7 +59,7 @@ try {
                 await page.waitForTimeout(500);
                 assert.deepEqual(errors, [], name);
                 assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, name);
-                const path = fileURLToPath(new URL(`${name}-${variant.name}-${captureDate}.png`, out));
+                const path = fileURLToPath(new URL(`${name}-${variant.name}-${captureStamp}.png`, out));
                 const png = await page.screenshot({ type: 'png' });
                 const pixels = [png.readUInt32BE(16), png.readUInt32BE(20)];
                 assert.deepEqual(pixels, variant.pixels, name + ' 4K ' + variant.name);
@@ -73,7 +77,7 @@ finally {
     await browser.close();
 }
 await mkdir(new URL('../evidence/mobile/', import.meta.url), { recursive: true });
-const captureUrl = new URL('../evidence/mobile/capture.json', import.meta.url);
+const captureUrl = new URL(captureLanguage === 'en' ? '../evidence/mobile/capture-en.json' : '../evidence/mobile/capture.json', import.meta.url);
 let previous = [];
 try {
     previous = JSON.parse(await readFile(captureUrl, 'utf8'));
@@ -87,7 +91,7 @@ await writeFile(captureUrl, JSON.stringify([...retained, ...report], null, 2));
 const manifestUrl = new URL('../assets-manifest.json', import.meta.url);
 const manifest = JSON.parse(await readFile(manifestUrl, 'utf8'));
 for (const shot of report) {
-    const path = `assets/screenshots/${shot.name}-${shot.variant}-${captureDate}.png`;
+    const path = `assets/screenshots/${shot.name}-${shot.variant}-${captureStamp}.png`;
     const bytes = await readFile(shot.path);
     const entry = { path, bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex') };
     const index = manifest.files.findIndex((file: { path: string; }) => file.path === path);

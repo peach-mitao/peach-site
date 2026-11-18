@@ -86,8 +86,11 @@ try {
                 assert.match(await card.locator('.feature-card').evaluate(el=>getComputedStyle(el).backgroundImage),/linear-gradient/);
                 assert.equal(await card.locator('.pFn2Lq_action svg path').count(),1);
                 assert.equal(await page.locator('.nav-github').evaluate(el=>getComputedStyle(el,'::after').content),'none');
-                assert.equal(await page.locator('.live[data-mock="follow"]').getAttribute('href'),'https://demo.peach.video/subscriptions?tab=add');
-                assert.equal(await page.locator('.live[data-mock="theme"]').getAttribute('href'),'https://demo.peach.video/settings/appearance');
+                const en = language === 'en';
+                assert.equal(await page.locator('.live[data-mock="follow"]').getAttribute('href'),
+                    'https://demo.peach.video/subscriptions?tab=add' + (en ? '&lang=en' : ''));
+                assert.equal(await page.locator('.live[data-mock="theme"]').getAttribute('href'),
+                    'https://demo.peach.video/settings/appearance' + (en ? '?lang=en' : ''));
                 await card.locator('.mk-cursor').waitFor({ state: 'visible' });
                 const scale = await card.locator('.live-screen').evaluate(el => ({ width: el.clientWidth, scale: Number((el.querySelector('.mk') as HTMLElement).style.getPropertyValue('--mk-s')) }));
                 assert.ok(Math.abs(scale.width / 720 - scale.scale) < .01, '画面按实际卡片宽度缩放');

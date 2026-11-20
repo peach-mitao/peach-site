@@ -236,7 +236,8 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
       const folded=`translate(${(a.left-b.left)/scale}px,${(a.top-b.top)/scale}px) scale(${a.width/b.width},${a.height/b.height})`;
       focus.style.transform=folded;focus.style.opacity='1';focus.getBoundingClientRect();focus.style.transition='';
       s.classList.add('open');focus.style.transform='none';await k.sleep(1800);
-      await k.click(k.$('.mk-wall-play'));k.$('.mk-wall-number').textContent='仅提供演示';
+      await k.click(k.$('.mk-wall-play'));
+      const number=k.$('.mk-wall-number');number.textContent=number.dataset.done!;
       await k.sleep(1800);
       await k.click(k.$('.mk-wall-close'));focus.style.transform=folded;focus.style.opacity='0';s.classList.remove('open');await k.sleep(1300);
     },
@@ -262,7 +263,7 @@ if(matchMedia('(min-width:961px) and (pointer:fine)').matches)
       await k.sleep(1100);
       const hits=k.$$('.mk-hit');
       await k.move(hits[0],.5,.5);await k.sleep(500);
-      await k.click((hits[2].querySelector('.ck') as HTMLElement));hits[2].classList.add('off');add.textContent='添加选中（2）';
+      await k.click((hits[2].querySelector('.ck') as HTMLElement));hits[2].classList.add('off');add.textContent=add.dataset.done!;
       await k.sleep(700);
       await k.click(add);
       s.classList.remove('found');field.classList.remove('typing');k.$('.mk-field .typed').textContent='';find.classList.add('off');

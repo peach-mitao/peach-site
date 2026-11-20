@@ -87,6 +87,18 @@ try {
                 assert.equal(await card.locator('.pFn2Lq_action svg path').count(),1);
                 assert.equal(await page.locator('.nav-github').evaluate(el=>getComputedStyle(el,'::after').content),'none');
                 const en = language === 'en';
+                const mockText = await page.locator('.live[data-mock] .mk').allTextContents();
+                assert.equal(mockText.length, 5);
+                const mockStatuses = await page.locator('.mk [data-done]').evaluateAll(
+                    nodes => nodes.map(node => node.getAttribute('data-done')));
+                if (en) {
+                    assert.doesNotMatch(mockText.join(' '), /\p{Script=Han}/u, '英文功能动画的界面文字');
+                    assert.doesNotMatch(mockStatuses.join(' '), /\p{Script=Han}/u, '英文功能动画的后续状态');
+                }
+                else {
+                    assert.match(mockText[0], /查理·卓别林/, '中文版保留中文界面文字');
+                    assert.ok(mockStatuses.includes('待你确认'), '中文版保留中文完成态');
+                }
                 assert.equal(await page.locator('.live[data-mock="follow"]').getAttribute('href'),
                     'https://demo.peach.video/subscriptions?tab=add' + (en ? '&lang=en' : ''));
                 assert.equal(await page.locator('.live[data-mock="theme"]').getAttribute('href'),
@@ -99,6 +111,23 @@ try {
                 const paused = await card.locator('.mk-win').innerHTML();
                 await page.waitForTimeout(600);
                 assert.equal(await card.locator('.mk-win').innerHTML(), paused, '离屏暂停内容变动');
+                if (width === 390) {
+                    for (const [scene, selector, copy] of [
+                        ['follow', '.mk-acts .add', en ? 'Add selected (2)' : '添加选中（2）'],
+                        ['taste', '.mk-taste.done .mk-stat em', en ? 'Needs your review' : '待你确认'],
+                        ['wall', '.mk-wall.open .mk-wall-number', en ? 'Demo only' : '仅提供演示'],
+                    ] as const) {
+                        await page.locator(`.live[data-mock="${scene}"]`).scrollIntoViewIfNeeded();
+                        await page.waitForFunction(({selector, copy}) =>
+                            [...document.querySelectorAll(selector)].some(node => node.textContent === copy),
+                        {selector, copy}, {timeout: 20000});
+                    }
+                    if (en) {
+                        const titles = page.locator('.mk-wall-head b, .mk-tgrid b');
+                        assert.ok(await titles.evaluateAll(nodes =>
+                            nodes.every(node => node.scrollWidth <= node.clientWidth)), '英文片名完整显示');
+                    }
+                }
                 await page.setViewportSize({ width: width === 390 ? 1440 : 390, height: 844 });
                 await card.scrollIntoViewIfNeeded();
                 await page.waitForFunction(() => { const s = (document.querySelector('.live[data-mock="feed"] .live-screen') as HTMLElement); return Math.abs(s.clientWidth / 720 - Number((s.querySelector('.mk') as HTMLElement).style.getPropertyValue('--mk-s'))) < .01; });

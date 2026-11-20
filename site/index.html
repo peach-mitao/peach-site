@@ -179,6 +179,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .mk-wall-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.86),rgba(0,0,0,.62) 14%,rgba(0,0,0,.26) 30%,transparent 46%),linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.5) 52%,rgba(0,0,0,.08))}
 .mk-wall-head{position:absolute;left:12px;right:12px;bottom:58px;display:flex;flex-direction:column;gap:4px}
 .mk-wall-head b{display:block;max-width:76%;font-size:31px;font-weight:600;line-height:.95;letter-spacing:-.045em;white-space:nowrap}
+:lang(en) .mk-wall-head b{white-space:normal;text-wrap:balance}
 .mk-wall-head strong{display:block;max-width:90%;font-size:10px;font-weight:500;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mk-wall-head span{font-size:9px;opacity:.8}
 .mk-wall-number{position:absolute;left:6px;top:6px;padding:2px 3px;background:rgba(0,0,0,.66);font-size:8px;font-weight:600}
@@ -365,6 +366,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 .mk-tgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .mk-tgrid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px}
 .mk-tgrid b{display:block;margin-top:5px;font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:lang(en) .mk-tgrid b{white-space:normal}
 .mk-tgrid small{font-size:10px;color:var(--mk-acc)}
 .mk-pop{position:absolute;left:18px;bottom:54px;z-index:6;width:196px;padding:10px;border-radius:12px;background:var(--t-surface);
   border:1px solid var(--t-line);box-shadow:0 14px 36px rgba(0,0,0,.4);opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s,background-color .5s}
@@ -774,7 +776,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
         <div class="_3Yq4tG_reel"><div class="live-grid _3Yq4tG_padding">
 <div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="library" style="--delay:100ms" data-first-card="true"><a class="live pFn2Lq_link" href="https://demo.peach.video/performers/135" data-mock="feed" data-category="library"><div class="feature-card pFn2Lq_card">
           <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-person"/></svg></span><h3 class="pFn2Lq_title">订阅艺人</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">关注作品更新，管理已看与未看。</p><div class="pFn2Lq_divider"></div></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-feed">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-feed">
             <div class="mk-hero"><div class="mk-ava"><img src="/assets/people/q882.webp" alt="" loading="lazy"></div><div><h4>查理·卓别林</h4><p>预置电影资料 · 4 部作品</p></div></div>
             <div class="mk-sect">作品列表<small>4 部示例电影</small></div>
             <div class="mk-row">
@@ -787,10 +789,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </div></a></div>
 <div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="library" style="--delay:180ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/subscriptions?tab=add" data-mock="follow" data-category="library"><div class="feature-card pFn2Lq_card">
           <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-follow"/></svg></span><h3 class="pFn2Lq_title">关注创作者</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">输入名字或粘贴链接，多渠道自动追更<span class="nowrap">创作者。</span></p><div class="pFn2Lq_divider"></div></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-follow">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-follow">
             <div class="mk-h"><h4>关注管理</h4></div>
             <div class="mk-stats">
-              <div class="mk-stat"><small>关注创作者</small><b><span class="v">0</span><i>位</i></b></div>
+              <div class="mk-stat"><small>已关注创作者</small><b><span class="v">0</span><i>位</i></b></div>
               <div class="mk-stat"><small>启用来源</small><b><span class="v">0</span><i class="of">/ 0</i></b></div>
               <div class="mk-stat"><small>未看更新</small><b>0<i>条</i></b></div>
             </div>
@@ -807,7 +809,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
                   <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/peach-logo-192.webp" alt="" loading="lazy"><b>官方网站</b><span>Sintel</span><small>预置电影资料 · 2010</small></div>
                   <div class="mk-hit"><span class="ck"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><img src="/assets/peach-logo-192.webp" alt="" loading="lazy"><b>官方网站</b><span>Tears of Steel</span><small>预置电影资料 · 2012</small></div>
                 </div>
-                <div class="mk-acts"><span class="mk-btn blue add">添加选中（3）</span><span class="mk-btn">关闭</span></div>
+                <div class="mk-acts"><span class="mk-btn blue add" data-done="添加选中（2）">添加选中（3）</span><span class="mk-btn">关闭</span></div>
               </div>
             </div>
             <div class="mk-toast"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg><span>已添加 2 个关注来源</span></div>
@@ -815,7 +817,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </div></a></div>
 <div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:260ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/taste" data-mock="taste" data-category="personal"><div class="feature-card pFn2Lq_card">
           <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-taste"/></svg></span><h3 class="pFn2Lq_title">看看自己的口味</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">（授权后）分析本机浏览器和 Peach 历史，在本地归纳<span class="nowrap">你的口味。</span></p><div class="pFn2Lq_divider"></div></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-taste">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-taste">
             <div class="mk-h"><h4>口味</h4><span class="mk-read"><span class="idle"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></svg>读取浏览器历史</span><span class="busy"><i class="mk-dots"><i></i><i></i><i></i></i>读取中</span></span></div>
             <div class="mk-stats">
               <div class="mk-stat"><small>浏览记录</small><b><span class="v" data-to="11537">0</span></b><em data-done="4 个数据源 · 2025/9/28—2026/9/27">尚未读取</em></div>
@@ -855,7 +857,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </div></a></div>
 <div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:340ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/settings/appearance" data-mock="theme" data-category="personal"><div class="feature-card pFn2Lq_card">
           <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-theme"/></svg></span><h3 class="pFn2Lq_title">丰富的自定义选项</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">一键切换深色浅色，配色<span class="nowrap">任你选。</span></p><div class="pFn2Lq_divider"></div></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win"><div class="mk-s mk-theme">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win"><div class="mk-s mk-theme">
             <aside class="mk-tside">
               <div class="lib"><img src="/assets/peach-logo-192.webp" alt="" width="18" height="18">Peach</div>
               <div class="mk-nav on"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10"/></svg>首页</div>
@@ -905,7 +907,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
 </div></a></div>
 <div class="feature-card-wrapper _3Yq4tG_extensionCardWrapper" data-category="personal" style="--delay:420ms"><a class="live pFn2Lq_link" href="https://demo.peach.video/wall" data-mock="wall" data-category="personal"><div class="feature-card pFn2Lq_card">
           <div class="pFn2Lq_headerContainer"><div class="pFn2Lq_header"><span class="feature-icon pFn2Lq_icon" aria-hidden="true"><svg><use href="#i-wall"/></svg></span><h3 class="pFn2Lq_title">影片墙</h3><span class="pFn2Lq_action" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="m5.75 3.75 4.5 4.25-4.5 4.25"/></svg></span></div><p class="pFn2Lq_description">拖动封面墙，沉浸式挑片。</p><div class="pFn2Lq_divider"></div></div>
-          <div class="live-screen"><div class="mk" aria-hidden="true" inert translate="no"><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
+          <div class="live-screen"><div class="mk" aria-hidden="true" inert><div class="mk-win" style="padding:0"><div class="mk-s mk-wall">
             <div class="mk-wall-world">
               <div class="mk-wall-tile" style="--x:0px;--y:0px;--w:180px;--h:260px"><img src="/assets/films/q1024861.webp" alt="" loading="lazy"><small>01</small><div class="mk-wall-copy"><b>卡比利亚</b><span>1914 · 示例作品</span></div></div>
               <div class="mk-wall-tile" style="--x:183px;--y:0px;--w:160px;--h:130px"><img src="/assets/films/q690583.webp" alt="" loading="lazy"><small>02</small><div class="mk-wall-copy"><b>贪婪</b><span>1924 · 示例作品</span></div></div>
@@ -928,7 +930,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
             <span class="mk-wall-settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m9 3 6 0 1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z"/></svg></span>
             <div class="mk-wall-focus">
               <img class="mk-wall-art" src="/assets/films/q1193655.webp" alt="" loading="lazy"><div class="mk-wall-preview"><img src="/assets/films/q1193655.webp" alt="" loading="lazy"></div><div class="mk-wall-shade"></div>
-              <span class="mk-wall-number">07</span>
+              <span class="mk-wall-number" data-done="仅提供演示">07</span>
               <div class="mk-wall-head"><b>幻影馬車</b><strong>1921 · 影片详情</strong><span>示例作品</span></div>
               <span class="mk-wall-close"><svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg></span>
               <div class="mk-wall-actions"><div class="mk-wall-controls">

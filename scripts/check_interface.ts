@@ -64,13 +64,18 @@ try {
                     assert.ok(motion.image,`${language} ${width} 切换到 ${key} 时图片有连续位移`);
                     assert.ok(motion.button,`${language} ${width} 切换到 ${key} 时按钮有连续放大`);
                 }
-                const faq = page.locator('#faq details').first();
+                const questions = page.locator('#faq details');
+                const faq = questions.first(), nextFaq = questions.nth(1);
                 await faq.locator('summary').click();
                 await page.waitForFunction(() => (document.querySelector('#faq details') as HTMLElement).getAnimations().length === 0);
                 assert.equal(await faq.getAttribute('open'), '');
                 assert.ok((await faq.locator('p').innerText()).length > 0, '问答内容可见');
-                await faq.locator('summary').click();
-                await page.waitForFunction(() => !((document.querySelector('#faq details') as HTMLElement) as HTMLDetailsElement).open);
+                await nextFaq.locator('summary').click();
+                assert.equal(await faq.getAttribute('open'), null, '打开新问题时收起上一项');
+                assert.equal(await nextFaq.getAttribute('open'), '');
+                assert.equal(await page.locator('#faq details[open]').count(), 1);
+                await nextFaq.locator('summary').press('Enter');
+                await page.waitForFunction(() => !document.querySelector('#faq details[open]'));
                 // 首次可见才初始化；离屏不继续改写内容，重新进入可续播。
                 const card = page.locator('.live[data-mock="feed"]');
                 await card.scrollIntoViewIfNeeded();

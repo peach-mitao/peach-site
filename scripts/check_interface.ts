@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
+const repoApi = 'https://api.github.com/repos/peach-mitao/peach';
+const starBadgeApi = 'https://img.shields.io/badge/dynamic/json.json?*';
 const browser = await chromium.launch();
 try {
     for (const width of [390, 1440] as const)
@@ -8,11 +10,19 @@ try {
             const page = await browser.newPage({ viewport: { width, height: 844 }, locale: language }), errors: string[] = [];
             page.on('pageerror', e => errors.push(e.message));
             await page.route('https://api.github.com/**', r => r.fulfill({ json: [] }));
+            await page.route(repoApi, r => width === 390 ? r.fulfill({ status: 403 }) : r.fulfill({ json: { stargazers_count: 12345 } }));
             await page.route('**/releases.json', r => r.fulfill({ json: [] }));
             await page.route('https://img.shields.io/**', r => r.fulfill({ json: { message: 'v1.2.3' } }));
+            await page.route(starBadgeApi, r => r.fulfill({ json: { value: '12345' } }));
             try {
                 await page.goto(new URL(language === 'en' ? '/en/' : '/', base).href, { waitUntil: 'networkidle' });
                 assert.equal(await page.locator('html').getAttribute('lang'), language, '直接地址决定页面语言');
+                const github = page.locator('.nav-github');
+                await page.waitForFunction(() => document.querySelector('.nav-github span')?.textContent === '12.3k');
+                assert.equal(await github.getAttribute('href'), 'https://github.com/peach-mitao/peach');
+                assert.equal(await github.getAttribute('aria-label'),
+                    language === 'en' ? 'GitHub · 12,345 stars' : 'GitHub · 12,345 个星标');
+                assert.equal(await github.locator('span').isVisible(), true);
                 assert.equal(await page.locator('.mk-cursor').count(), 0, '离屏卡片不创建播放光标');
                 await page.locator('.lang-menu button').click();
                 assert.equal(await page.locator('.lang-list').isVisible(), true);
@@ -64,6 +74,9 @@ try {
                     assert.ok(motion.image,`${language} ${width} 切换到 ${key} 时图片有连续位移`);
                     assert.ok(motion.button,`${language} ${width} 切换到 ${key} 时按钮有连续放大`);
                 }
+                const issueLink = page.locator('#faq a[href="https://github.com/peach-mitao/peach/issues/new/choose"]');
+                assert.match(await issueLink.evaluate(el => getComputedStyle(el, '::after').maskImage),
+                    /data:image\/svg/, '提交问题的链接显示外链箭头');
                 const questions = page.locator('#faq details');
                 const faq = questions.first(), nextFaq = questions.nth(1);
                 await faq.locator('summary').click();
@@ -149,8 +162,13 @@ try {
         try{
             await narrow.route('**/releases.json',r=>r.fulfill({json:[]}));
             await narrow.route('https://api.github.com/**',r=>r.fulfill({json:[]}));
+            await narrow.route(repoApi,r=>r.fulfill({json:{stargazers_count:12345}}));
             await narrow.route('https://img.shields.io/**',r=>r.fulfill({json:{message:'v1.2.3'}}));
             await narrow.goto(new URL(language==='en'?'/en/':'/',base).href,{waitUntil:'networkidle'});
+            const github = narrow.locator('.nav-github[data-stars]');
+            assert.equal(await github.locator('span').isVisible(),width === 320,'最窄屏保留 GitHub 图标入口');
+            const starButton = await github.boundingBox();
+            assert.ok(starButton && starButton.x >= 0 && starButton.x + starButton.width <= width,'星标按钮不超出窄屏');
             await narrow.locator('[data-platform-option="docker"]').click();
             await narrow.waitForFunction(()=>{const group=document.querySelector('.platform-options')!.getBoundingClientRect(),item=document.querySelector('[data-platform-option="docker"]')!.getBoundingClientRect();return item.left>=group.left&&item.right<=group.right});
             const platform=await narrow.locator('.platform-options').evaluate(el=>{const b=el.getBoundingClientRect();return {scroll:el.scrollWidth,client:el.clientWidth,left:b.left,right:b.right,width:document.documentElement.clientWidth}});
@@ -171,8 +189,11 @@ try {
     try {
         await page.route('**/releases.json',r=>r.fulfill({json:[]}));
         await page.route('https://api.github.com/**',r=>r.fulfill({json:[]}));
+        await page.route(repoApi,r=>r.fulfill({status:503}));
         await page.route('https://img.shields.io/**',r=>r.fulfill({json:{message:'v1.2.3'}}));
+        await page.route(starBadgeApi,r=>r.fulfill({status:503}));
         await page.goto(base, { waitUntil: 'networkidle' });
+        assert.equal(await page.locator('.nav-github').getAttribute('aria-label'),'GitHub','星标不可用时保留仓库入口');
         await page.locator('.dock button[data-k="people"]').click();
         await page.waitForFunction(()=>document.querySelector('.dock button[data-k="people"]')?.getAttribute('aria-selected')==='true');
         assert.equal(await page.locator('.dock [aria-selected="true"]').evaluate(el=>el.getAnimations().length),0);

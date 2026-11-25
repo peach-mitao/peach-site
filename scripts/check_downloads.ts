@@ -4,7 +4,8 @@ import { chromium } from 'playwright';
 import { platformFor, macArchitecture, downloadsFor } from '../browser/assets/downloads.ts';
 const base = process.argv[2] ?? 'http://127.0.0.1:8795/';
 const live = process.argv.includes('--live');
-const api = 'https://api.github.com/repos/peach-mitao/peach/releases?per_page=30';
+const repoApi = 'https://api.github.com/repos/peach-mitao/peach';
+const api = repoApi + '/releases?per_page=30';
 const releasesUrl = 'https://github.com/peach-mitao/peach/releases';
 const mirrorBase = 'https://downloads.peach.video';
 const mirrorApi = mirrorBase + '/releases.json';
@@ -60,8 +61,10 @@ try {
                 const failedRequests: { url: string; error: string|undefined; }[] = [];
                 page.on('pageerror', error => errors.push((error instanceof Error ? error.message : String(error))));
                 page.on('requestfailed', request => failedRequests.push({ url: request.url(), error: request.failure()?.errorText }));
-                if (!scenario.live)
+                if (!scenario.live) {
+                    await page.route(repoApi, route => route.fulfill({ json: { stargazers_count: 12345 } }));
                     await page.route(mirrorApi, route => route.fulfill({ json: scenario.r2 ?? [], headers: { 'access-control-allow-origin': '*' } }));
+                }
                 await page.route(dockerVersionApi, route => route.fulfill({ json: { message: 'v7.8.9' }, headers: { 'access-control-allow-origin': '*' } }));
                 if (!scenario.live)
                     await page.route(api, route => scenario.abort || scenario.githubAbort ? route.abort() : route.fulfill({
@@ -146,6 +149,7 @@ try {
                                 platform: 'macOS', getHighEntropyValues: async () => ({ architecture: s.architecture, bitness: '64' }),
                             } : undefined, configurable: true });
                     }, scenario);
+                    await page.route(repoApi, route => route.fulfill({ json: { stargazers_count: 12345 } }));
                     await page.route(api, route => route.fulfill({ json: [both], headers: { 'access-control-allow-origin': '*' } }));
                     await page.route(mirrorApi, route => route.fulfill({ json: [], headers: { 'access-control-allow-origin': '*' } }));
                     await page.route(dockerVersionApi, route => route.fulfill({ json: { message: 'v7.8.9' }, headers: { 'access-control-allow-origin': '*' } }));

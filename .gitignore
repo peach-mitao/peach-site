@@ -32,6 +32,11 @@
 !/site/index.html
 !/site/404.html
 !/site/unavailable.html
+!/site/robots.txt
+!/site/sitemap.xml
+!/site/.well-known/
+/site/.well-known/*
+!/site/.well-known/security.txt
 !/site/.assetsignore
 !/site/_redirects
 !/site/_headers

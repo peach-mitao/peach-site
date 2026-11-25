@@ -1,6 +1,37 @@
 interface MockContext {$:(selector:string)=>HTMLElement;$$:(selector:string)=>HTMLElement[];sleep(ms:number):Promise<void>;down(on:boolean):void;move(el:HTMLElement,fx?:number,fy?:number,fixed?:number):Promise<void>;click(el:HTMLElement,fx?:number,fy?:number):Promise<void>;type(el:HTMLElement,text:string):Promise<void>;count(el:HTMLElement,to:number,ms?:number):Promise<void>;key(label:string,el:HTMLElement):void;remove(el:HTMLElement):Promise<void>}
 import {revealHorizontal} from './horizontal-controls.ts';
 const t=(text:string)=>window.PEACH_I18N?.[text]??text;
+
+async function fetchStarCount(url: string, field: 'stargazers_count' | 'value') {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const value: unknown = (await response.json())?.[field];
+    const count = typeof value === 'string' && /^\d+$/.test(value) ? Number(value) : value;
+    return typeof count === 'number' && Number.isSafeInteger(count) && count >= 0 ? count : null;
+  } catch { return null; }
+}
+
+async function loadGitHubStars() {
+  const repository = 'https://api.github.com/repos/peach-mitao/peach';
+  const badge = 'https://img.shields.io/badge/dynamic/json.json?' + new URLSearchParams({
+    url: repository, query: '$.stargazers_count', label: 'stars',
+  });
+  const stars = await fetchStarCount(repository, 'stargazers_count') ?? await fetchStarCount(badge, 'value');
+  if (stars === null) return;
+
+  const link = document.querySelector<HTMLAnchorElement>('.nav-github')!;
+  const fullCount = new Intl.NumberFormat(document.documentElement.lang).format(stars);
+  const label = link.dataset.title!.replace('{count}', fullCount);
+  link.querySelector('span')!.textContent = new Intl.NumberFormat('en', {
+    notation: 'compact', maximumFractionDigits: 1,
+  }).format(stars).toLowerCase();
+  link.setAttribute('aria-label', label);
+  link.title = label;
+  link.dataset.stars = '';
+}
+void loadGitHubStars();
+
 const shots=[...(document.querySelectorAll('#screen picture') as NodeListOf<HTMLElement>)];
 const tabs=[...(document.querySelectorAll('.dock button') as NodeListOf<HTMLElement>)];
 const label=document.getElementById('dock-label'),say=document.getElementById('stage-say');

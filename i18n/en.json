@@ -62,6 +62,7 @@
     }
   },
   "text": {
+    "GitHub · {count} 个星标": "GitHub · {count} stars",
     "功能分类": "Feature categories",
     "全部功能": "All features",
     "订阅与关注": "Follow",

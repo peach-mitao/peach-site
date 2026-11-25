@@ -17,11 +17,12 @@ server.listen(0,'127.0.0.1');await once(server,'listening');const base=`http://1
 const browser=await chromium.launch({channel:'chrome'});
 try{
  const context=await browser.newContext({locale:'zh-CN'}),page=await context.newPage();
- // 不使用 route()，保留真实浏览器 HTTP 缓存；只替代两个外部版本源。
+ // 不使用 route()，保留真实浏览器 HTTP 缓存；只替代外部请求。
  await context.addInitScript(()=>{
   const native=window.fetch.bind(window);
   window.fetch=(input,options)=>{
    const url=typeof input==='string'?input:input instanceof Request?input.url:input.toString();
+   if(url==='https://api.github.com/repos/peach-mitao/peach')return Promise.resolve(Response.json({stargazers_count:12345}));
    if(url.startsWith('https://api.github.com/repos/peach-mitao/peach/releases')){
     const v=(window as Window&{testGitHubVersion?:string}).testGitHubVersion;
     return Promise.resolve(Response.json(v?[{tag_name:'v'+v,published_at:`2026-01-${v.split('.').at(-1)!.padStart(2,'0')}T00:00:00Z`,assets:[`Peach-${v}-windows-x64-setup.exe`,`Peach-${v}-windows-x64.zip`].map(name=>({name,state:'uploaded',size:123,digest:'sha256:'+'a'.repeat(64)}))}]:[]));

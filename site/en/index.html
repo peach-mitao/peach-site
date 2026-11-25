@@ -119,6 +119,7 @@ h1,.say{word-break:normal;overflow-wrap:normal;line-break:strict}
 /* 按钮宽度容得下各平台的文字，换字时不改变位置；文字与版本行定稿后淡入。 */
 .cta-download>.btn{min-width:180px}
 .nav [data-primary-download]{min-width:86px}
+.nav .nav-github{min-width:104px;font-variant-numeric:tabular-nums}
 [data-primary-download]>*,.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]{transition:opacity .2s}
 .dl-label-pending [data-primary-download]>*,.dl-meta-pending :is(.download-meta,[data-release-version],[data-download-panel="macos"] .platform-packages,[data-macos-status]){opacity:0}
 .cta-secondary{display:flex;justify-content:center;gap:12px}
@@ -572,7 +573,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .wrap,.nav{padding:0 14px}
   .nav-end>.btn>span{display:none}
   .code pre{padding:12px;font-size:12px}
-  /* 手机顶栏显示语言、GitHub 与当前平台三个等宽图标。 */
+  /* 手机顶栏的图标按钮保留相同的点击高度。 */
   .nav .nav-end>.btn,.nav .nav-end .icon-btn{width:36px;min-width:36px;height:36px;padding:0;flex:none}
   .nav-end{position:relative}
   .nav-end .lang-menu{position:static}
@@ -598,6 +599,10 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   .final footer{margin-top:72px}
   .foot-row{gap:8px}
   .panel{padding:22px}
+}
+@media (320px <= width <= 560px){
+  .nav .nav-end>.nav-github[data-stars]{width:auto;padding:0 9px;gap:5px}
+  .nav-end>.nav-github[data-stars]>span{display:inline}
 }
 @media (max-width:400px){
   .code pre{padding:12px 10px;font-size:11px}
@@ -701,7 +706,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
           <li><a href="/en/" hreflang="en" lang="en">English</a></li>
         </ul>
       </div>
-      <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
+      <a class="btn btn-quiet nav-github" href="https://github.com/peach-mitao/peach" aria-label="GitHub" title="GitHub" data-title="GitHub · {count} stars"><svg aria-hidden="true"><use href="#i-github"/></svg><span>GitHub</span></a>
       <a class="btn btn-primary" href="#download" data-primary-download aria-label="Download"><svg aria-hidden="true"><use href="#i-download"/></svg><span>Download</span></a>
     </div>
   </div>
@@ -1107,7 +1112,7 @@ code{font-family:var(--mono);font-size:.9em;background:rgba(255,255,255,.06);pad
   <section class="section" id="faq">
     <div class="wrap split">
       <div class="reveal">
-        <p class="say lg"><b>FAQ</b><span class="sub"><span>Can't find an answer?</span> <a class="contact" href="https://github.com/peach-mitao/peach/issues/new/choose" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a></span></p>
+        <p class="say lg"><b>FAQ</b><span class="sub"><span>Can't find an answer?</span> <a class="contact ext" href="https://github.com/peach-mitao/peach/issues/new/choose" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a></span></p>
       </div>
       <div class="faq reveal">
         <details name="peach-faq"><summary>Will Peach change my files?</summary><p>Scanning and filling in metadata leave your original files unchanged. Manual organization renames or moves files; emptying the trash deletes files, and cleanup during resource sync removes empty folders. These file changes require confirmation.</p></details>
